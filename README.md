@@ -1,2 +1,2 @@
 # sy-deploy-auomation
-Github Action for Shopify Deploment Automation
+Github Action for Shopify Deployment Automation
