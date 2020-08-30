@@ -3,5 +3,3 @@ development:
   theme_id: 110026555546
   store: kayzen-development.myshopify.com
   timeout: 60s
-  ignore_files:
-    - config/settings_data.json

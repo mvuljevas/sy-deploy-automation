@@ -1,6414 +1,5644 @@
-window.theme = window.theme || {};
+/* 
+         IMPORTANT NOTE:
+         
+         This file is the unminified JS that is used by the theme. This file is therefore not included into the "theme.liquid" Liquid. It is bundled only
+         for developers who would like to add their own JavaScript or edit the existing JavaScript. Re-minifying the ile and make sure you include it into
+         the "theme.liquid" is up to the developers responsibility.
+         
+         Because we are using WebPack internally to bundle our JavaScript code, even the unminified file can be quite hard to read or edit due to all the
+         code added by WebPack.
+         
+         Please note that we do not provide any assistance for changes made here that may break the theme: it's at your own risk :).
+      */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-/* ================ SLATE ================ */
-window.theme = window.theme || {};
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-theme.Sections = function Sections() {
-  this.constructors = {};
-  this.instances = [];
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  $(document)
-    .on('shopify:section:load', this._onSectionLoad.bind(this))
-    .on('shopify:section:unload', this._onSectionUnload.bind(this))
-    .on('shopify:section:select', this._onSelect.bind(this))
-    .on('shopify:section:deselect', this._onDeselect.bind(this))
-    .on('shopify:block:select', this._onBlockSelect.bind(this))
-    .on('shopify:block:deselect', this._onBlockDeselect.bind(this));
-};
+/******/(function (modules) {
+  // webpackBootstrap
+  /******/ // The module cache
+  /******/var installedModules = {};
+  /******/
+  /******/ // The require function
+  /******/function __webpack_require__(moduleId) {
+    /******/
+    /******/ // Check if module is in cache
+    /******/if (installedModules[moduleId]) {
+      /******/return installedModules[moduleId].exports;
+      /******/
+    }
+    /******/ // Create a new module (and put it into the cache)
+    /******/var module = installedModules[moduleId] = {
+      /******/i: moduleId,
+      /******/l: false,
+      /******/exports: {}
+      /******/ };
+    /******/
+    /******/ // Execute the module function
+    /******/modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+    /******/
+    /******/ // Flag the module as loaded
+    /******/module.l = true;
+    /******/
+    /******/ // Return the exports of the module
+    /******/return module.exports;
+    /******/
+  }
+  /******/
+  /******/
+  /******/ // expose the modules object (__webpack_modules__)
+  /******/__webpack_require__.m = modules;
+  /******/
+  /******/ // expose the module cache
+  /******/__webpack_require__.c = installedModules;
+  /******/
+  /******/ // define getter function for harmony exports
+  /******/__webpack_require__.d = function (exports, name, getter) {
+    /******/if (!__webpack_require__.o(exports, name)) {
+      /******/Object.defineProperty(exports, name, {
+        /******/configurable: false,
+        /******/enumerable: true,
+        /******/get: getter
+        /******/ });
+      /******/
+    }
+    /******/
+  };
+  /******/
+  /******/ // getDefaultExport function for compatibility with non-harmony modules
+  /******/__webpack_require__.n = function (module) {
+    /******/var getter = module && module.__esModule ?
+    /******/function getDefault() {
+      return module['default'];
+    } :
+    /******/function getModuleExports() {
+      return module;
+    };
+    /******/__webpack_require__.d(getter, 'a', getter);
+    /******/return getter;
+    /******/
+  };
+  /******/
+  /******/ // Object.prototype.hasOwnProperty.call
+  /******/__webpack_require__.o = function (object, property) {
+    return Object.prototype.hasOwnProperty.call(object, property);
+  };
+  /******/
+  /******/ // __webpack_public_path__
+  /******/__webpack_require__.p = "";
+  /******/
+  /******/ // Load entry module and return exports
+  /******/return __webpack_require__(__webpack_require__.s = 57);
+  /******/
+})(
+/************************************************************************/
+/******/[
+/* 0 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-theme.Sections.prototype = Object.assign({}, theme.Sections.prototype, {
-  _createInstance: function(container, constructor) {
-    var $container = $(container);
-    var id = $container.attr('data-section-id');
-    var type = $container.attr('data-section-type');
+  "use strict";
 
-    constructor = constructor || this.constructors[type];
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * Various DOM helper
+   */
 
-    if (typeof constructor === 'undefined') {
-      return;
+  var Dom = function () {
+    function Dom() {
+      _classCallCheck(this, Dom);
     }
 
-    var instance = Object.assign(new constructor(container), {
-      id: id,
-      type: type,
-      container: container
-    });
+    _createClass(Dom, null, [{
+      key: 'getSiblings',
 
-    this.instances.push(instance);
-  },
+      /**
+       * Get all the previous and next siblings, optionally filtered by a selector
+       */
+      value: function getSiblings(element, filter) {
+        var includeSelf = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-  _onSectionLoad: function(evt) {
-    var container = $('[data-section-id]', evt.target)[0];
-    if (container) {
-      this._createInstance(container);
+        var siblings = [];
+        var currentElement = element;
+
+        // Do the previous first
+        while (currentElement = currentElement.previousElementSibling) {
+          if (!filter || currentElement.matches(filter)) {
+            siblings.push(currentElement);
+          }
+        }
+
+        if (includeSelf) {
+          siblings.push(element);
+        }
+
+        // Then the next side
+        currentElement = element;
+
+        while (currentElement = currentElement.nextElementSibling) {
+          if (!filter || currentElement.matches(filter)) {
+            siblings.push(currentElement);
+          }
+        }
+
+        return siblings;
+      }
+
+      /**
+       * By default, NodeList object are only iterable with forEach on newest browsers. To support it cross-browser,
+       * we need to normalize it
+       */
+
+    }, {
+      key: 'nodeListToArray',
+      value: function nodeListToArray(nodeList, filter) {
+        var items = [];
+
+        for (var i = 0; i !== nodeList.length; ++i) {
+          if (!filter || nodeList[i].matches(filter)) {
+            items.push(nodeList[i]);
+          }
+        }
+
+        return items;
+      }
+
+      /**
+       * Calculate an element width with its margin
+       */
+
+    }, {
+      key: 'outerWidthWithMargin',
+      value: function outerWidthWithMargin(element) {
+        var width = element.offsetWidth,
+            style = getComputedStyle(element);
+
+        width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+
+        return width;
+      }
+
+      /**
+       * Calculate an element height with its margin
+       */
+
+    }, {
+      key: 'outerHeightWithMargin',
+      value: function outerHeightWithMargin(element) {
+        var height = element.offsetHeight,
+            style = getComputedStyle(element);
+
+        height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+
+        return height;
+      }
+    }]);
+
+    return Dom;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Dom;
+
+  /***/
+},
+/* 1 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var Responsive = function () {
+    function Responsive() {
+      var _this = this;
+
+      _classCallCheck(this, Responsive);
+
+      this.currentBreakpoint = Responsive.getCurrentBreakpoint();
+
+      window.addEventListener('resize', function () {
+        var newBreakpoint = Responsive.getCurrentBreakpoint();
+
+        if (_this.currentBreakpoint === newBreakpoint) {
+          return;
+        }
+
+        document.dispatchEvent(new CustomEvent('breakpoint:changed', { detail: {
+            previousBreakpoint: _this.currentBreakpoint,
+            currentBreakpoint: newBreakpoint
+          } }));
+
+        _this.currentBreakpoint = newBreakpoint;
+      });
     }
-  },
 
-  _onSectionUnload: function(evt) {
-    this.instances = this.instances.filter(function(instance) {
-      var isEventInstance = instance.id === evt.detail.sectionId;
+    _createClass(Responsive, null, [{
+      key: 'matchesBreakpoint',
+      value: function matchesBreakpoint(breakpoint) {
+        switch (breakpoint) {
+          case 'phone':
+            return window.matchMedia('screen and (max-width: 640px)').matches;
 
-      if (isEventInstance) {
-        if (typeof instance.onUnload === 'function') {
-          instance.onUnload(evt);
+          case 'tablet':
+            return window.matchMedia('screen and (min-width: 641px) and (max-width: 1007px)').matches;
+
+          case 'tablet-and-up':
+            return window.matchMedia('screen and (min-width: 641px)').matches;
+
+          case 'pocket':
+            return window.matchMedia('screen and (max-width: 1007px)').matches;
+
+          case 'lap':
+            return window.matchMedia('screen and (min-width: 1008px) and (max-width: 1279px)').matches;
+
+          case 'lap-and-up':
+            return window.matchMedia('screen and (min-width: 1008px)').matches;
+
+          case 'desk':
+            return window.matchMedia('screen and (min-width: 1280px)').matches;
+
+          case 'widescreen':
+            return window.matchMedia('screen and (min-width: 1600px)').matches;
+
+          case 'supports-hover':
+            return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        }
+      }
+    }, {
+      key: 'getCurrentBreakpoint',
+      value: function getCurrentBreakpoint() {
+        if (window.matchMedia('screen and (max-width: 640px)').matches) {
+          return 'phone';
+        }
+
+        if (window.matchMedia('screen and (min-width: 641px) and (max-width: 1007px)').matches) {
+          return 'tablet';
+        }
+
+        if (window.matchMedia('screen and (min-width: 1008px) and (max-width: 1279px)').matches) {
+          return 'lap';
+        }
+
+        if (window.matchMedia('screen and (min-width: 1280px)').matches) {
+          return 'desk';
+        }
+      }
+    }]);
+
+    return Responsive;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Responsive;
+
+  /***/
+},
+/* 2 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Responsive__ = __webpack_require__(1);
+
+  var Carousel = function () {
+    function Carousel(element) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var overrideSettings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      _classCallCheck(this, Carousel);
+
+      this.element = element;
+      this.initialConfig = Object.assign(JSON.parse(element.getAttribute('data-flickity-config')), overrideSettings);
+      this.options = options;
+
+      this._attachListeners();
+      this._build();
+    }
+
+    _createClass(Carousel, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.flickityInstance.destroy();
+
+        if (this.initialConfig['breakpoints'] !== undefined) {
+          document.removeEventListener('breakpoint:changed', this._onBreakpointChangedListener);
+        }
+      }
+    }, {
+      key: 'getFlickityInstance',
+      value: function getFlickityInstance() {
+        return this.flickityInstance;
+      }
+    }, {
+      key: 'selectCell',
+      value: function selectCell(index) {
+        var shouldPause = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        var shouldAnimate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+        if (shouldPause) {
+          this.flickityInstance.pausePlayer();
+        }
+
+        this.flickityInstance.select(index, false, !shouldAnimate);
+      }
+    }, {
+      key: 'next',
+      value: function next() {
+        this.flickityInstance.next();
+      }
+    }, {
+      key: 'previous',
+      value: function previous() {
+        this.flickityInstance.previous();
+      }
+    }, {
+      key: 'pausePlayer',
+      value: function pausePlayer() {
+        this.flickityInstance.pausePlayer();
+      }
+    }, {
+      key: 'unpausePlayer',
+      value: function unpausePlayer() {
+        this.flickityInstance.unpausePlayer();
+      }
+    }, {
+      key: 'resize',
+      value: function resize() {
+        this.flickityInstance.resize();
+      }
+    }, {
+      key: 'getSelectedIndex',
+      value: function getSelectedIndex() {
+        return this.flickityInstance.selectedIndex;
+      }
+    }, {
+      key: 'getSelectedCell',
+      value: function getSelectedCell() {
+        return this.flickityInstance.selectedCell.element;
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        if (this.initialConfig['breakpoints'] !== undefined) {
+          this._onBreakpointChangedListener = this._onBreakpointChanged.bind(this);
+          document.addEventListener('breakpoint:changed', this._onBreakpointChangedListener);
         }
       }
 
-      return !isEventInstance;
-    });
-  },
-
-  _onSelect: function(evt) {
-    // eslint-disable-next-line no-shadow
-    var instance = this.instances.find(function(instance) {
-      return instance.id === evt.detail.sectionId;
-    });
-
-    if (
-      typeof instance !== 'undefined' &&
-      typeof instance.onSelect === 'function'
-    ) {
-      instance.onSelect(evt);
-    }
-  },
-
-  _onDeselect: function(evt) {
-    // eslint-disable-next-line no-shadow
-    var instance = this.instances.find(function(instance) {
-      return instance.id === evt.detail.sectionId;
-    });
-
-    if (
-      typeof instance !== 'undefined' &&
-      typeof instance.onDeselect === 'function'
-    ) {
-      instance.onDeselect(evt);
-    }
-  },
-
-  _onBlockSelect: function(evt) {
-    // eslint-disable-next-line no-shadow
-    var instance = this.instances.find(function(instance) {
-      return instance.id === evt.detail.sectionId;
-    });
-
-    if (
-      typeof instance !== 'undefined' &&
-      typeof instance.onBlockSelect === 'function'
-    ) {
-      instance.onBlockSelect(evt);
-    }
-  },
-
-  _onBlockDeselect: function(evt) {
-    // eslint-disable-next-line no-shadow
-    var instance = this.instances.find(function(instance) {
-      return instance.id === evt.detail.sectionId;
-    });
-
-    if (
-      typeof instance !== 'undefined' &&
-      typeof instance.onBlockDeselect === 'function'
-    ) {
-      instance.onBlockDeselect(evt);
-    }
-  },
-
-  register: function(type, constructor) {
-    this.constructors[type] = constructor;
-
-    $('[data-section-type=' + type + ']').each(
-      function(index, container) {
-        this._createInstance(container, constructor);
-      }.bind(this)
-    );
-  }
-});
-
-window.slate = window.slate || {};
-
-/**
- * Slate utilities
- * -----------------------------------------------------------------------------
- * A collection of useful utilities to help build your theme
- *
- *
- * @namespace utils
- */
-
-slate.utils = {
-  /**
-   * Get the query params in a Url
-   * Ex
-   * https://mysite.com/search?q=noodles&b
-   * getParameterByName('q') = "noodles"
-   * getParameterByName('b') = "" (empty value)
-   * getParameterByName('test') = null (absent)
-   */
-  getParameterByName: function(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-  },
-
-  resizeSelects: function($selects) {
-    $selects.each(function() {
-      var $this = $(this);
-      var arrowWidth = 10;
-      // create test element
-      var text = $this.find('option:selected').text();
-      var $test = $('<span>').html(text);
-
-      // add to body, get width, and get out
-      $test.appendTo('body');
-      var width = $test.width();
-      $test.remove();
-
-      // set select width
-      $this.width(width + arrowWidth);
-    });
-  },
-
-  keyboardKeys: {
-    TAB: 9,
-    ENTER: 13,
-    ESCAPE: 27,
-    LEFTARROW: 37,
-    RIGHTARROW: 39
-  }
-};
-
-window.slate = window.slate || {};
-
-/**
- * iFrames
- * -----------------------------------------------------------------------------
- * Wrap videos in div to force responsive layout.
- *
- * @namespace iframes
- */
-
-slate.rte = {
-  /**
-   * Wrap tables in a container div to make them scrollable when needed
-   *
-   * @param {object} options - Options to be used
-   * @param {jquery} options.$tables - jquery object(s) of the table(s) to wrap
-   * @param {string} options.tableWrapperClass - table wrapper class name
-   */
-  wrapTable: function(options) {
-    options.$tables.wrap(
-      '<div class="' + options.tableWrapperClass + '"></div>'
-    );
-  },
-
-  /**
-   * Wrap iframes in a container div to make them responsive
-   *
-   * @param {object} options - Options to be used
-   * @param {jquery} options.$iframes - jquery object(s) of the iframe(s) to wrap
-   * @param {string} options.iframeWrapperClass - class name used on the wrapping div
-   */
-  wrapIframe: function(options) {
-    options.$iframes.each(function() {
-      // Add wrapper to make video responsive
-      $(this).wrap('<div class="' + options.iframeWrapperClass + '"></div>');
-
-      // Re-set the src attribute on each iframe after page load
-      // for Chrome's "incorrect iFrame content on 'back'" bug.
-      // https://code.google.com/p/chromium/issues/detail?id=395791
-      // Need to specifically target video and admin bar
-      this.src = this.src;
-    });
-  }
-};
-
-window.slate = window.slate || {};
-
-/**
- * A11y Helpers
- * -----------------------------------------------------------------------------
- * A collection of useful functions that help make your theme more accessible
- * to users with visual impairments.
- *
- *
- * @namespace a11y
- */
-
-slate.a11y = {
-  /**
-   * For use when focus shifts to a container rather than a link
-   * eg for In-page links, after scroll, focus shifts to content area so that
-   * next `tab` is where user expects if focusing a link, just $link.focus();
-   *
-   * @param {JQuery} $element - The element to be acted upon
-   */
-  pageLinkFocus: function($element) {
-    var focusClass = 'js-focus-hidden';
-
-    $element
-      .first()
-      .attr('tabIndex', '-1')
-      .focus()
-      .addClass(focusClass)
-      .one('blur', callback);
-
-    function callback() {
-      $element
-        .first()
-        .removeClass(focusClass)
-        .removeAttr('tabindex');
-    }
-  },
-
-  /**
-   * If there's a hash in the url, focus the appropriate element
-   */
-  focusHash: function() {
-    var hash = window.location.hash;
-
-    // is there a hash in the url? is it an element on the page?
-    if (hash && document.getElementById(hash.slice(1))) {
-      this.pageLinkFocus($(hash));
-    }
-  },
-
-  /**
-   * When an in-page (url w/hash) link is clicked, focus the appropriate element
-   */
-  bindInPageLinks: function() {
-    $('a[href*=#]').on(
-      'click',
-      function(evt) {
-        this.pageLinkFocus($(evt.currentTarget.hash));
-      }.bind(this)
-    );
-  },
-
-  /**
-   * Traps the focus in a particular container
-   *
-   * @param {object} options - Options to be used
-   * @param {jQuery} options.$container - Container to trap focus within
-   * @param {jQuery} options.$elementToFocus - Element to be focused when focus leaves container
-   * @param {string} options.namespace - Namespace used for new focus event handler
-   */
-  trapFocus: function(options) {
-    if (options.container) options.$container = $(options.container);
-
-    var eventsName = {
-      focusin: options.namespace ? 'focusin.' + options.namespace : 'focusin',
-      focusout: options.namespace
-        ? 'focusout.' + options.namespace
-        : 'focusout',
-      keydown: options.namespace
-        ? 'keydown.' + options.namespace
-        : 'keydown.handleFocus'
-    };
-
-    /**
-     * Get every possible visible focusable element
-     */
-    var $focusableElements = options.$container.find(
-      $(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex^="-"])'
-      ).filter(':visible')
-    );
-    var firstFocusable = $focusableElements[0];
-    var lastFocusable = $focusableElements[$focusableElements.length - 1];
-
-    if (options.elementToFocus) {
-      options.$elementToFocus = $(options.elementToFocus);
-    }
-
-    if (!options.$elementToFocus) {
-      options.$elementToFocus = options.$container;
-    }
-
-    function _manageFocus(evt) {
-      if (evt.keyCode !== slate.utils.keyboardKeys.TAB) return;
-
       /**
-       * On the last focusable element and tab forward,
-       * focus the first element.
+       * Create the carousel instance
        */
-      if (evt.target === lastFocusable && !evt.shiftKey) {
-        evt.preventDefault();
-        firstFocusable.focus();
-      }
-      /**
-       * On the first focusable element and tab backward,
-       * focus the last element.
-       */
-      if (evt.target === firstFocusable && evt.shiftKey) {
-        evt.preventDefault();
-        lastFocusable.focus();
-      }
-    }
 
-    options.$container.attr('tabindex', '-1');
-    options.$elementToFocus.focus();
+    }, {
+      key: '_build',
+      value: function _build() {
+        var _this2 = this;
 
-    $(document).off('focusin');
+        var config = this._processConfig();
 
-    $(document).on(eventsName.focusout, function() {
-      $(document).off(eventsName.keydown);
-    });
+        this.flickityInstance = new Flickity(this.element, config);
+        this._validateDraggable();
 
-    $(document).on(eventsName.focusin, function(evt) {
-      if (evt.target !== lastFocusable && evt.target !== firstFocusable) return;
+        this.selectedIndex = this.flickityInstance.selectedIndex;
 
-      $(document).on(eventsName.keydown, function(evt) {
-        _manageFocus(evt);
-      });
-    });
-  },
+        this.flickityInstance.on('resize', this._validateDraggable.bind(this));
 
-  /**
-   * Removes the trap of focus in a particular container
-   *
-   * @param {object} options - Options to be used
-   * @param {jQuery} options.$container - Container to trap focus within
-   * @param {string} options.namespace - Namespace used for new focus event handler
-   */
-  removeTrapFocus: function(options) {
-    if (options.container) options.$container = $(options.container);
+        if (this.options['onSelect']) {
+          this.flickityInstance.on('select', function () {
+            // Flickity will send the "select" event whenever the window resize (even on mobile...), as a consequence we need to check
+            // first if the slide index have changed or not (cf: https://github.com/metafizzy/flickity/issues/529)
 
-    var eventName = options.namespace
-      ? 'focusin.' + options.namespace
-      : 'focusin';
-
-    if (options.$container && options.$container.length) {
-      options.$container.removeAttr('tabindex');
-    }
-
-    $(document).off(eventName);
-  },
-
-  /**
-   * Add aria-describedby attribute to external and new window links
-   *
-   * @param {object} options - Options to be used
-   * @param {object} options.messages - Custom messages to be used
-   * @param {jQuery} options.$links - Specific links to be targeted
-   */
-  accessibleLinks: function(options) {
-    var body = document.querySelector('body');
-
-    var idSelectors = {
-      newWindow: 'a11y-new-window-message',
-      external: 'a11y-external-message',
-      newWindowExternal: 'a11y-new-window-external-message'
-    };
-
-    if (options.$links === undefined || !options.$links.jquery) {
-      options.$links = $('a[href]:not([aria-describedby])');
-    }
-
-    function generateHTML(customMessages) {
-      if (typeof customMessages !== 'object') {
-        customMessages = {};
-      }
-
-      var messages = $.extend(
-        {
-          newWindow: 'Opens in a new window.',
-          external: 'Opens external website.',
-          newWindowExternal: 'Opens external website in a new window.'
-        },
-        customMessages
-      );
-
-      var container = document.createElement('ul');
-      var htmlMessages = '';
-
-      for (var message in messages) {
-        htmlMessages +=
-          '<li id=' + idSelectors[message] + '>' + messages[message] + '</li>';
-      }
-
-      container.setAttribute('hidden', true);
-      container.innerHTML = htmlMessages;
-
-      body.appendChild(container);
-    }
-
-    function _externalSite($link) {
-      var hostname = window.location.hostname;
-
-      return $link[0].hostname !== hostname;
-    }
-
-    $.each(options.$links, function() {
-      var $link = $(this);
-      var target = $link.attr('target');
-      var rel = $link.attr('rel');
-      var isExternal = _externalSite($link);
-      var isTargetBlank = target === '_blank';
-
-      if (isExternal) {
-        $link.attr('aria-describedby', idSelectors.external);
-      }
-      if (isTargetBlank) {
-        if (rel === undefined || rel.indexOf('noopener') === -1) {
-          $link.attr('rel', function(i, val) {
-            var relValue = val === undefined ? '' : val + ' ';
-            return relValue + 'noopener';
+            if (_this2.selectedIndex !== _this2.flickityInstance.selectedIndex) {
+              _this2.options['onSelect'](_this2.flickityInstance.selectedIndex, _this2.flickityInstance.selectedCell.element);
+              _this2.selectedIndex = _this2.flickityInstance.selectedIndex;
+            }
           });
         }
-        $link.attr('aria-describedby', idSelectors.newWindow);
-      }
-      if (isExternal && isTargetBlank) {
-        $link.attr('aria-describedby', idSelectors.newWindowExternal);
-      }
-    });
 
-    generateHTML(options.messages);
-  }
-};
+        if (this.options['onSettle']) {
+          this.flickityInstance.on('settle', function (index) {
+            _this2.options['onSettle'](index, _this2.flickityInstance.selectedCell.element);
+          });
+        }
 
-/**
- * Image Helper Functions
- * -----------------------------------------------------------------------------
- * A collection of functions that help with basic image operations.
- *
- */
-
-theme.Images = (function() {
-  /**
-   * Preloads an image in memory and uses the browsers cache to store it until needed.
-   *
-   * @param {Array} images - A list of image urls
-   * @param {String} size - A shopify image size attribute
-   */
-
-  function preload(images, size) {
-    if (typeof images === 'string') {
-      images = [images];
-    }
-
-    for (var i = 0; i < images.length; i++) {
-      var image = images[i];
-      this.loadImage(this.getSizedImageUrl(image, size));
-    }
-  }
-
-  /**
-   * Loads and caches an image in the browsers cache.
-   * @param {string} path - An image url
-   */
-  function loadImage(path) {
-    new Image().src = path;
-  }
-
-  /**
-   * Swaps the src of an image for another OR returns the imageURL to the callback function
-   * @param image
-   * @param element
-   * @param callback
-   */
-  function switchImage(image, element, callback) {
-    var size = this.imageSize(element.src);
-    var imageUrl = this.getSizedImageUrl(image.src, size);
-
-    if (callback) {
-      callback(imageUrl, image, element); // eslint-disable-line callback-return
-    } else {
-      element.src = imageUrl;
-    }
-  }
-
-  /**
-   * +++ Useful
-   * Find the Shopify image attribute size
-   *
-   * @param {string} src
-   * @returns {null}
-   */
-  function imageSize(src) {
-    var match = src.match(
-      /.+_((?:pico|icon|thumb|small|compact|medium|large|grande)|\d{1,4}x\d{0,4}|x\d{1,4})[_\\.@]/
-    );
-
-    if (match !== null) {
-      if (match[2] !== undefined) {
-        return match[1] + match[2];
-      } else {
-        return match[1];
-      }
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * +++ Useful
-   * Adds a Shopify size attribute to a URL
-   *
-   * @param src
-   * @param size
-   * @returns {*}
-   */
-  function getSizedImageUrl(src, size) {
-    if (size === null) {
-      return src;
-    }
-
-    if (size === 'master') {
-      return this.removeProtocol(src);
-    }
-
-    var match = src.match(
-      /\.(jpg|jpeg|gif|png|bmp|bitmap|tiff|tif)(\?v=\d+)?$/i
-    );
-
-    if (match !== null) {
-      var prefix = src.split(match[0]);
-      var suffix = match[0];
-
-      return this.removeProtocol(prefix[0] + '_' + size + suffix);
-    }
-
-    return null;
-  }
-
-  function removeProtocol(path) {
-    return path.replace(/http(s)?:/, '');
-  }
-
-  return {
-    preload: preload,
-    loadImage: loadImage,
-    switchImage: switchImage,
-    imageSize: imageSize,
-    getSizedImageUrl: getSizedImageUrl,
-    removeProtocol: removeProtocol
-  };
-})();
-
-/**
- * Currency Helpers
- * -----------------------------------------------------------------------------
- * A collection of useful functions that help with currency formatting
- *
- * Current contents
- * - formatMoney - Takes an amount in cents and returns it as a formatted dollar value.
- *
- * Alternatives
- * - Accounting.js - http://openexchangerates.github.io/accounting.js/
- *
- */
-
-theme.Currency = (function() {
-  var moneyFormat = '${{amount}}'; // eslint-disable-line camelcase
-
-  function formatMoney(cents, format) {
-    if (typeof cents === 'string') {
-      cents = cents.replace('.', '');
-    }
-    var value = '';
-    var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
-    var formatString = format || moneyFormat;
-
-    function formatWithDelimiters(number, precision, thousands, decimal) {
-      thousands = thousands || ',';
-      decimal = decimal || '.';
-
-      if (isNaN(number) || number === null) {
-        return 0;
+        if (this.options['onClick']) {
+          this.flickityInstance.on('staticClick', function (event, pointer, cell, index) {
+            _this2.options['onClick'](cell, index);
+          });
+        }
       }
 
-      number = (number / 100.0).toFixed(precision);
+      /**
+       * By default, Flickity does not disable draggable automatically if there is nothing to slide. We therefore manually do the check here by checking
+       * if the displayed elements equals to the amount of elements
+       */
 
-      var parts = number.split('.');
-      var dollarsAmount = parts[0].replace(
-        /(\d)(?=(\d\d\d)+(?!\d))/g,
-        '$1' + thousands
-      );
-      var centsAmount = parts[1] ? decimal + parts[1] : '';
+    }, {
+      key: '_validateDraggable',
+      value: function _validateDraggable() {
+        var isActive = this.flickityInstance.isActive || false;
 
-      return dollarsAmount + centsAmount;
+        if (!isActive || !this.flickityInstance.options['draggable']) {
+          return; // Not draggable, so nothing to do
+        }
+
+        if (undefined === this.flickityInstance.selectedElements || this.flickityInstance.selectedElements.length === this.flickityInstance.cells.length) {
+          this.flickityInstance.unbindDrag();
+        } else {
+          this.flickityInstance.bindDrag();
+        }
+      }
+
+      /**
+       * Flickity is a CSS driven library and hence it is hard to setup some stuff in pure JS
+       */
+
+    }, {
+      key: '_processConfig',
+      value: function _processConfig() {
+        var config = Object.assign({}, this.initialConfig);
+
+        delete config['breakpoints'];
+
+        if (this.initialConfig['breakpoints'] === undefined) {
+          return config; // No change, we simply return the config as it is
+        }
+
+        var breakpoints = this.initialConfig['breakpoints'];
+
+        breakpoints.forEach(function (breakpoint) {
+          if (__WEBPACK_IMPORTED_MODULE_0__helper_Responsive__["default"].matchesBreakpoint(breakpoint['matches'])) {
+            config = Object.assign(config, breakpoint['settings']);
+          }
+        });
+
+        return config;
+      }
+
+      /**
+       * Verify if the breakpoint has changed, and optionally update the carousel
+       */
+
+    }, {
+      key: '_onBreakpointChanged',
+      value: function _onBreakpointChanged() {
+        // The breakpoint may have changed, so we delete the carousel and rebuild it
+        this.flickityInstance.destroy();
+        this._build();
+      }
+    }]);
+
+    return Carousel;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Carousel;
+
+  /***/
+},
+/* 3 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Responsive__ = __webpack_require__(1);
+
+  var Popover = function () {
+    function Popover(element, options) {
+      _classCallCheck(this, Popover);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+
+      this.activator = options['activator'] || document.querySelector('[aria-controls="' + element.getAttribute('id') + '"]');
+
+      this.preferredPosition = options['preferredPosition'] || 'bottom';
+      this.preferredAlignment = options['preferredAlignment'] || undefined;
+      this.threshold = options['threshold'] || 20;
+      this.isOpen = false;
+
+      this.onValueChanged = options['onValueChanged'] || function () {};
+      this.onOpen = options['onOpen'] || function () {};
+      this.onClose = options['onClose'] || function () {};
+
+      this.showOverlay = options['showOverlay'] === undefined ? true : options['showOverlay'];
+      this.pageOverlayElement = document.querySelector('.PageOverlay');
+
+      this._attachListeners();
     }
 
-    switch (formatString.match(placeholderRegex)[1]) {
-      case 'amount':
-        value = formatWithDelimiters(cents, 2);
-        break;
-      case 'amount_no_decimals':
-        value = formatWithDelimiters(cents, 0);
-        break;
-      case 'amount_with_comma_separator':
-        value = formatWithDelimiters(cents, 2, '.', ',');
-        break;
-      case 'amount_no_decimals_with_comma_separator':
-        value = formatWithDelimiters(cents, 0, '.', ',');
-        break;
-      case 'amount_no_decimals_with_space_separator':
-        value = formatWithDelimiters(cents, 0, ' ');
-        break;
-      case 'amount_with_apostrophe_separator':
-        value = formatWithDelimiters(cents, 2, "'");
-        break;
-    }
+    _createClass(Popover, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.element.removeEventListener('keyup', this._handleKeyboardListener);
+        this.delegateElement.off('click');
+        this.activator.removeEventListener('click', this._toggleListener);
+      }
+    }, {
+      key: 'toggle',
+      value: function toggle() {
+        this.isOpen ? this.close() : this.open();
+      }
+    }, {
+      key: 'open',
+      value: function open() {
+        // Note: the additional check on the aria-controls is used here so that a given activator can be used on different
+        //       popovers and be modified dynamically in JavaScript
+        if (this.isOpen || this.activator.getAttribute('aria-controls') !== this.element.id) {
+          return;
+        }
 
-    return formatString.replace(placeholderRegex, value);
-  }
+        this.element.setAttribute('aria-hidden', 'false');
+        this.activator.setAttribute('aria-expanded', 'true');
 
-  return {
-    formatMoney: formatMoney
-  };
-})();
+        disableBodyScroll(true, '[data-scrollable]');
 
-/**
- * Variant Selection scripts
- * ------------------------------------------------------------------------------
- *
- * Handles change events from the variant inputs in any `cart/add` forms that may
- * exist.  Also updates the master select and triggers updates when the variants
- * price or image changes.
- *
- * @namespace variants
- */
+        document.documentElement.classList.add('no-scroll'); // Prevent scrolling when popover is open
 
-slate.Variants = (function() {
-  /**
-   * Variant constructor
-   *
-   * @param {object} options - Settings from `product.js`
-   */
-  function Variants(options) {
-    this.$container = options.$container;
-    this.product = options.product;
-    this.singleOptionSelector = options.singleOptionSelector;
-    this.originalSelectorId = options.originalSelectorId;
-    this.enableHistoryState = options.enableHistoryState;
-    this.currentVariant = this._getVariantFromOptions();
+        if (__WEBPACK_IMPORTED_MODULE_1__helper_Responsive__["default"].matchesBreakpoint('lap-and-up')) {
+          document.body.addEventListener('click', this._clickOutsideListener);
+          this._position();
+        } else {
+          this.element.removeAttribute('style');
 
-    $(this.singleOptionSelector, this.$container).on(
-      'change',
-      this._onSelectChange.bind(this)
-    );
-  }
+          if (this.showOverlay) {
+            this.pageOverlayElement.classList.add('is-visible');
+            this.pageOverlayElement.addEventListener('click', this._closeListener);
+          }
+        }
 
-  Variants.prototype = Object.assign({}, Variants.prototype, {
-    /**
-     * Get the currently selected options from add-to-cart form. Works with all
-     * form input elements.
-     *
-     * @return {array} options - Values of currently selected variants
-     */
-    _getCurrentOptions: function() {
-      return $(this.singleOptionSelector, this.$container)
-        .map(function(index, element) {
-          var $element = $(element);
-          var type = $element.attr('type');
-          var currentOption = {};
+        this.onOpen(this); // Call the callback to allow other code to hook their logic
+        this.isOpen = true;
+      }
+    }, {
+      key: 'close',
+      value: function close() {
+        if (!this.isOpen) {
+          return;
+        }
 
-          if (type === 'radio' || type === 'checkbox') {
-            if ($element[0].checked) {
-              currentOption.value = $element.val();
-              currentOption.index = $element.data('index');
+        this.element.setAttribute('aria-hidden', 'true');
+        this.activator.setAttribute('aria-expanded', 'false');
 
-              return currentOption;
+        disableBodyScroll(false, '[data-scrollable]');
+
+        document.documentElement.classList.remove('no-scroll');
+
+        if (__WEBPACK_IMPORTED_MODULE_1__helper_Responsive__["default"].matchesBreakpoint('lap-and-up')) {
+          document.body.removeEventListener('click', this._clickOutsideListener);
+        } else if (this.showOverlay) {
+          this.pageOverlayElement.classList.remove('is-visible');
+          this.pageOverlayElement.removeEventListener('click', this._closeListener);
+        }
+
+        this.onClose(this); // Call the callback to allow other code to hook their logic
+        this.isOpen = false;
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._handleKeyboardListener = this._handleKeyboard.bind(this);
+        this._clickOutsideListener = this._clickOutside.bind(this);
+        this._closeListener = this.close.bind(this);
+        this._toggleListener = this.toggle.bind(this);
+
+        this.element.addEventListener('keyup', this._handleKeyboardListener);
+        this.activator.addEventListener('click', this._toggleListener);
+
+        this.delegateElement.on('click', '[data-action="close-popover"]', this.close.bind(this));
+        this.delegateElement.on('click', '[data-action="select-value"]', this._valueChanged.bind(this));
+
+        if (this.element.hasAttribute('id')) {
+          this.delegateElement.on('focusout', '#' + this.element.getAttribute('id'), this._onFocusOut.bind(this));
+        }
+      }
+
+      /**
+       * Whenever a value is selected, it can notify a callback so that the calling code can do its own logic in response
+       * of the value change
+       */
+
+    }, {
+      key: '_valueChanged',
+      value: function _valueChanged(event) {
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].getSiblings(event.target, '.is-selected').forEach(function (item) {
+          return item.classList.remove('is-selected');
+        });
+        event.target.classList.add('is-selected');
+
+        // If there is a callback in option we call it with the value
+        this.onValueChanged(event.target.getAttribute('data-value'), event.target, this.activator);
+        this.close();
+      }
+    }, {
+      key: '_onFocusOut',
+      value: function _onFocusOut(event) {
+        if (!this.element.contains(event.relatedTarget)) {
+          this.close();
+        }
+      }
+
+      /**
+       * Callback that is called to decide if we should close the popover when a click is captured outside
+       */
+
+    }, {
+      key: '_clickOutside',
+      value: function _clickOutside(event) {
+        if (!event.target.closest('.Popover') && !event.target.closest('.Modal') && event.target !== this.activator && !this.activator.contains(event.target)) {
+          this.close();
+        }
+      }
+
+      /**
+       * On desktop, we reposition the popover in JavaScript by doing some smart logic to detect the most appropriate area
+       */
+
+    }, {
+      key: '_position',
+      value: function _position() {
+        var _this3 = this;
+
+        var topPosition = 0,
+            rightPosition = 0,
+            position = '',
+            alignment = '',
+            threshold = this.threshold;
+
+        fastdom.measure(function () {
+          var windowHeight = window.innerHeight,
+              activatorBoundingRect = _this3.activator.getBoundingClientRect(),
+              halfHeight = windowHeight / 2;
+
+          if (_this3.preferredPosition === 'bottom') {
+            alignment = 'right';
+
+            if (_this3.element.clientHeight <= windowHeight - (activatorBoundingRect.bottom + threshold) || windowHeight - activatorBoundingRect.bottom >= halfHeight) {
+              position = 'bottom';
             } else {
-              return false;
+              position = 'top';
+            }
+          } else if (_this3.preferredPosition === 'top') {
+            alignment = 'right';
+
+            if (_this3.element.clientHeight <= activatorBoundingRect.top - threshold || activatorBoundingRect.top >= halfHeight) {
+              position = 'top';
+            } else {
+              position = 'bottom';
             }
           } else {
-            currentOption.value = $element.val();
-            currentOption.index = $element.data('index');
-
-            return currentOption;
-          }
-        })
-        .get();
-    },
-
-    /**
-     * Find variant based on selected values.
-     *
-     * @param  {array} selectedValues - Values of variant inputs
-     * @return {object || undefined} found - Variant object from product.variants
-     */
-    _getVariantFromOptions: function() {
-      var selectedValues = this._getCurrentOptions();
-      var variants = this.product.variants;
-
-      var found = variants.find(function(variant) {
-        return selectedValues.every(function(values) {
-          return variant[values.index] === values.value;
-        });
-      });
-
-      return found;
-    },
-
-    /**
-     * Event handler for when a variant input changes.
-     */
-    _onSelectChange: function() {
-      var variant = this._getVariantFromOptions();
-
-      this.$container.trigger({
-        type: 'variantChange',
-        variant: variant
-      });
-
-      if (!variant) {
-        return;
-      }
-
-      this._updateMasterSelect(variant);
-      this._updateImages(variant);
-      this._updatePrice(variant);
-      this._updateSKU(variant);
-      this.currentVariant = variant;
-
-      if (this.enableHistoryState) {
-        this._updateHistoryState(variant);
-      }
-    },
-
-    /**
-     * Trigger event when variant image changes
-     *
-     * @param  {object} variant - Currently selected variant
-     * @return {event}  variantImageChange
-     */
-    _updateImages: function(variant) {
-      var variantImage = variant.featured_image || {};
-      var currentVariantImage = this.currentVariant.featured_image || {};
-
-      if (
-        !variant.featured_image ||
-        variantImage.src === currentVariantImage.src
-      ) {
-        return;
-      }
-
-      this.$container.trigger({
-        type: 'variantImageChange',
-        variant: variant
-      });
-    },
-
-    /**
-     * Trigger event when variant price changes.
-     *
-     * @param  {object} variant - Currently selected variant
-     * @return {event} variantPriceChange
-     */
-    _updatePrice: function(variant) {
-      if (
-        variant.price === this.currentVariant.price &&
-        variant.compare_at_price === this.currentVariant.compare_at_price
-      ) {
-        return;
-      }
-
-      this.$container.trigger({
-        type: 'variantPriceChange',
-        variant: variant
-      });
-    },
-
-    /**
-     * Trigger event when variant sku changes.
-     *
-     * @param  {object} variant - Currently selected variant
-     * @return {event} variantSKUChange
-     */
-    _updateSKU: function(variant) {
-      if (variant.sku === this.currentVariant.sku) {
-        return;
-      }
-
-      this.$container.trigger({
-        type: 'variantSKUChange',
-        variant: variant
-      });
-    },
-
-    /**
-     * Update history state for product deeplinking
-     *
-     * @param  {variant} variant - Currently selected variant
-     * @return {k}         [description]
-     */
-    _updateHistoryState: function(variant) {
-      if (!history.replaceState || !variant) {
-        return;
-      }
-
-      var newurl =
-        window.location.protocol +
-        '//' +
-        window.location.host +
-        window.location.pathname +
-        '?variant=' +
-        variant.id;
-      window.history.replaceState({ path: newurl }, '', newurl);
-    },
-
-    /**
-     * Update hidden master select of variant change
-     *
-     * @param  {variant} variant - Currently selected variant
-     */
-    _updateMasterSelect: function(variant) {
-      $(this.originalSelectorId, this.$container).val(variant.id);
-    }
-  });
-
-  return Variants;
-})();
-
-this.Shopify = this.Shopify || {};
-this.Shopify.theme = this.Shopify.theme || {};
-this.Shopify.theme.PredictiveSearch = (function() {
-  'use strict';
-
-  function validateQuery(query) {
-    var error;
-
-    if (query === null || query === undefined) {
-      error = new TypeError("'query' is missing");
-      error.type = 'argument';
-      throw error;
-    }
-
-    if (typeof query !== 'string') {
-      error = new TypeError("'query' is not a string");
-      error.type = 'argument';
-      throw error;
-    }
-  }
-
-  function GenericError() {
-    var error = Error.call(this);
-
-    error.name = 'Server error';
-    error.message = 'Something went wrong on the server';
-    error.status = 500;
-
-    return error;
-  }
-
-  function NotFoundError(status) {
-    var error = Error.call(this);
-
-    error.name = 'Not found';
-    error.message = 'Not found';
-    error.status = status;
-
-    return error;
-  }
-
-  function ServerError() {
-    var error = Error.call(this);
-
-    error.name = 'Server error';
-    error.message = 'Something went wrong on the server';
-    error.status = 500;
-
-    return error;
-  }
-
-  function ContentTypeError(status) {
-    var error = Error.call(this);
-
-    error.name = 'Content-Type error';
-    error.message = 'Content-Type was not provided or is of wrong type';
-    error.status = status;
-
-    return error;
-  }
-
-  function JsonParseError(status) {
-    var error = Error.call(this);
-
-    error.name = 'JSON parse error';
-    error.message = 'JSON syntax error';
-    error.status = status;
-
-    return error;
-  }
-
-  function ThrottledError(status, name, message, retryAfter) {
-    var error = Error.call(this);
-
-    error.name = name;
-    error.message = message;
-    error.status = status;
-    error.retryAfter = retryAfter;
-
-    return error;
-  }
-
-  function InvalidParameterError(status, name, message) {
-    var error = Error.call(this);
-
-    error.name = name;
-    error.message = message;
-    error.status = status;
-
-    return error;
-  }
-
-  function ExpectationFailedError(status, name, message) {
-    var error = Error.call(this);
-
-    error.name = name;
-    error.message = message;
-    error.status = status;
-
-    return error;
-  }
-
-  function request(configParams, query, onSuccess, onError) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState !== XMLHttpRequest.DONE) {
-        return;
-      }
-
-      var contentType = xhr.getResponseHeader('Content-Type');
-
-      if (xhr.status >= 500) {
-        onError(new ServerError());
-
-        return;
-      }
-
-      if (xhr.status === 404) {
-        onError(new NotFoundError(xhr.status));
-
-        return;
-      }
-
-      if (
-        typeof contentType !== 'string' ||
-        contentType.toLowerCase().match('application/json') === null
-      ) {
-        onError(new ContentTypeError(xhr.status));
-
-        return;
-      }
-
-      if (xhr.status === 417) {
-        try {
-          var invalidParameterJson = JSON.parse(xhr.responseText);
-
-          onError(
-            new InvalidParameterError(
-              xhr.status,
-              invalidParameterJson.message,
-              invalidParameterJson.description
-            )
-          );
-        } catch (error) {
-          onError(new JsonParseError(xhr.status));
-        }
-
-        return;
-      }
-
-      if (xhr.status === 422) {
-        try {
-          var expectationFailedJson = JSON.parse(xhr.responseText);
-
-          onError(
-            new ExpectationFailedError(
-              xhr.status,
-              expectationFailedJson.message,
-              expectationFailedJson.description
-            )
-          );
-        } catch (error) {
-          onError(new JsonParseError(xhr.status));
-        }
-
-        return;
-      }
-
-      if (xhr.status === 429) {
-        try {
-          var throttledJson = JSON.parse(xhr.responseText);
-
-          onError(
-            new ThrottledError(
-              xhr.status,
-              throttledJson.message,
-              throttledJson.description,
-              xhr.getResponseHeader('Retry-After')
-            )
-          );
-        } catch (error) {
-          onError(new JsonParseError(xhr.status));
-        }
-
-        return;
-      }
-
-      if (xhr.status === 200) {
-        try {
-          var res = JSON.parse(xhr.responseText);
-          res.query = query;
-          onSuccess(res);
-        } catch (error) {
-          onError(new JsonParseError(xhr.status));
-        }
-
-        return;
-      }
-
-      try {
-        var genericErrorJson = JSON.parse(xhr.responseText);
-        onError(
-          new GenericError(
-            xhr.status,
-            genericErrorJson.message,
-            genericErrorJson.description
-          )
-        );
-      } catch (error) {
-        onError(new JsonParseError(xhr.status));
-      }
-
-      return;
-    };
-
-    xhr.open(
-      'get',
-      '/search/suggest.json?q=' + encodeURIComponent(query) + '&' + configParams
-    );
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.send();
-  }
-
-  function Cache(config) {
-    this._store = {};
-    this._keys = [];
-    if (config && config.bucketSize) {
-      this.bucketSize = config.bucketSize;
-    } else {
-      this.bucketSize = 20;
-    }
-  }
-
-  Cache.prototype.set = function(key, value) {
-    if (this.count() >= this.bucketSize) {
-      var deleteKey = this._keys.splice(0, 1);
-      this.delete(deleteKey);
-    }
-
-    this._keys.push(key);
-    this._store[key] = value;
-
-    return this._store;
-  };
-
-  Cache.prototype.get = function(key) {
-    return this._store[key];
-  };
-
-  Cache.prototype.has = function(key) {
-    return Boolean(this._store[key]);
-  };
-
-  Cache.prototype.count = function() {
-    return Object.keys(this._store).length;
-  };
-
-  Cache.prototype.delete = function(key) {
-    var exists = Boolean(this._store[key]);
-    delete this._store[key];
-    return exists && !this._store[key];
-  };
-
-  function Dispatcher() {
-    this.events = {};
-  }
-
-  Dispatcher.prototype.on = function(eventName, callback) {
-    var event = this.events[eventName];
-    if (!event) {
-      event = new DispatcherEvent(eventName);
-      this.events[eventName] = event;
-    }
-    event.registerCallback(callback);
-  };
-
-  Dispatcher.prototype.off = function(eventName, callback) {
-    var event = this.events[eventName];
-    if (event && event.callbacks.indexOf(callback) > -1) {
-      event.unregisterCallback(callback);
-      if (event.callbacks.length === 0) {
-        delete this.events[eventName];
-      }
-    }
-  };
-
-  Dispatcher.prototype.dispatch = function(eventName, payload) {
-    var event = this.events[eventName];
-    if (event) {
-      event.fire(payload);
-    }
-  };
-
-  function DispatcherEvent(eventName) {
-    this.eventName = eventName;
-    this.callbacks = [];
-  }
-
-  DispatcherEvent.prototype.registerCallback = function(callback) {
-    this.callbacks.push(callback);
-  };
-
-  DispatcherEvent.prototype.unregisterCallback = function(callback) {
-    var index = this.callbacks.indexOf(callback);
-    if (index > -1) {
-      this.callbacks.splice(index, 1);
-    }
-  };
-
-  DispatcherEvent.prototype.fire = function(payload) {
-    var callbacks = this.callbacks.slice(0);
-    callbacks.forEach(function(callback) {
-      callback(payload);
-    });
-  };
-
-  function debounce(func, wait) {
-    var timeout = null;
-    return function() {
-      var context = this;
-      var args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        timeout = null;
-        func.apply(context, args);
-      }, wait || 0);
-    };
-  }
-
-  function objectToQueryParams(obj, parentKey) {
-    var output = '';
-    parentKey = parentKey || null;
-
-    Object.keys(obj).forEach(function(key) {
-      var outputKey = key + '=';
-      if (parentKey) {
-        outputKey = parentKey + '[' + key + ']';
-      }
-
-      switch (trueTypeOf(obj[key])) {
-        case 'object':
-          output += objectToQueryParams(obj[key], parentKey ? outputKey : key);
-          break;
-        case 'array':
-          output += outputKey + '=' + obj[key].join(',') + '&';
-          break;
-        default:
-          if (parentKey) {
-            outputKey += '=';
-          }
-          output += outputKey + encodeURIComponent(obj[key]) + '&';
-          break;
-      }
-    });
-
-    return output;
-  }
-
-  function trueTypeOf(obj) {
-    return Object.prototype.toString
-      .call(obj)
-      .slice(8, -1)
-      .toLowerCase();
-  }
-
-  var DEBOUNCE_RATE = 10;
-  var requestDebounced = debounce(request, DEBOUNCE_RATE);
-
-  function PredictiveSearch(config) {
-    if (!config) {
-      throw new TypeError('No config object was specified');
-    }
-
-    this._retryAfter = null;
-    this._currentQuery = null;
-
-    this.dispatcher = new Dispatcher();
-    this.cache = new Cache({ bucketSize: 40 });
-    this.configParams = objectToQueryParams(config);
-  }
-
-  PredictiveSearch.TYPES = {
-    PRODUCT: 'product',
-    PAGE: 'page',
-    ARTICLE: 'article'
-  };
-
-  PredictiveSearch.FIELDS = {
-    AUTHOR: 'author',
-    BODY: 'body',
-    PRODUCT_TYPE: 'product_type',
-    TAG: 'tag',
-    TITLE: 'title',
-    VARIANTS_BARCODE: 'variants.barcode',
-    VARIANTS_SKU: 'variants.sku',
-    VARIANTS_TITLE: 'variants.title',
-    VENDOR: 'vendor'
-  };
-
-  PredictiveSearch.UNAVAILABLE_PRODUCTS = {
-    SHOW: 'show',
-    HIDE: 'hide',
-    LAST: 'last'
-  };
-
-  PredictiveSearch.prototype.query = function query(query) {
-    try {
-      validateQuery(query);
-    } catch (error) {
-      this.dispatcher.dispatch('error', error);
-      return;
-    }
-
-    if (query === '') {
-      return this;
-    }
-
-    this._currentQuery = normalizeQuery(query);
-    var cacheResult = this.cache.get(this._currentQuery);
-    if (cacheResult) {
-      this.dispatcher.dispatch('success', cacheResult);
-      return this;
-    }
-
-    requestDebounced(
-      this.configParams,
-      query,
-      function(result) {
-        this.cache.set(normalizeQuery(result.query), result);
-        if (normalizeQuery(result.query) === this._currentQuery) {
-          this._retryAfter = null;
-          this.dispatcher.dispatch('success', result);
-        }
-      }.bind(this),
-      function(error) {
-        if (error.retryAfter) {
-          this._retryAfter = error.retryAfter;
-        }
-        this.dispatcher.dispatch('error', error);
-      }.bind(this)
-    );
-
-    return this;
-  };
-
-  PredictiveSearch.prototype.on = function on(eventName, callback) {
-    this.dispatcher.on(eventName, callback);
-
-    return this;
-  };
-
-  PredictiveSearch.prototype.off = function on(eventName, callback) {
-    this.dispatcher.off(eventName, callback);
-
-    return this;
-  };
-
-  function normalizeQuery(query) {
-    if (typeof query !== 'string') {
-      return null;
-    }
-
-    return query
-      .trim()
-      .replace(' ', '-')
-      .toLowerCase();
-  }
-
-  return PredictiveSearch;
-})();
-
-this.Shopify = this.Shopify || {};
-this.Shopify.theme = this.Shopify.theme || {};
-this.Shopify.theme.PredictiveSearchComponent = (function(PredictiveSearch) {
-  'use strict';
-
-  PredictiveSearch =
-    PredictiveSearch && PredictiveSearch.hasOwnProperty('default')
-      ? PredictiveSearch['default']
-      : PredictiveSearch;
-
-  var DEFAULT_PREDICTIVE_SEARCH_API_CONFIG = {
-    resources: {
-      type: [PredictiveSearch.TYPES.PRODUCT],
-      options: {
-        unavailable_products: PredictiveSearch.UNAVAILABLE_PRODUCTS.LAST,
-        fields: [
-          PredictiveSearch.FIELDS.TITLE,
-          PredictiveSearch.FIELDS.VENDOR,
-          PredictiveSearch.FIELDS.PRODUCT_TYPE,
-          PredictiveSearch.FIELDS.VARIANTS_TITLE
-        ]
-      }
-    }
-  };
-
-  function PredictiveSearchComponent(config) {
-    // validate config
-    if (
-      !config ||
-      !config.selectors ||
-      !config.selectors.input ||
-      !isString(config.selectors.input) ||
-      !config.selectors.result ||
-      !isString(config.selectors.result) ||
-      !config.resultTemplateFct ||
-      !isFunction(config.resultTemplateFct) ||
-      !config.numberOfResultsTemplateFct ||
-      !isFunction(config.numberOfResultsTemplateFct) ||
-      !config.loadingResultsMessageTemplateFct ||
-      !isFunction(config.loadingResultsMessageTemplateFct)
-    ) {
-      var error = new TypeError(
-        'PredictiveSearchComponent config is not valid'
-      );
-      error.type = 'argument';
-      throw error;
-    }
-
-    // Find nodes
-    this.nodes = findNodes(config.selectors);
-
-    // Validate nodes
-    if (!isValidNodes(this.nodes)) {
-      // eslint-disable-next-line no-console
-      console.warn('Could not find valid nodes');
-      return;
-    }
-
-    // Store the keyword that was used for the search
-    this._searchKeyword = '';
-
-    // Assign result template
-    this.resultTemplateFct = config.resultTemplateFct;
-
-    // Assign number of results template
-    this.numberOfResultsTemplateFct = config.numberOfResultsTemplateFct;
-
-    // Assign loading state template function
-    this.loadingResultsMessageTemplateFct =
-      config.loadingResultsMessageTemplateFct;
-
-    // Assign number of search results
-    this.numberOfResults = config.numberOfResults || 4;
-
-    // Set classes
-    this.classes = {
-      visibleVariant: config.visibleVariant
-        ? config.visibleVariant
-        : 'predictive-search-wrapper--visible',
-      itemSelected: config.itemSelectedClass
-        ? config.itemSelectedClass
-        : 'predictive-search-item--selected',
-      clearButtonVisible: config.clearButtonVisibleClass
-        ? config.clearButtonVisibleClass
-        : 'predictive-search__clear-button--visible'
-    };
-
-    this.selectors = {
-      searchResult: config.searchResult
-        ? config.searchResult
-        : '[data-search-result]'
-    };
-
-    // Assign callbacks
-    this.callbacks = assignCallbacks(config);
-
-    // Add input attributes
-    addInputAttributes(this.nodes.input);
-
-    // Add input event listeners
-    this._addInputEventListeners();
-
-    // Add body listener
-    this._addBodyEventListener();
-
-    // Add accessibility announcer
-    this._addAccessibilityAnnouncer();
-
-    // Display the reset button if the input is not empty
-    this._toggleClearButtonVisibility();
-
-    // Instantiate Predictive Search API
-    this.predictiveSearch = new PredictiveSearch(
-      config.PredictiveSearchAPIConfig
-        ? config.PredictiveSearchAPIConfig
-        : DEFAULT_PREDICTIVE_SEARCH_API_CONFIG
-    );
-
-    // Add predictive search success event listener
-    this.predictiveSearch.on(
-      'success',
-      this._handlePredictiveSearchSuccess.bind(this)
-    );
-
-    // Add predictive search error event listener
-    this.predictiveSearch.on(
-      'error',
-      this._handlePredictiveSearchError.bind(this)
-    );
-  }
-
-  /**
-   * Private methods
-   */
-  function findNodes(selectors) {
-    return {
-      input: document.querySelector(selectors.input),
-      reset: document.querySelector(selectors.reset),
-      result: document.querySelector(selectors.result)
-    };
-  }
-
-  function isValidNodes(nodes) {
-    if (
-      !nodes ||
-      !nodes.input ||
-      !nodes.result ||
-      nodes.input.tagName !== 'INPUT'
-    ) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function assignCallbacks(config) {
-    return {
-      onBodyMousedown: config.onBodyMousedown,
-      onBeforeOpen: config.onBeforeOpen,
-      onOpen: config.onOpen,
-      onBeforeClose: config.onBeforeClose,
-      onClose: config.onClose,
-      onInputFocus: config.onInputFocus,
-      onInputKeyup: config.onInputKeyup,
-      onInputBlur: config.onInputBlur,
-      onInputReset: config.onInputReset,
-      onBeforeDestroy: config.onBeforeDestroy,
-      onDestroy: config.onDestroy
-    };
-  }
-
-  function addInputAttributes(input) {
-    input.setAttribute('autocorrect', 'off');
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('autocapitalize', 'off');
-    input.setAttribute('spellcheck', 'false');
-  }
-
-  function removeInputAttributes(input) {
-    input.removeAttribute('autocorrect', 'off');
-    input.removeAttribute('autocomplete', 'off');
-    input.removeAttribute('autocapitalize', 'off');
-    input.removeAttribute('spellcheck', 'false');
-  }
-
-  /**
-   * Public variables
-   */
-  PredictiveSearchComponent.prototype.isResultVisible = false;
-  PredictiveSearchComponent.prototype.results = {};
-
-  /**
-   * "Private" variables
-   */
-  PredictiveSearchComponent.prototype._latencyTimer = null;
-  PredictiveSearchComponent.prototype._resultNodeClicked = false;
-
-  /**
-   * "Private" instance methods
-   */
-  PredictiveSearchComponent.prototype._addInputEventListeners = function() {
-    var input = this.nodes.input;
-    var reset = this.nodes.reset;
-
-    if (!input) {
-      return;
-    }
-
-    this._handleInputFocus = this._handleInputFocus.bind(this);
-    this._handleInputBlur = this._handleInputBlur.bind(this);
-    this._handleInputKeyup = this._handleInputKeyup.bind(this);
-    this._handleInputKeydown = this._handleInputKeydown.bind(this);
-
-    input.addEventListener('focus', this._handleInputFocus);
-    input.addEventListener('blur', this._handleInputBlur);
-    input.addEventListener('keyup', this._handleInputKeyup);
-    input.addEventListener('keydown', this._handleInputKeydown);
-
-    if (reset) {
-      this._handleInputReset = this._handleInputReset.bind(this);
-      reset.addEventListener('click', this._handleInputReset);
-    }
-  };
-
-  PredictiveSearchComponent.prototype._removeInputEventListeners = function() {
-    var input = this.nodes.input;
-
-    input.removeEventListener('focus', this._handleInputFocus);
-    input.removeEventListener('blur', this._handleInputBlur);
-    input.removeEventListener('keyup', this._handleInputKeyup);
-    input.removeEventListener('keydown', this._handleInputKeydown);
-  };
-
-  PredictiveSearchComponent.prototype._addBodyEventListener = function() {
-    this._handleBodyMousedown = this._handleBodyMousedown.bind(this);
-
-    document
-      .querySelector('body')
-      .addEventListener('mousedown', this._handleBodyMousedown);
-  };
-
-  PredictiveSearchComponent.prototype._removeBodyEventListener = function() {
-    document
-      .querySelector('body')
-      .removeEventListener('mousedown', this._handleBodyMousedown);
-  };
-
-  PredictiveSearchComponent.prototype._removeClearButtonEventListener = function() {
-    var reset = this.nodes.reset;
-
-    if (!reset) {
-      return;
-    }
-
-    reset.removeEventListener('click', this._handleInputReset);
-  };
-
-  /**
-   * Event handlers
-   */
-  PredictiveSearchComponent.prototype._handleBodyMousedown = function(evt) {
-    if (this.isResultVisible && this.nodes !== null) {
-      if (
-        evt.target.isEqualNode(this.nodes.input) ||
-        this.nodes.input.contains(evt.target) ||
-        evt.target.isEqualNode(this.nodes.result) ||
-        this.nodes.result.contains(evt.target)
-      ) {
-        this._resultNodeClicked = true;
-      } else {
-        if (isFunction(this.callbacks.onBodyMousedown)) {
-          var returnedValue = this.callbacks.onBodyMousedown(this.nodes);
-          if (isBoolean(returnedValue) && returnedValue) {
-            this.close();
-          }
-        } else {
-          this.close();
-        }
-      }
-    }
-  };
-
-  PredictiveSearchComponent.prototype._handleInputFocus = function(evt) {
-    if (isFunction(this.callbacks.onInputFocus)) {
-      var returnedValue = this.callbacks.onInputFocus(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    if (evt.target.value.length > 0) {
-      this._search();
-    }
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype._handleInputBlur = function() {
-    // This has to be done async, to wait for the focus to be on the next
-    // element and avoid closing the results.
-    // Example: Going from the input to the reset button.
-    setTimeout(
-      function() {
-        if (isFunction(this.callbacks.onInputBlur)) {
-          var returnedValue = this.callbacks.onInputBlur(this.nodes);
-          if (isBoolean(returnedValue) && !returnedValue) {
-            return false;
-          }
-        }
-
-        if (document.activeElement.isEqualNode(this.nodes.reset)) {
-          return false;
-        }
-
-        if (this._resultNodeClicked) {
-          this._resultNodeClicked = false;
-          return false;
-        }
-
-        this.close();
-      }.bind(this)
-    );
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype._addAccessibilityAnnouncer = function() {
-    this._accessibilityAnnouncerDiv = window.document.createElement('div');
-
-    this._accessibilityAnnouncerDiv.setAttribute(
-      'style',
-      'position: absolute !important; overflow: hidden; clip: rect(0 0 0 0); height: 1px; width: 1px; margin: -1px; padding: 0; border: 0;'
-    );
-
-    this._accessibilityAnnouncerDiv.setAttribute('data-search-announcer', '');
-    this._accessibilityAnnouncerDiv.setAttribute('aria-live', 'polite');
-    this._accessibilityAnnouncerDiv.setAttribute('aria-atomic', 'true');
-
-    this.nodes.result.parentElement.appendChild(
-      this._accessibilityAnnouncerDiv
-    );
-  };
-
-  PredictiveSearchComponent.prototype._removeAccessibilityAnnouncer = function() {
-    this.nodes.result.parentElement.removeChild(
-      this._accessibilityAnnouncerDiv
-    );
-  };
-
-  PredictiveSearchComponent.prototype._updateAccessibilityAttributesAfterSelectingElement = function(
-    previousSelectedElement,
-    currentSelectedElement
-  ) {
-    // Update the active descendant on the search input
-    this.nodes.input.setAttribute(
-      'aria-activedescendant',
-      currentSelectedElement.id
-    );
-
-    // Unmark the previousSelected elemented as selected
-    if (previousSelectedElement) {
-      previousSelectedElement.removeAttribute('aria-selected');
-    }
-
-    // Mark the element as selected
-    currentSelectedElement.setAttribute('aria-selected', true);
-  };
-
-  PredictiveSearchComponent.prototype._clearAriaActiveDescendant = function() {
-    this.nodes.input.setAttribute('aria-activedescendant', '');
-  };
-
-  PredictiveSearchComponent.prototype._announceNumberOfResultsFound = function(
-    results
-  ) {
-    var currentAnnouncedMessage = this._accessibilityAnnouncerDiv.innerHTML;
-    var newMessage = this.numberOfResultsTemplateFct(results);
-
-    // If the messages are the same, they won't get announced
-    // add white space so it gets announced
-    if (currentAnnouncedMessage === newMessage) {
-      newMessage = newMessage + '&nbsp;';
-    }
-
-    this._accessibilityAnnouncerDiv.innerHTML = newMessage;
-  };
-
-  PredictiveSearchComponent.prototype._announceLoadingState = function() {
-    this._accessibilityAnnouncerDiv.innerHTML = this.loadingResultsMessageTemplateFct();
-  };
-
-  PredictiveSearchComponent.prototype._handleInputKeyup = function(evt) {
-    var UP_ARROW_KEY_CODE = 38;
-    var DOWN_ARROW_KEY_CODE = 40;
-    var RETURN_KEY_CODE = 13;
-    var ESCAPE_KEY_CODE = 27;
-
-    if (isFunction(this.callbacks.onInputKeyup)) {
-      var returnedValue = this.callbacks.onInputKeyup(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    this._toggleClearButtonVisibility();
-
-    if (this.isResultVisible && this.nodes !== null) {
-      if (evt.keyCode === UP_ARROW_KEY_CODE) {
-        this._navigateOption(evt, 'UP');
-        return true;
-      }
-
-      if (evt.keyCode === DOWN_ARROW_KEY_CODE) {
-        this._navigateOption(evt, 'DOWN');
-        return true;
-      }
-
-      if (evt.keyCode === RETURN_KEY_CODE) {
-        this._selectOption();
-        return true;
-      }
-
-      if (evt.keyCode === ESCAPE_KEY_CODE) {
-        this.close();
-      }
-    }
-
-    if (evt.target.value.length <= 0) {
-      this.close();
-      this._setKeyword('');
-    } else if (evt.target.value.length > 0) {
-      this._search();
-    }
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype._handleInputKeydown = function(evt) {
-    var RETURN_KEY_CODE = 13;
-    var UP_ARROW_KEY_CODE = 38;
-    var DOWN_ARROW_KEY_CODE = 40;
-
-    // Prevent the form default submission if there is a selected option
-    if (evt.keyCode === RETURN_KEY_CODE && this._getSelectedOption() !== null) {
-      evt.preventDefault();
-    }
-
-    // Prevent the cursor from moving in the input when using the up and down arrow keys
-    if (
-      evt.keyCode === UP_ARROW_KEY_CODE ||
-      evt.keyCode === DOWN_ARROW_KEY_CODE
-    ) {
-      evt.preventDefault();
-    }
-  };
-
-  PredictiveSearchComponent.prototype._handleInputReset = function(evt) {
-    evt.preventDefault();
-
-    if (isFunction(this.callbacks.onInputReset)) {
-      var returnedValue = this.callbacks.onInputReset(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    this.nodes.input.value = '';
-    this.nodes.input.focus();
-    this._toggleClearButtonVisibility();
-    this.close();
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype._navigateOption = function(
-    evt,
-    direction
-  ) {
-    var currentOption = this._getSelectedOption();
-
-    if (!currentOption) {
-      var firstOption = this.nodes.result.querySelector(
-        this.selectors.searchResult
-      );
-      firstOption.classList.add(this.classes.itemSelected);
-      this._updateAccessibilityAttributesAfterSelectingElement(
-        null,
-        firstOption
-      );
-    } else {
-      if (direction === 'DOWN') {
-        var nextOption = currentOption.nextElementSibling;
-        if (nextOption) {
-          currentOption.classList.remove(this.classes.itemSelected);
-          nextOption.classList.add(this.classes.itemSelected);
-          this._updateAccessibilityAttributesAfterSelectingElement(
-            currentOption,
-            nextOption
-          );
-        }
-      } else {
-        var previousOption = currentOption.previousElementSibling;
-        if (previousOption) {
-          currentOption.classList.remove(this.classes.itemSelected);
-          previousOption.classList.add(this.classes.itemSelected);
-          this._updateAccessibilityAttributesAfterSelectingElement(
-            currentOption,
-            previousOption
-          );
-        }
-      }
-    }
-  };
-
-  PredictiveSearchComponent.prototype._getSelectedOption = function() {
-    return this.nodes.result.querySelector('.' + this.classes.itemSelected);
-  };
-
-  PredictiveSearchComponent.prototype._selectOption = function() {
-    var selectedOption = this._getSelectedOption();
-
-    if (selectedOption) {
-      selectedOption.querySelector('a, button').click();
-    }
-  };
-
-  PredictiveSearchComponent.prototype._search = function() {
-    var newSearchKeyword = this.nodes.input.value;
-
-    if (this._searchKeyword === newSearchKeyword) {
-      return;
-    }
-
-    clearTimeout(this._latencyTimer);
-    this._latencyTimer = setTimeout(
-      function() {
-        this.results.isLoading = true;
-
-        // Annonuce that we're loading the results
-        this._announceLoadingState();
-
-        this.nodes.result.classList.add(this.classes.visibleVariant);
-        // NOTE: We could benifit in using DOMPurify.
-        // https://github.com/cure53/DOMPurify
-        this.nodes.result.innerHTML = this.resultTemplateFct(this.results);
-      }.bind(this),
-      500
-    );
-
-    this.predictiveSearch.query(newSearchKeyword);
-    this._setKeyword(newSearchKeyword);
-  };
-
-  PredictiveSearchComponent.prototype._handlePredictiveSearchSuccess = function(
-    json
-  ) {
-    clearTimeout(this._latencyTimer);
-    this.results = json.resources.results;
-
-    this.results.isLoading = false;
-    this.results.products = this.results.products.slice(
-      0,
-      this.numberOfResults
-    );
-    this.results.canLoadMore =
-      this.numberOfResults <= this.results.products.length;
-    this.results.searchQuery = this.nodes.input.value;
-
-    if (this.results.products.length > 0 || this.results.searchQuery) {
-      this.nodes.result.innerHTML = this.resultTemplateFct(this.results);
-      this._announceNumberOfResultsFound(this.results);
-      this.open();
-    } else {
-      this.nodes.result.innerHTML = '';
-
-      this._closeOnNoResults();
-    }
-  };
-
-  PredictiveSearchComponent.prototype._handlePredictiveSearchError = function() {
-    clearTimeout(this._latencyTimer);
-    this.nodes.result.innerHTML = '';
-
-    this._closeOnNoResults();
-  };
-
-  PredictiveSearchComponent.prototype._closeOnNoResults = function() {
-    if (this.nodes) {
-      this.nodes.result.classList.remove(this.classes.visibleVariant);
-    }
-
-    this.isResultVisible = false;
-  };
-
-  PredictiveSearchComponent.prototype._setKeyword = function(keyword) {
-    this._searchKeyword = keyword;
-  };
-
-  PredictiveSearchComponent.prototype._toggleClearButtonVisibility = function() {
-    if (!this.nodes.reset) {
-      return;
-    }
-
-    if (this.nodes.input.value.length > 0) {
-      this.nodes.reset.classList.add(this.classes.clearButtonVisible);
-    } else {
-      this.nodes.reset.classList.remove(this.classes.clearButtonVisible);
-    }
-  };
-
-  /**
-   * Public methods
-   */
-  PredictiveSearchComponent.prototype.open = function() {
-    if (this.isResultVisible) {
-      return;
-    }
-
-    if (isFunction(this.callbacks.onBeforeOpen)) {
-      var returnedValue = this.callbacks.onBeforeOpen(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    this.nodes.result.classList.add(this.classes.visibleVariant);
-    this.nodes.input.setAttribute('aria-expanded', true);
-    this.isResultVisible = true;
-
-    if (isFunction(this.callbacks.onOpen)) {
-      return this.callbacks.onOpen(this.nodes) || true;
-    }
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype.close = function() {
-    if (!this.isResultVisible) {
-      return true;
-    }
-
-    if (isFunction(this.callbacks.onBeforeClose)) {
-      var returnedValue = this.callbacks.onBeforeClose(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    if (this.nodes) {
-      this.nodes.result.classList.remove(this.classes.visibleVariant);
-    }
-
-    this.nodes.input.setAttribute('aria-expanded', false);
-    this._clearAriaActiveDescendant();
-    this._setKeyword('');
-
-    if (isFunction(this.callbacks.onClose)) {
-      this.callbacks.onClose(this.nodes);
-    }
-
-    this.isResultVisible = false;
-    this.results = {};
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype.destroy = function() {
-    this.close();
-
-    if (isFunction(this.callbacks.onBeforeDestroy)) {
-      var returnedValue = this.callbacks.onBeforeDestroy(this.nodes);
-      if (isBoolean(returnedValue) && !returnedValue) {
-        return false;
-      }
-    }
-
-    this.nodes.result.classList.remove(this.classes.visibleVariant);
-    removeInputAttributes(this.nodes.input);
-    this._removeInputEventListeners();
-    this._removeBodyEventListener();
-    this._removeAccessibilityAnnouncer();
-    this._removeClearButtonEventListener();
-
-    if (isFunction(this.callbacks.onDestroy)) {
-      this.callbacks.onDestroy(this.nodes);
-    }
-
-    return true;
-  };
-
-  PredictiveSearchComponent.prototype.clearAndClose = function() {
-    this.nodes.input.value = '';
-    this.close();
-  };
-
-  /**
-   * Utilities
-   */
-  function getTypeOf(value) {
-    return Object.prototype.toString.call(value);
-  }
-
-  function isString(value) {
-    return getTypeOf(value) === '[object String]';
-  }
-
-  function isBoolean(value) {
-    return getTypeOf(value) === '[object Boolean]';
-  }
-
-  function isFunction(value) {
-    return getTypeOf(value) === '[object Function]';
-  }
-
-  return PredictiveSearchComponent;
-})(Shopify.theme.PredictiveSearch);
-
-
-/* ================ GLOBAL ================ */
-/*============================================================================
-  Drawer modules
-==============================================================================*/
-theme.Drawers = (function() {
-  function Drawer(id, position, options) {
-    var DEFAULT_OPEN_CLASS = 'js-drawer-open';
-    var DEFAULT_CLOSE_CLASS = 'js-drawer-close';
-
-    var defaults = {
-      selectors: {
-        openVariant: '.' + DEFAULT_OPEN_CLASS + '-' + position,
-        close: '.' + DEFAULT_CLOSE_CLASS
-      },
-      classes: {
-        open: DEFAULT_OPEN_CLASS,
-        openVariant: DEFAULT_OPEN_CLASS + '-' + position
-      },
-      withPredictiveSearch: false
-    };
-
-    this.nodes = {
-      $parent: $('html').add('body'),
-      $page: $('#PageContainer')
-    };
-
-    this.config = $.extend(defaults, options);
-    this.position = position;
-    this.$drawer = $('#' + id);
-
-    if (!this.$drawer.length) {
-      return false;
-    }
-
-    this.drawerIsOpen = false;
-    this.init();
-  }
-
-  Drawer.prototype.init = function() {
-    $(this.config.selectors.openVariant).on('click', $.proxy(this.open, this));
-    this.$drawer.on(
-      'click',
-      this.config.selectors.close,
-      $.proxy(this.close, this)
-    );
-  };
-
-  Drawer.prototype.open = function(evt) {
-    // Keep track if drawer was opened from a click, or called by another function
-    var externalCall = false;
-
-    // Prevent following href if link is clicked
-    if (evt) {
-      evt.preventDefault();
-    } else {
-      externalCall = true;
-    }
-
-    // Without this, the drawer opens, the click event bubbles up to nodes.$page
-    // which closes the drawer.
-    if (evt && evt.stopPropagation) {
-      evt.stopPropagation();
-      // save the source of the click, we'll focus to this on close
-      this.$activeSource = $(evt.currentTarget);
-    }
-
-    if (this.drawerIsOpen && !externalCall) {
-      return this.close();
-    }
-
-    // Add is-transitioning class to moved elements on open so drawer can have
-    // transition for close animation
-    if (!this.config.withPredictiveSearch) {
-      this.$drawer.prepareTransition();
-    }
-
-    this.nodes.$parent.addClass(
-      this.config.classes.open + ' ' + this.config.classes.openVariant
-    );
-    this.drawerIsOpen = true;
-
-    // Run function when draw opens if set
-    if (
-      this.config.onDrawerOpen &&
-      typeof this.config.onDrawerOpen === 'function'
-    ) {
-      if (!externalCall) {
-        this.config.onDrawerOpen();
-      }
-    }
-
-    if (this.$activeSource && this.$activeSource.attr('aria-expanded')) {
-      this.$activeSource.attr('aria-expanded', 'true');
-    }
-
-    // Set focus on drawer
-    var trapFocusConfig = {
-      $container: this.$drawer,
-      namespace: 'drawer_focus'
-    };
-    if (this.config.$elementToFocusOnOpen) {
-      trapFocusConfig.$elementToFocus = this.config.$elementToFocusOnOpen;
-    }
-
-    slate.a11y.trapFocus(trapFocusConfig);
-
-    this.bindEvents();
-
-    return this;
-  };
-
-  Drawer.prototype.close = function() {
-    if (!this.drawerIsOpen) {
-      // don't close a closed drawer
-      return;
-    }
-
-    // deselect any focused form elements
-    $(document.activeElement).trigger('blur');
-
-    // Ensure closing transition is applied to moved elements, like the nav
-    if (!this.config.withPredictiveSearch) {
-      this.$drawer.prepareTransition();
-    }
-
-    this.nodes.$parent.removeClass(
-      this.config.classes.open + ' ' + this.config.classes.openVariant
-    );
-
-    if (this.$activeSource && this.$activeSource.attr('aria-expanded')) {
-      this.$activeSource.attr('aria-expanded', 'false');
-    }
-
-    this.drawerIsOpen = false;
-
-    // Remove focus on drawer
-    slate.a11y.removeTrapFocus({
-      $container: this.$drawer,
-      namespace: 'drawer_focus'
-    });
-
-    this.unbindEvents();
-
-    // Run function when draw closes if set
-    if (
-      this.config.onDrawerClose &&
-      typeof this.config.onDrawerClose === 'function'
-    ) {
-      this.config.onDrawerClose();
-    }
-  };
-
-  Drawer.prototype.bindEvents = function() {
-    this.nodes.$parent.on(
-      'keyup.drawer',
-      $.proxy(function(evt) {
-        // close on 'esc' keypress
-        if (evt.keyCode === 27) {
-          this.close();
-          return false;
-        } else {
-          return true;
-        }
-      }, this)
-    );
-
-    // Lock scrolling on mobile
-    this.nodes.$page.on('touchmove.drawer', function() {
-      return false;
-    });
-
-    this.nodes.$page.on(
-      'click.drawer',
-      $.proxy(function() {
-        this.close();
-        return false;
-      }, this)
-    );
-  };
-
-  Drawer.prototype.unbindEvents = function() {
-    this.nodes.$page.off('.drawer');
-    this.nodes.$parent.off('.drawer');
-  };
-
-  return Drawer;
-})();
-
-theme.Helpers = (function() {
-  var touchDevice = false;
-
-  var classes = {
-    preventScrolling: 'prevent-scrolling'
-  };
-
-  var scrollPosition = window.pageYOffset;
-
-  function setTouch() {
-    touchDevice = true;
-  }
-
-  function isTouch() {
-    return touchDevice;
-  }
-
-  function enableScrollLock() {
-    scrollPosition = window.pageYOffset;
-    document.body.style.top = '-' + scrollPosition + 'px';
-    document.body.classList.add(classes.preventScrolling);
-  }
-
-  function disableScrollLock() {
-    document.body.classList.remove(classes.preventScrolling);
-    document.body.style.removeProperty('top');
-    window.scrollTo(0, scrollPosition);
-  }
-
-  function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-      var context = this,
-        args = arguments;
-
-      var later = function() {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
-      var callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-      if (callNow) func.apply(context, args);
-    };
-  }
-
-  return {
-    setTouch: setTouch,
-    isTouch: isTouch,
-    enableScrollLock: enableScrollLock,
-    disableScrollLock: disableScrollLock,
-    debounce: debounce
-  };
-})();
-
-theme.LibraryLoader = (function() {
-  var types = {
-    link: 'link',
-    script: 'script'
-  };
-
-  var status = {
-    requested: 'requested',
-    loaded: 'loaded'
-  };
-
-  var cloudCdn = 'https://cdn.shopify.com/shopifycloud/';
-
-  var libraries = {
-    youtubeSdk: {
-      tagId: 'youtube-sdk',
-      src: 'https://www.youtube.com/iframe_api',
-      type: types.script
-    },
-    plyrShopifyStyles: {
-      tagId: 'plyr-shopify-styles',
-      src: cloudCdn + 'shopify-plyr/v1.0/shopify-plyr.css',
-      type: types.link
-    },
-    modelViewerUiStyles: {
-      tagId: 'shopify-model-viewer-ui-styles',
-      src: cloudCdn + 'model-viewer-ui/assets/v1.0/model-viewer-ui.css',
-      type: types.link
-    }
-  };
-
-  function load(libraryName, callback) {
-    var library = libraries[libraryName];
-
-    if (!library) return;
-    if (library.status === status.requested) return;
-
-    callback = callback || function() {};
-    if (library.status === status.loaded) {
-      callback();
-      return;
-    }
-
-    library.status = status.requested;
-
-    var tag;
-
-    switch (library.type) {
-      case types.script:
-        tag = createScriptTag(library, callback);
-        break;
-      case types.link:
-        tag = createLinkTag(library, callback);
-        break;
-    }
-
-    tag.id = library.tagId;
-    library.element = tag;
-
-    var firstScriptTag = document.getElementsByTagName(library.type)[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  }
-
-  function createScriptTag(library, callback) {
-    var tag = document.createElement('script');
-    tag.src = library.src;
-    tag.addEventListener('load', function() {
-      library.status = status.loaded;
-      callback();
-    });
-    return tag;
-  }
-
-  function createLinkTag(library, callback) {
-    var tag = document.createElement('link');
-    tag.href = library.src;
-    tag.rel = 'stylesheet';
-    tag.type = 'text/css';
-    tag.addEventListener('load', function() {
-      library.status = status.loaded;
-      callback();
-    });
-    return tag;
-  }
-
-  return {
-    load: load
-  };
-})();
-
-
-/* ================ MODULES ================ */
-window.theme = window.theme || {};
-
-theme.Header = (function() {
-  var selectors = {
-    body: 'body',
-    navigation: '#AccessibleNav',
-    siteNavHasDropdown: '[data-has-dropdowns]',
-    siteNavChildLinks: '.site-nav__child-link',
-    siteNavActiveDropdown: '.site-nav--active-dropdown',
-    siteNavHasCenteredDropdown: '.site-nav--has-centered-dropdown',
-    siteNavCenteredDropdown: '.site-nav__dropdown--centered',
-    siteNavLinkMain: '.site-nav__link--main',
-    siteNavChildLink: '.site-nav__link--last',
-    siteNavDropdown: '.site-nav__dropdown',
-    siteHeader: '.site-header'
-  };
-
-  var config = {
-    activeClass: 'site-nav--active-dropdown',
-    childLinkClass: 'site-nav__child-link',
-    rightDropdownClass: 'site-nav__dropdown--right',
-    leftDropdownClass: 'site-nav__dropdown--left'
-  };
-
-  var cache = {};
-
-  function init() {
-    cacheSelectors();
-    styleDropdowns(document.querySelectorAll(selectors.siteNavHasDropdown));
-    positionFullWidthDropdowns();
-
-    cache.parents.forEach(function(element) {
-      element.addEventListener('click', submenuParentClickHandler);
-    });
-
-    // check when we're leaving a dropdown and close the active dropdown
-    cache.siteNavChildLink.forEach(function(element) {
-      element.addEventListener('focusout', submenuFocusoutHandler);
-    });
-
-    cache.topLevel.forEach(function(element) {
-      element.addEventListener('focus', hideDropdown);
-    });
-
-    cache.subMenuLinks.forEach(function(element) {
-      element.addEventListener('click', stopImmediatePropagation);
-    });
-
-    window.addEventListener('resize', resizeHandler);
-  }
-
-  function stopImmediatePropagation(event) {
-    event.stopImmediatePropagation();
-  }
-
-  function cacheSelectors() {
-    var navigation = document.querySelector(selectors.navigation);
-
-    cache = {
-      nav: navigation,
-      topLevel: document.querySelectorAll(selectors.siteNavLinkMain),
-      parents: navigation.querySelectorAll(selectors.siteNavHasDropdown),
-      subMenuLinks: document.querySelectorAll(selectors.siteNavChildLinks),
-      activeDropdown: document.querySelector(selectors.siteNavActiveDropdown),
-      siteHeader: document.querySelector(selectors.siteHeader),
-      siteNavChildLink: document.querySelectorAll(selectors.siteNavChildLink)
-    };
-  }
-
-  function showDropdown(element) {
-    element.classList.add(config.activeClass);
-
-    if (cache.activeDropdown) hideDropdown();
-
-    cache.activeDropdown = element;
-
-    element
-      .querySelector(selectors.siteNavLinkMain)
-      .setAttribute('aria-expanded', 'true');
-
-    setTimeout(function() {
-      window.addEventListener('keyup', keyUpHandler);
-      document.body.addEventListener('click', hideDropdown);
-    }, 250);
-  }
-
-  function hideDropdown() {
-    if (!cache.activeDropdown) return;
-
-    cache.activeDropdown
-      .querySelector(selectors.siteNavLinkMain)
-      .setAttribute('aria-expanded', 'false');
-    cache.activeDropdown.classList.remove(config.activeClass);
-
-    cache.activeDropdown = document.querySelector(
-      selectors.siteNavActiveDropdown
-    );
-
-    window.removeEventListener('keyup', keyUpHandler);
-    document.body.removeEventListener('click', hideDropdown);
-  }
-
-  function styleDropdowns(dropdownListItems) {
-    dropdownListItems.forEach(function(item) {
-      var dropdownLi = item.querySelector(selectors.siteNavDropdown);
-
-      if (!dropdownLi) return;
-
-      if (isRightOfLogo(item)) {
-        dropdownLi.classList.remove(config.leftDropdownClass);
-        dropdownLi.classList.add(config.rightDropdownClass);
-      } else {
-        dropdownLi.classList.remove(config.rightDropdownClass);
-        dropdownLi.classList.add(config.leftDropdownClass);
-      }
-    });
-  }
-
-  function isRightOfLogo(item) {
-    var rect = item.getBoundingClientRect();
-    var win = item.ownerDocument.defaultView;
-    var leftOffset = rect.left + win.pageXOffset;
-
-    var headerWidth = Math.floor(cache.siteHeader.offsetWidth) / 2;
-    return leftOffset > headerWidth;
-  }
-
-  function positionFullWidthDropdowns() {
-    document
-      .querySelectorAll(selectors.siteNavHasCenteredDropdown)
-      .forEach(function(el) {
-        var fullWidthDropdown = el.querySelector(
-          selectors.siteNavCenteredDropdown
-        );
-
-        var fullWidthDropdownOffset = el.offsetTop + 41;
-        fullWidthDropdown.style.top = fullWidthDropdownOffset + 'px';
-      });
-  }
-
-  function keyUpHandler(event) {
-    if (event.keyCode === 27) hideDropdown();
-  }
-
-  function resizeHandler() {
-    adjustStyleAndPosition();
-  }
-
-  function submenuParentClickHandler(event) {
-    var element = event.currentTarget;
-
-    element.classList.contains(config.activeClass)
-      ? hideDropdown()
-      : showDropdown(element);
-  }
-
-  function submenuFocusoutHandler() {
-    setTimeout(function() {
-      if (
-        document.activeElement.classList.contains(config.childLinkClass) ||
-        !cache.activeDropdown
-      ) {
-        return;
-      }
-
-      hideDropdown();
-    });
-  }
-
-  var adjustStyleAndPosition = theme.Helpers.debounce(function() {
-    styleDropdowns(document.querySelectorAll(selectors.siteNavHasDropdown));
-    positionFullWidthDropdowns();
-  }, 50);
-
-  function unload() {
-    cache.topLevel.forEach(function(element) {
-      element.removeEventListener('focus', hideDropdown);
-    });
-
-    cache.subMenuLinks.forEach(function(element) {
-      element.removeEventListener('click', stopImmediatePropagation);
-    });
-
-    cache.parents.forEach(function(element) {
-      element.removeEventListener('click', submenuParentClickHandler);
-    });
-
-    cache.siteNavChildLink.forEach(function(element) {
-      element.removeEventListener('focusout', submenuFocusoutHandler);
-    });
-
-    window.removeEventListener('resize', resizeHandler);
-    window.removeEventListener('keyup', keyUpHandler);
-    document.body.removeEventListener('click', hideDropdown);
-  }
-
-  return {
-    init: init,
-    unload: unload
-  };
-})();
-
-window.theme = window.theme || {};
-
-theme.MobileNav = (function() {
-  var classes = {
-    mobileNavOpenIcon: 'mobile-nav--open',
-    mobileNavCloseIcon: 'mobile-nav--close',
-    navLinkWrapper: 'mobile-nav__item',
-    navLink: 'mobile-nav__link',
-    subNavLink: 'mobile-nav__sublist-link',
-    return: 'mobile-nav__return-btn',
-    subNavActive: 'is-active',
-    subNavClosing: 'is-closing',
-    navOpen: 'js-menu--is-open',
-    subNavShowing: 'sub-nav--is-open',
-    thirdNavShowing: 'third-nav--is-open',
-    subNavToggleBtn: 'js-toggle-submenu'
-  };
-  var cache = {};
-  var isTransitioning;
-  var $activeSubNav;
-  var $activeTrigger;
-  var menuLevel = 1;
-  var mediumUpQuery = '(min-width: ' + theme.breakpoints.medium + 'px)';
-  var mql = window.matchMedia(mediumUpQuery);
-
-  $(document).on('shopify:section:unload', function(event) {
-    if (event.detail.sectionId !== 'header') return;
-
-    mql.removeListener(initBreakpoints);
-  });
-
-  function init() {
-    cacheSelectors();
-
-    cache.$mobileNavToggle.on('click', toggleMobileNav);
-    cache.$subNavToggleBtn.on('click.subNav', toggleSubNav);
-
-    mql.addListener(initBreakpoints);
-  }
-
-  function initBreakpoints() {
-    if (mql.matches && cache.$mobileNavContainer.hasClass(classes.navOpen)) {
-      closeMobileNav();
-    }
-  }
-
-  function toggleMobileNav() {
-    if (cache.$mobileNavToggle.hasClass(classes.mobileNavCloseIcon)) {
-      closeMobileNav();
-    } else {
-      openMobileNav();
-    }
-  }
-
-  function cacheSelectors() {
-    cache = {
-      $pageContainer: $('#PageContainer'),
-      $siteHeader: $('.site-header'),
-      $mobileNavToggle: $('.js-mobile-nav-toggle'),
-      $mobileNavContainer: $('.mobile-nav-wrapper'),
-      $mobileNav: $('#MobileNav'),
-      $sectionHeader: $('#shopify-section-header'),
-      $subNavToggleBtn: $('.' + classes.subNavToggleBtn)
-    };
-  }
-
-  function openMobileNav() {
-    var translateHeaderHeight = cache.$siteHeader.outerHeight();
-
-    cache.$mobileNavContainer.prepareTransition().addClass(classes.navOpen);
-
-    cache.$mobileNavContainer.css({
-      transform: 'translateY(' + translateHeaderHeight + 'px)'
-    });
-
-    cache.$pageContainer.css({
-      transform:
-        'translate3d(0, ' + cache.$mobileNavContainer[0].scrollHeight + 'px, 0)'
-    });
-
-    slate.a11y.trapFocus({
-      $container: cache.$sectionHeader,
-      $elementToFocus: cache.$mobileNavToggle,
-      namespace: 'navFocus'
-    });
-
-    cache.$mobileNavToggle
-      .addClass(classes.mobileNavCloseIcon)
-      .removeClass(classes.mobileNavOpenIcon)
-      .attr('aria-expanded', true);
-
-    // close on escape
-    $(window).on('keyup.mobileNav', function(evt) {
-      if (evt.which === 27) {
-        closeMobileNav();
-      }
-    });
-  }
-
-  function closeMobileNav() {
-    cache.$mobileNavContainer.prepareTransition().removeClass(classes.navOpen);
-
-    cache.$mobileNavContainer.css({
-      transform: 'translateY(-100%)'
-    });
-
-    cache.$pageContainer.removeAttr('style');
-
-    slate.a11y.trapFocus({
-      $container: $('html'),
-      $elementToFocus: $('body')
-    });
-
-    cache.$mobileNavContainer.one(
-      'TransitionEnd.navToggle webkitTransitionEnd.navToggle transitionend.navToggle oTransitionEnd.navToggle',
-      function() {
-        slate.a11y.removeTrapFocus({
-          $container: cache.$mobileNav,
-          namespace: 'navFocus'
-        });
-      }
-    );
-
-    cache.$mobileNavToggle
-      .addClass(classes.mobileNavOpenIcon)
-      .removeClass(classes.mobileNavCloseIcon)
-      .attr('aria-expanded', false)
-      .focus();
-
-    $(window).off('keyup.mobileNav');
-
-    scrollTo(0, 0);
-  }
-
-  function toggleSubNav(evt) {
-    if (isTransitioning) {
-      return;
-    }
-
-    var $toggleBtn = $(evt.currentTarget);
-    var isReturn = $toggleBtn.hasClass(classes.return);
-    isTransitioning = true;
-
-    if (isReturn) {
-      // Close all subnavs by removing active class on buttons
-      $(
-        '.' + classes.subNavToggleBtn + '[data-level="' + (menuLevel - 1) + '"]'
-      ).removeClass(classes.subNavActive);
-
-      if ($activeTrigger && $activeTrigger.length) {
-        $activeTrigger.removeClass(classes.subNavActive);
-      }
-    } else {
-      $toggleBtn.addClass(classes.subNavActive);
-    }
-
-    $activeTrigger = $toggleBtn;
-
-    goToSubnav($toggleBtn.data('target'));
-  }
-
-  function goToSubnav(target) {
-    /*eslint-disable shopify/jquery-dollar-sign-reference */
-
-    var $targetMenu = target
-      ? $('.mobile-nav__dropdown[data-parent="' + target + '"]')
-      : cache.$mobileNav;
-
-    menuLevel = $targetMenu.data('level') ? $targetMenu.data('level') : 1;
-
-    if ($activeSubNav && $activeSubNav.length) {
-      $activeSubNav.prepareTransition().addClass(classes.subNavClosing);
-    }
-
-    $activeSubNav = $targetMenu;
-
-    /*eslint-enable shopify/jquery-dollar-sign-reference */
-
-    var translateMenuHeight = $targetMenu.outerHeight();
-
-    var openNavClass =
-      menuLevel > 2 ? classes.thirdNavShowing : classes.subNavShowing;
-
-    cache.$mobileNavContainer
-      .css('height', translateMenuHeight)
-      .removeClass(classes.thirdNavShowing)
-      .addClass(openNavClass);
-
-    if (!target) {
-      // Show top level nav
-      cache.$mobileNavContainer
-        .removeClass(classes.thirdNavShowing)
-        .removeClass(classes.subNavShowing);
-    }
-
-    /* if going back to first subnav, focus is on whole header */
-    var $container = menuLevel === 1 ? cache.$sectionHeader : $targetMenu;
-
-    var $menuTitle = $targetMenu.find('[data-menu-title=' + menuLevel + ']');
-    var $elementToFocus = $menuTitle ? $menuTitle : $targetMenu;
-
-    // Focusing an item in the subnav early forces element into view and breaks the animation.
-    cache.$mobileNavContainer.one(
-      'TransitionEnd.subnavToggle webkitTransitionEnd.subnavToggle transitionend.subnavToggle oTransitionEnd.subnavToggle',
-      function() {
-        slate.a11y.trapFocus({
-          $container: $container,
-          $elementToFocus: $elementToFocus,
-          namespace: 'subNavFocus'
-        });
-
-        cache.$mobileNavContainer.off('.subnavToggle');
-        isTransitioning = false;
-      }
-    );
-
-    // Match height of subnav
-    cache.$pageContainer.css({
-      transform: 'translateY(' + translateMenuHeight + 'px)'
-    });
-
-    $activeSubNav.removeClass(classes.subNavClosing);
-  }
-
-  return {
-    init: init,
-    closeMobileNav: closeMobileNav
-  };
-})(jQuery);
-
-(function() {
-  var selectors = {
-    backButton: '.return-link'
-  };
-
-  var $backButton = $(selectors.backButton);
-
-  if (!document.referrer || !$backButton.length || !window.history.length) {
-    return;
-  }
-
-  $backButton.one('click', function(evt) {
-    evt.preventDefault();
-
-    var referrerDomain = urlDomain(document.referrer);
-    var shopDomain = urlDomain(window.location.href);
-
-    if (shopDomain === referrerDomain) {
-      history.back();
-    }
-
-    return false;
-  });
-
-  function urlDomain(url) {
-    var anchor = document.createElement('a');
-    anchor.ref = url;
-
-    return anchor.hostname;
-  }
-})();
-
-theme.Slideshow = (function() {
-  this.$slideshow = null;
-  var classes = {
-    slideshow: 'slideshow',
-    slickActiveMobile: 'slick-active-mobile',
-    controlsHover: 'slideshow__controls--hover',
-    isPaused: 'is-paused'
-  };
-
-  var selectors = {
-    section: '.shopify-section',
-    wrapper: '#SlideshowWrapper-',
-    slides: '.slideshow__slide',
-    textWrapperMobile: '.slideshow__text-wrap--mobile',
-    textContentMobile: '.slideshow__text-content--mobile',
-    controls: '.slideshow__controls',
-    pauseButton: '.slideshow__pause',
-    dots: '.slick-dots',
-    arrows: '.slideshow__arrows',
-    arrowsMobile: '.slideshow__arrows--mobile',
-    arrowLeft: '.slideshow__arrow-left',
-    arrowRight: '.slideshow__arrow-right'
-  };
-
-  function slideshow(el, sectionId) {
-    var $slideshow = (this.$slideshow = $(el));
-    this.adaptHeight = this.$slideshow.data('adapt-height');
-    this.$wrapper = this.$slideshow.closest(selectors.wrapper + sectionId);
-    this.$section = this.$wrapper.closest(selectors.section);
-    this.$controls = this.$wrapper.find(selectors.controls);
-    this.$arrows = this.$section.find(selectors.arrows);
-    this.$arrowsMobile = this.$section.find(selectors.arrowsMobile);
-    this.$pause = this.$controls.find(selectors.pauseButton);
-    this.$textWrapperMobile = this.$section.find(selectors.textWrapperMobile);
-    this.autorotate = this.$slideshow.data('autorotate');
-    var autoplaySpeed = this.$slideshow.data('speed');
-    var loadSlideA11yString = this.$slideshow.data('slide-nav-a11y');
-
-    this.settings = {
-      accessibility: true,
-      arrows: false,
-      dots: true,
-      fade: true,
-      draggable: true,
-      touchThreshold: 20,
-      autoplay: this.autorotate,
-      autoplaySpeed: autoplaySpeed,
-      // eslint-disable-next-line shopify/jquery-dollar-sign-reference
-      appendDots: this.$arrows,
-      customPaging: function(slick, index) {
-        return (
-          '<a href="' +
-          selectors.wrapper +
-          sectionId +
-          '" aria-label="' +
-          loadSlideA11yString.replace('[slide_number]', index + 1) +
-          '" data-slide-number="' +
-          index +
-          '"></a>'
-        );
-      }
-    };
-
-    this.$slideshow.on('beforeChange', beforeChange.bind(this));
-    this.$slideshow.on('init', slideshowA11ySetup.bind(this));
-
-    // Add class to style mobile dots & show the correct text content for the
-    // first slide on mobile when the slideshow initialises
-    this.$slideshow.on(
-      'init',
-      function() {
-        this.$mobileDots
-          .find('li:first-of-type')
-          .addClass(classes.slickActiveMobile);
-        this.showMobileText(0);
-      }.bind(this)
-    );
-
-    // Stop the autorotate when you scroll past the mobile controls, resume when
-    // they are scrolled back into view
-    if (this.autorotate) {
-      $(document).scroll(
-        $.debounce(
-          250,
-          function() {
-            if (
-              this.$arrowsMobile.offset().top +
-                this.$arrowsMobile.outerHeight() <
-              window.pageYOffset
-            ) {
-              $slideshow.slick('slickPause');
-            } else if (!this.$pause.hasClass(classes.isPaused)) {
-              $slideshow.slick('slickPlay');
-            }
-          }.bind(this)
-        )
-      );
-    }
-
-    if (this.adaptHeight) {
-      this.setSlideshowHeight();
-      $(window).resize($.debounce(50, this.setSlideshowHeight.bind(this)));
-    }
-
-    this.$slideshow.slick(this.settings);
-
-    // This can't be called when the slick 'init' event fires due to how slick
-    // adds a11y features.
-    slideshowPostInitA11ySetup.bind(this)();
-
-    this.$arrows.find(selectors.arrowLeft).on('click', function() {
-      $slideshow.slick('slickPrev');
-    });
-    this.$arrows.find(selectors.arrowRight).on('click', function() {
-      $slideshow.slick('slickNext');
-    });
-
-    this.$pause.on('click', this.togglePause.bind(this));
-  }
-
-  function slideshowA11ySetup(event, obj) {
-    var $slider = obj.$slider;
-    var $list = obj.$list;
-    this.$dots = this.$section.find(selectors.dots);
-    this.$mobileDots = this.$dots.eq(1);
-
-    // Remove default Slick aria-live attr until slider is focused
-    $list.removeAttr('aria-live');
-
-    this.$wrapper.on('keyup', keyboardNavigation.bind(this));
-    this.$controls.on('keyup', keyboardNavigation.bind(this));
-    this.$textWrapperMobile.on('keyup', keyboardNavigation.bind(this));
-
-    // When an element in the slider is focused
-    // pause slideshow and set aria-live.
-    this.$wrapper
-      .on(
-        'focusin',
-        function(evt) {
-          if (!this.$wrapper.has(evt.target).length) {
-            return;
-          }
-
-          $list.attr('aria-live', 'polite');
-          if (this.autorotate) {
-            $slider.slick('slickPause');
-          }
-        }.bind(this)
-      )
-      .on(
-        'focusout',
-        function(evt) {
-          if (!this.$wrapper.has(evt.target).length) {
-            return;
-          }
-
-          $list.removeAttr('aria-live');
-          if (this.autorotate) {
-            // Only resume playing if the user hasn't paused using the pause
-            // button
-            if (!this.$pause.is('.is-paused')) {
-              $slider.slick('slickPlay');
+            position = 'left';
+
+            // Is there enough space to use the center alignment (which is preferred)?
+            var halfElementHeight = _this3.element.clientHeight / 2;
+
+            if (activatorBoundingRect.top >= halfElementHeight && windowHeight - activatorBoundingRect.bottom >= halfElementHeight) {
+              alignment = 'center';
+            } else if (windowHeight - activatorBoundingRect.bottom >= halfElementHeight) {
+              alignment = 'bottom';
+            } else {
+              alignment = 'top';
             }
           }
-        }.bind(this)
-      );
 
-    // Add arrow key support when focused
-    if (this.$dots) {
-      this.$dots
-        .find('a')
-        .each(function() {
-          var $dot = $(this);
-          $dot.on('click keyup', function(evt) {
-            if (
-              evt.type === 'keyup' &&
-              evt.which !== slate.utils.keyboardKeys.ENTER
-            )
-              return;
+          if (_this3.preferredAlignment) {
+            alignment = _this3.preferredAlignment;
+          }
 
-            evt.preventDefault();
+          if (position === 'top') {
+            topPosition = activatorBoundingRect.top - _this3.element.clientHeight - threshold;
 
-            var slideNumber = $(evt.target).data('slide-number');
-
-            $slider.attr('tabindex', -1).slick('slickGoTo', slideNumber);
-
-            if (evt.type === 'keyup') {
-              $slider.focus();
+            if (alignment === 'center') {
+              rightPosition = window.innerWidth - activatorBoundingRect.right - _this3.element.clientWidth / 2 + 3;
+            } else {
+              rightPosition = window.innerWidth - activatorBoundingRect.right;
             }
+          } else if (position === 'bottom') {
+            topPosition = activatorBoundingRect.bottom + threshold;
+
+            if (alignment === 'center') {
+              rightPosition = window.innerWidth - activatorBoundingRect.right - _this3.element.clientWidth / 2 + 3;
+            } else {
+              rightPosition = window.innerWidth - activatorBoundingRect.right;
+            }
+          } else {
+            rightPosition = window.innerWidth - activatorBoundingRect.left + threshold;
+
+            if (alignment === 'center') {
+              topPosition = activatorBoundingRect.top - _this3.element.clientHeight / 2 + _this3.activator.clientHeight / 2;
+            } else if (alignment === 'top') {
+              topPosition = activatorBoundingRect.bottom - _this3.element.clientHeight;
+            } else {
+              topPosition = activatorBoundingRect.top;
+            }
+          }
+        });
+
+        fastdom.mutate(function () {
+          ['Popover--positionBottom', 'Popover--positionTop', 'Popover--positionCenter', 'Popover--alignTop', 'Popover--alignCenter', 'Popover--alignBottom'].map(function (item) {
+            return _this3.element.classList.remove(item);
           });
-        })
-        .eq(0)
-        .attr('aria-current', 'true');
-    }
+          _this3.element.classList.add('Popover--position' + (position.charAt(0).toUpperCase() + position.slice(1)));
+          _this3.element.classList.add('Popover--align' + (alignment.charAt(0).toUpperCase() + alignment.slice(1)));
 
-    this.$controls
-      .on('focusin', highlightControls.bind(this))
-      .on('focusout', unhighlightControls.bind(this));
-  }
-
-  function slideshowPostInitA11ySetup() {
-    var $slides = this.$slideshow.find(selectors.slides);
-
-    $slides.removeAttr('role').removeAttr('aria-labelledby');
-    this.$dots
-      .removeAttr('role')
-      .find('li')
-      .removeAttr('role')
-      .removeAttr('aria-selected')
-      .each(function() {
-        var $dot = $(this);
-        var ariaControls = $dot.attr('aria-controls');
-        $dot
-          .removeAttr('aria-controls')
-          .find('a')
-          .attr('aria-controls', ariaControls);
-      });
-  }
-
-  function beforeChange(event, slick, currentSlide, nextSlide) {
-    var $dotLinks = this.$dots.find('a');
-    var $mobileDotLinks = this.$mobileDots.find('li');
-
-    $dotLinks
-      .removeAttr('aria-current')
-      .eq(nextSlide)
-      .attr('aria-current', 'true');
-
-    $mobileDotLinks
-      .removeClass(classes.slickActiveMobile)
-      .eq(nextSlide)
-      .addClass(classes.slickActiveMobile);
-    this.showMobileText(nextSlide);
-  }
-
-  function keyboardNavigation() {
-    if (event.keyCode === slate.utils.keyboardKeys.LEFTARROW) {
-      this.$slideshow.slick('slickPrev');
-    }
-    if (event.keyCode === slate.utils.keyboardKeys.RIGHTARROW) {
-      this.$slideshow.slick('slickNext');
-    }
-  }
-
-  function highlightControls() {
-    this.$controls.addClass(classes.controlsHover);
-  }
-
-  function unhighlightControls() {
-    this.$controls.removeClass(classes.controlsHover);
-  }
-
-  slideshow.prototype.togglePause = function() {
-    var slideshowSelector = getSlideshowId(this.$pause);
-    if (this.$pause.hasClass(classes.isPaused)) {
-      this.$pause.removeClass(classes.isPaused).attr('aria-pressed', 'false');
-      if (this.autorotate) {
-        $(slideshowSelector).slick('slickPlay');
+          _this3.element.setAttribute('style', 'top: ' + parseInt(topPosition) + 'px; right: ' + parseInt(rightPosition) + 'px;');
+        });
       }
-    } else {
-      this.$pause.addClass(classes.isPaused).attr('aria-pressed', 'true');
-      if (this.autorotate) {
-        $(slideshowSelector).slick('slickPause');
+
+      /**
+       * Handle a11y events
+       */
+
+    }, {
+      key: '_handleKeyboard',
+      value: function _handleKeyboard(event) {
+        if (this.isOpen && event.keyCode === 27) {
+          this.close();
+        }
       }
-    }
-  };
+    }]);
 
-  slideshow.prototype.setSlideshowHeight = function() {
-    var minAspectRatio = this.$slideshow.data('min-aspect-ratio');
-    this.$slideshow.height($(document).width() / minAspectRatio);
-  };
+    return Popover;
+  }();
+  /* harmony export (immutable) */
 
-  slideshow.prototype.showMobileText = function(slideIndex) {
-    var $allTextContent = this.$textWrapperMobile.find(
-      selectors.textContentMobile
-    );
-    var currentTextContentSelector =
-      selectors.textContentMobile + '-' + slideIndex;
-    var $currentTextContent = this.$textWrapperMobile.find(
-      currentTextContentSelector
-    );
-    if (
-      !$currentTextContent.length &&
-      this.$slideshow.find(selectors.slides).length === 1
-    ) {
-      this.$textWrapperMobile.hide();
-    } else {
-      this.$textWrapperMobile.show();
-    }
-    $allTextContent.hide();
-    $currentTextContent.show();
-  };
+  __webpack_exports__["default"] = Popover;
 
-  function getSlideshowId($el) {
-    return '#Slideshow-' + $el.data('id');
-  }
+  /***/
+},
+/* 4 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-  return slideshow;
-})();
+  "use strict";
 
-theme.Video = (function() {
-  var autoplayCheckComplete = false;
-  var playOnClickChecked = false;
-  var playOnClick = false;
-  var youtubeLoaded = false;
-  var videos = {};
-  var videoPlayers = [];
-  var videoOptions = {
-    ratio: 16 / 9,
-    scrollAnimationDuration: 400,
-    playerVars: {
-      // eslint-disable-next-line camelcase
-      iv_load_policy: 3,
-      modestbranding: 1,
-      autoplay: 0,
-      controls: 0,
-      wmode: 'opaque',
-      branding: 0,
-      autohide: 0,
-      rel: 0
-    },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerChange
-    }
-  };
-  var classes = {
-    playing: 'video-is-playing',
-    paused: 'video-is-paused',
-    loading: 'video-is-loading',
-    loaded: 'video-is-loaded',
-    backgroundVideoWrapper: 'video-background-wrapper',
-    videoWithImage: 'video--image_with_play',
-    backgroundVideo: 'video--background',
-    userPaused: 'is-paused',
-    supportsAutoplay: 'autoplay',
-    supportsNoAutoplay: 'no-autoplay',
-    wrapperMinHeight: 'video-section-wrapper--min-height'
-  };
-
-  var selectors = {
-    section: '.video-section',
-    videoWrapper: '.video-section-wrapper',
-    playVideoBtn: '.video-control__play',
-    closeVideoBtn: '.video-control__close-wrapper',
-    pauseVideoBtn: '.video__pause',
-    pauseVideoStop: '.video__pause-stop',
-    pauseVideoResume: '.video__pause-resume',
-    fallbackText: '.icon__fallback-text'
-  };
-
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   /**
-   * Public functions
-   */
-  function init($video) {
-    if (!$video.length) {
-      return;
-    }
-
-    videos[$video.attr('id')] = {
-      id: $video.attr('id'),
-      videoId: $video.data('id'),
-      type: $video.data('type'),
-      status:
-        $video.data('type') === 'image_with_play' ? 'closed' : 'background', // closed, open, background
-      $video: $video,
-      $videoWrapper: $video.closest(selectors.videoWrapper),
-      $section: $video.closest(selectors.section),
-      controls: $video.data('type') === 'background' ? 0 : 1
-    };
-
-    if (!youtubeLoaded) {
-      // This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-
-    playOnClickCheck();
-  }
-
-  function customPlayVideo(playerId) {
-    // Make sure we have carried out the playOnClick check first
-    if (!playOnClickChecked && !playOnClick) {
-      return;
-    }
-
-    if (playerId && typeof videoPlayers[playerId].playVideo === 'function') {
-      privatePlayVideo(playerId);
-    }
-  }
-
-  function pauseVideo(playerId) {
-    if (
-      videoPlayers[playerId] &&
-      typeof videoPlayers[playerId].pauseVideo === 'function'
-    ) {
-      videoPlayers[playerId].pauseVideo();
-    }
-  }
-
-  function loadVideos() {
-    for (var key in videos) {
-      if (videos.hasOwnProperty(key)) {
-        createPlayer(key);
-      }
-    }
-
-    initEvents();
-    youtubeLoaded = true;
-  }
-
-  function editorLoadVideo(key) {
-    if (!youtubeLoaded) {
-      return;
-    }
-    createPlayer(key);
-
-    initEvents();
-  }
-
-  /**
-   * Private functions
+   * Note: this was a feature that was added at the very end and couldn't do something much cleaner without rewriting large parts of the theme...
    */
 
-  function privatePlayVideo(id, clicked) {
-    var videoData = videos[id];
-    var player = videoPlayers[id];
-    var $videoWrapper = videoData.$videoWrapper;
+  var ProductItemColorSwatch = function () {
+    function ProductItemColorSwatch(element) {
+      _classCallCheck(this, ProductItemColorSwatch);
 
-    if (playOnClick) {
-      // playOnClick means we are probably on mobile (no autoplay).
-      // setAsPlaying will show the iframe, requiring another click
-      // to play the video.
-      setAsPlaying(videoData);
-    } else if (clicked || autoplayCheckComplete) {
-      // Play if autoplay is available or clicked to play
-      $videoWrapper.removeClass(classes.loading);
-      setAsPlaying(videoData);
-      player.playVideo();
-      return;
-    } else {
-      player.playVideo();
-    }
-  }
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
 
-  function setAutoplaySupport(supported) {
-    var supportClass = supported
-      ? classes.supportsAutoplay
-      : classes.supportsNoAutoplay;
-    $(document.documentElement)
-      .removeClass(classes.supportsAutoplay)
-      .removeClass(classes.supportsNoAutoplay)
-      .addClass(supportClass);
-
-    if (!supported) {
-      playOnClick = true;
+      this.delegateElement.on('change', '.ColorSwatch__Radio', this._colorChanged.bind(this));
     }
 
-    autoplayCheckComplete = true;
-  }
+    _createClass(ProductItemColorSwatch, [{
+      key: '_colorChanged',
+      value: function _colorChanged(event, target) {
+        // We need to change the URL of the various links
+        var productItem = target.closest('.ProductItem'),
+            variantUrl = target.getAttribute('data-variant-url');
 
-  function playOnClickCheck() {
-    if (playOnClickChecked) {
-      return;
-    }
+        productItem.querySelector('.ProductItem__ImageWrapper').setAttribute('href', variantUrl);
+        productItem.querySelector('.ProductItem__Title > a').setAttribute('href', variantUrl);
 
-    if (isMobile()) {
-      playOnClick = true;
-    }
+        // If we have a custom image for the variant, we change it
+        var originalImageElement = productItem.querySelector('.ProductItem__Image:not(.ProductItem__Image--alternate)');
 
-    if (playOnClick) {
-      // No need to also do the autoplay check
-      setAutoplaySupport(false);
-    }
+        if (target.hasAttribute('data-image-url') && target.getAttribute('data-image-id') !== originalImageElement.getAttribute('data-image-id')) {
+          var newImageElement = document.createElement('img');
+          newImageElement.className = 'ProductItem__Image Image--fadeIn Image--lazyLoad';
+          newImageElement.setAttribute('data-image-id', target.getAttribute('data-image-id'));
+          newImageElement.setAttribute('data-src', target.getAttribute('data-image-url'));
+          newImageElement.setAttribute('data-widths', target.getAttribute('data-image-widths'));
+          newImageElement.setAttribute('data-sizes', 'auto');
 
-    playOnClickChecked = true;
-  }
-
-  // The API will call this function when each video player is ready
-  function onPlayerReady(evt) {
-    evt.target.setPlaybackQuality('hd1080');
-    var videoData = getVideoOptions(evt);
-    var videoTitle = evt.target.getVideoData().title;
-    playOnClickCheck();
-
-    // Prevent tabbing through YouTube player controls until visible
-    $('#' + videoData.id).attr('tabindex', '-1');
-
-    sizeBackgroundVideos();
-    setButtonLabels(videoData.$videoWrapper, videoTitle);
-
-    // Customize based on options from the video ID
-    if (videoData.type === 'background') {
-      evt.target.mute();
-      privatePlayVideo(videoData.id);
-    }
-
-    videoData.$videoWrapper.addClass(classes.loaded);
-  }
-
-  function onPlayerChange(evt) {
-    var videoData = getVideoOptions(evt);
-    if (
-      videoData.status === 'background' &&
-      !isMobile() &&
-      !autoplayCheckComplete &&
-      (evt.data === YT.PlayerState.PLAYING ||
-        evt.data === YT.PlayerState.BUFFERING)
-    ) {
-      setAutoplaySupport(true);
-      autoplayCheckComplete = true;
-      videoData.$videoWrapper.removeClass(classes.loading);
-    }
-    switch (evt.data) {
-      case YT.PlayerState.ENDED:
-        setAsFinished(videoData);
-        break;
-      case YT.PlayerState.PAUSED:
-        // Seeking on a YouTube video also fires a PAUSED state change,
-        // checking the state after a delay prevents us pausing the video when
-        // the user is seeking instead of pausing
-        setTimeout(function() {
-          if (evt.target.getPlayerState() === YT.PlayerState.PAUSED) {
-            setAsPaused(videoData);
+          // Replace the original node
+          if (window.theme.productImageSize === 'natural') {
+            originalImageElement.parentNode.style.paddingBottom = 100.0 / target.getAttribute('data-image-aspect-ratio') + '%';
           }
-        }, 200);
-        break;
-    }
-  }
 
-  function setAsFinished(videoData) {
-    switch (videoData.type) {
-      case 'background':
-        videoPlayers[videoData.id].seekTo(0);
-        break;
-      case 'image_with_play':
-        closeVideo(videoData.id);
-        toggleExpandVideo(videoData.id, false);
-        break;
-    }
-  }
+          originalImageElement.parentNode.style.setProperty('--aspect-ratio', target.getAttribute('data-image-aspect-ratio'));
+          originalImageElement.parentNode.replaceChild(newImageElement, originalImageElement);
+        }
+      }
+    }]);
 
-  function setAsPlaying(videoData) {
-    var $videoWrapper = videoData.$videoWrapper;
-    var $pauseButton = $videoWrapper.find(selectors.pauseVideoBtn);
+    return ProductItemColorSwatch;
+  }();
+  /* harmony export (immutable) */
 
-    $videoWrapper.removeClass(classes.loading);
+  __webpack_exports__["default"] = ProductItemColorSwatch;
 
-    if ($pauseButton.hasClass(classes.userPaused)) {
-      $pauseButton.removeClass(classes.userPaused);
-    }
+  /***/
+},
+/* 5 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-    // Do not change element visibility if it is a background video
-    if (videoData.status === 'background') {
-      return;
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var Accessibility = function () {
+    function Accessibility() {
+      _classCallCheck(this, Accessibility);
     }
 
-    $('#' + videoData.id).attr('tabindex', '0');
+    _createClass(Accessibility, null, [{
+      key: 'trapFocus',
 
-    if (videoData.type === 'image_with_play') {
-      $videoWrapper.removeClass(classes.paused).addClass(classes.playing);
+      /**
+       * Traps the focus in a particular container
+       */
+      value: function trapFocus(container, namespace) {
+        this.listeners = this.listeners || {};
+
+        // We check if there is an element with the attribute "autofocus"
+        var elementToFocus = container.querySelector('[autofocus]') || container;
+
+        container.setAttribute('tabindex', '-1');
+        elementToFocus.focus();
+
+        this.listeners[namespace] = function (event) {
+          if (container !== event.target && !container.contains(event.target)) {
+            container.focus();
+          }
+        };
+
+        document.addEventListener('focusin', this.listeners[namespace]);
+      }
+
+      /**
+       * Removes the trap of focus in a particular container
+       */
+
+    }, {
+      key: 'removeTrapFocus',
+      value: function removeTrapFocus(container, namespace) {
+        if (container) {
+          container.removeAttribute('tabindex');
+        }
+
+        if (this.listeners && this.listeners[namespace]) {
+          document.removeEventListener('focusin', this.listeners[namespace]);
+        }
+      }
+
+      /**
+       * Reset any previous trap focus
+       */
+
+    }, {
+      key: 'clearTrapFocus',
+      value: function clearTrapFocus() {
+        for (var key in this.listeners) {
+          if (this.listeners.hasOwnProperty(key)) {
+            document.removeEventListener('focusin', this.listeners[key]);
+          }
+        }
+
+        this.listeners = {};
+      }
+    }]);
+
+    return Accessibility;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Accessibility;
+
+  /***/
+},
+/* 6 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var Animation = function () {
+    function Animation() {
+      _classCallCheck(this, Animation);
     }
 
-    // Update focus to the close button so we stay within the video wrapper,
-    // allowing time for the scroll animation
-    setTimeout(function() {
-      $videoWrapper.find(selectors.closeVideoBtn).focus();
-    }, videoOptions.scrollAnimationDuration);
-  }
+    _createClass(Animation, null, [{
+      key: 'slideUp',
 
-  function setAsPaused(videoData) {
-    var $videoWrapper = videoData.$videoWrapper;
+      /**
+       * Slide up aims to close an element. To do that, we take the height of the element, and set it to 0 to
+       * force an animation
+       */
+      value: function slideUp(element) {
+        element.style.height = element.scrollHeight + 'px'; // Force previous height to allow CSS transition
+        element.offsetHeight; // Force redraw
+        element.style.height = 0;
+      }
 
-    // YT's events fire after our click event. This status flag ensures
-    // we don't interact with a closed or background video.
-    if (videoData.type === 'image_with_play') {
-      if (videoData.status === 'closed') {
-        $videoWrapper.removeClass(classes.paused);
-      } else {
-        $videoWrapper.addClass(classes.paused);
+      /**
+       * Slide down aims to open an element. To do that, you must make sure that the element you are trying to open
+       * is set with height: 0; overflow: hidden in the CSS, and does not contain any padding nor margin.
+       */
+
+    }, {
+      key: 'slideDown',
+      value: function slideDown(element) {
+        if (element.style.height === 'auto') {
+          return;
+        }
+
+        // To do the animation we temporarily hide it, check the height, and transition to it
+        element.style.height = element.firstElementChild.scrollHeight + 'px';
+
+        var transitionEnded = function transitionEnded(event) {
+          if (event.propertyName === 'height') {
+            element.style.height = 'auto'; // Allows the content to grow normally
+            element.removeEventListener('transitionend', transitionEnded);
+          }
+        };
+
+        element.addEventListener('transitionend', transitionEnded);
+      }
+    }]);
+
+    return Animation;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Animation;
+
+  /***/
+},
+/* 7 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__Accessibility__ = __webpack_require__(5);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "AccessibilityHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_0__Accessibility__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__Animation__ = __webpack_require__(6);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "AnimationHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_1__Animation__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__Currency__ = __webpack_require__(9);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "CurrencyHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_2__Currency__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__Dom__ = __webpack_require__(0);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "DomHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_3__Dom__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__Image__ = __webpack_require__(10);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ImageHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_4__Image__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__Responsive__ = __webpack_require__(1);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ResponsiveHelper", function () {
+    return __WEBPACK_IMPORTED_MODULE_5__Responsive__["default"];
+  });
+
+  /***/
+},
+/* 8 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__ = __webpack_require__(5);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper__ = __webpack_require__(7);
+
+  var Drawer = function () {
+    function Drawer(element) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _classCallCheck(this, Drawer);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.delegateBody = new domDelegate.Delegate(document.body);
+
+      this.onOpen = options['onOpen'] || function () {};
+      this.onClose = options['onClose'] || function () {};
+
+      this.isOpen = false;
+      this.direction = this.element.classList.contains('Drawer--fromLeft') ? 'fromLeft' : 'fromRight';
+
+      this.pageOverlayElement = document.querySelector('.PageOverlay');
+
+      this._attachListeners();
+    }
+
+    _createClass(Drawer, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.delegateBody.off('click', '[data-action="open-drawer"][data-drawer-id="' + this.element.id + '"]');
+        this.delegateBody.off('click', '[data-action="close-drawer"][data-drawer-id="' + this.element.id + '"]');
+        window.removeEventListener('resize', this._calculateMaxHeightListener);
+      }
+    }, {
+      key: 'toggle',
+      value: function toggle() {
+        this.isOpen ? this.close() : this.open();
+      }
+    }, {
+      key: 'open',
+      value: function open(event) {
+        if (this.isOpen) {
+          return;
+        }
+
+        // Make sure that the search is closed whenever a drawer is opened
+        this.element.dispatchEvent(new CustomEvent('search:close', { bubbles: true }));
+
+        if (event) {
+          event.preventDefault();
+        }
+
+        this.element.setAttribute('aria-hidden', 'false');
+        this._calculateMaxHeight();
+
+        document.documentElement.classList.add('no-scroll');
+
+        // This prevent the body to scroll on iOS. This is honestly a bit hacky, but until the platform supports "touch-action: none" like
+        // other browsers, this is the only way to achieve that
+        disableBodyScroll(true, '[data-scrollable]');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].trapFocus(this.element, 'drawer');
+
+        document.querySelector('#shopify-section-header').style.zIndex = ''; // Ugly hack
+
+        // We attach an event to the page overlay to close it
+        this.pageOverlayElement.classList.add('is-visible');
+        this.pageOverlayElement.addEventListener('click', this._closeListener);
+
+        this.isOpen = true;
+
+        this.onOpen(); // Call the callback to allow other code to hook their logic
+
+        return false;
+      }
+    }, {
+      key: 'close',
+      value: function close(event) {
+        if (!this.isOpen) {
+          return;
+        }
+
+        if (event) {
+          event.preventDefault();
+        }
+
+        this.element.setAttribute('aria-hidden', 'true');
+
+        document.documentElement.classList.remove('no-scroll');
+
+        disableBodyScroll(false, '[data-scrollable]');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].removeTrapFocus(this.element, 'drawer');
+
+        this.pageOverlayElement.classList.remove('is-visible');
+        this.pageOverlayElement.removeEventListener('click', this._closeListener);
+
+        this.isOpen = false;
+
+        this.onClose(); // Call the callback to allow other code to hook their logic
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._openListener = this.open.bind(this);
+        this._closeListener = this.close.bind(this);
+        this._calculateMaxHeightListener = this._calculateMaxHeight.bind(this);
+
+        this.delegateBody.on('click', '[data-action="open-drawer"][data-drawer-id="' + this.element.id + '"]', this._openListener);
+        this.delegateBody.on('click', '[data-action="close-drawer"][data-drawer-id="' + this.element.id + '"]', this._closeListener);
+        this.element.addEventListener('keyup', this._handleKeyboard.bind(this));
+        window.addEventListener('resize', this._calculateMaxHeightListener);
+      }
+
+      /**
+       * Make sure that we force a max-height so that the drawer always stays on screen
+       */
+
+    }, {
+      key: '_calculateMaxHeight',
+      value: function _calculateMaxHeight() {
+        this.element.style.maxHeight = window.innerHeight + 'px';
+      }
+    }, {
+      key: '_handleKeyboard',
+
+
+      /**
+       * Handle a11y events
+       */
+      value: function _handleKeyboard(event) {
+        if (this.isOpen && event.keyCode === 27) {
+          this.close();
+        }
+      }
+    }]);
+
+    return Drawer;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Drawer;
+
+  /***/
+},
+/* 9 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var Currency = function () {
+    function Currency() {
+      _classCallCheck(this, Currency);
+    }
+
+    _createClass(Currency, null, [{
+      key: 'formatMoney',
+
+      /**
+       * Format money values based on your shop currency settings
+       *
+       * @param  {Number|string} cents - value in cents or dollar amount e.g. 300 cents or 3.00 dollars
+       * @param  {String} format - shop money_format setting
+       * @return {String} value - formatted value
+       */
+      value: function formatMoney(cents, format) {
+        if (typeof cents === 'string') {
+          cents = cents.replace('.', '');
+        }
+
+        var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/,
+            formatString = format || '${{amount}}';
+
+        function defaultTo(value, defaultValue) {
+          return value == null || value !== value ? defaultValue : value;
+        }
+
+        function formatWithDelimiters(number, precision, thousands, decimal) {
+          precision = defaultTo(precision, 2);
+          thousands = defaultTo(thousands, ',');
+          decimal = defaultTo(decimal, '.');
+
+          if (isNaN(number) || number == null) {
+            return 0;
+          }
+
+          number = (number / 100.0).toFixed(precision);
+
+          var parts = number.split('.'),
+              dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands),
+              centsAmount = parts[1] ? decimal + parts[1] : '';
+
+          return dollarsAmount + centsAmount;
+        }
+
+        var value = '';
+
+        switch (formatString.match(placeholderRegex)[1]) {
+          case 'amount':
+            value = formatWithDelimiters(cents, 2);
+            break;
+          case 'amount_no_decimals':
+            value = formatWithDelimiters(cents, 0);
+            break;
+          case 'amount_with_space_separator':
+            value = formatWithDelimiters(cents, 2, ' ', '.');
+            break;
+          case 'amount_no_decimals_with_comma_separator':
+            value = formatWithDelimiters(cents, 0, ',', '.');
+            break;
+          case 'amount_no_decimals_with_space_separator':
+            value = formatWithDelimiters(cents, 0, ' ');
+            break;
+          case 'amount_with_comma_separator':
+            value = formatWithDelimiters(cents, 2, '.', ',');
+            break;
+        }
+
+        if (formatString.indexOf('with_comma_separator') !== -1) {
+          return formatString.replace(placeholderRegex, value).replace(',00', '');
+        } else {
+          return formatString.replace(placeholderRegex, value).replace('.00', '');
+        }
+      }
+    }]);
+
+    return Currency;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Currency;
+
+  /***/
+},
+/* 10 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var Image = function () {
+    function Image() {
+      _classCallCheck(this, Image);
+    }
+
+    _createClass(Image, null, [{
+      key: 'getSizedImageUrl',
+
+      /**
+       * Create a CDN URL (similar to the img_url filter in Liquid)
+       */
+      value: function getSizedImageUrl(src, size) {
+        if (size === null) {
+          return src;
+        }
+
+        if (size === 'master') {
+          return src.replace(/http(s)?:/, '');
+        }
+
+        var match = src.match(/\.(jpg|jpeg|gif|png|bmp|bitmap|tiff|tif)(\?v=\d+)?$/i);
+
+        if (match) {
+          var prefix = src.split(match[0]);
+          var suffix = match[0];
+
+          return (prefix[0] + '_' + size + suffix).replace(/http(s)?:/, '');
+        } else {
+          return null;
+        }
+      }
+
+      /**
+       * From a given set of desired sizes and a given image, filter out any unwanted sizes
+       */
+
+    }, {
+      key: 'getSupportedSizes',
+      value: function getSupportedSizes(image, desiredSizes) {
+        var supportedSizes = [],
+            imageWidth = image['width'];
+
+        desiredSizes.forEach(function (width) {
+          if (imageWidth >= width) {
+            supportedSizes.push(width);
+          }
+        });
+
+        return supportedSizes;
+      }
+    }]);
+
+    return Image;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Image;
+
+  /***/
+},
+/* 11 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Popover__ = __webpack_require__(3);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Form__ = __webpack_require__(22);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__components_VariantSelector__ = __webpack_require__(17);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__helper_Currency__ = __webpack_require__(9);
+  /**
+   * This component handles all the logic of switching variant, updating product meta...
+   */
+
+  var ProductVariants = function () {
+    function ProductVariants(container, options) {
+      var _this4 = this;
+
+      _classCallCheck(this, ProductVariants);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = options;
+
+      var jsonData = JSON.parse(this.element.querySelector('[data-product-json]').innerHTML);
+
+      this.productData = jsonData['product'];
+      this.variantsInventories = jsonData['inventories'] || {};
+      this.masterSelector = this.element.querySelector('#product-select-' + this.productData['id']);
+
+      // We init value with the first selected variant
+      this.productData['variants'].forEach(function (variant) {
+        if (variant['id'] === jsonData['selected_variant_id']) {
+          _this4.currentVariant = variant;
+          _this4.option1 = variant['option1'];
+          _this4.option2 = variant['option2'];
+          _this4.option3 = variant['option3'];
+        }
+      });
+
+      this._attachListeners();
+      this._createSelectors();
+    }
+
+    _createClass(ProductVariants, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.delegateElement.off('click');
+        this.formPopovers.forEach(function (popover) {
+          return popover.destroy();
+        });
+        this.formVariantSelectors.forEach(function (selector) {
+          return selector.destroy();
+        });
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '[data-action="add-to-cart"]', this._addToCart.bind(this));
+        this.delegateElement.on('click', '[data-action="decrease-quantity"]', this._decreaseQuantity.bind(this));
+        this.delegateElement.on('click', '[data-action="increase-quantity"]', this._increaseQuantity.bind(this));
+        this.delegateElement.on('change', '[name="quantity"]', this._validateQuantity.bind(this));
+
+        // Hook when a radio button change
+        this.delegateElement.on('change', '.ProductForm__Option [type="radio"]', this._onOptionChanged.bind(this));
+      }
+
+      /**
+       * Selectors can either be popovers or dedicated variant selectors. We therefore pre-create them all here
+       */
+
+    }, {
+      key: '_createSelectors',
+      value: function _createSelectors() {
+        var _this5 = this;
+
+        // Create the instances for each selector
+        this.formPopovers = [];
+        this.formVariantSelectors = [];
+
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.OptionSelector')).forEach(function (item) {
+          var popover = new __WEBPACK_IMPORTED_MODULE_0__components_Popover__["default"](item, { preferredPosition: 'left', onValueChanged: _this5._onOptionChanged.bind(_this5) });
+          _this5.formPopovers.push(popover);
+        });
+
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.VariantSelector')).forEach(function (item) {
+          var variantSelector = new __WEBPACK_IMPORTED_MODULE_3__components_VariantSelector__["default"](item, { onValueChanged: _this5._onOptionChanged.bind(_this5) });
+          _this5.formVariantSelectors.push(variantSelector);
+        });
+      }
+
+      /**
+       * ---------------------------------------------------------------------------------------------------
+       * CODE THAT HANDLE VARIANT CHANGES IN THE FRONT
+       *
+       * Please note that this code is highly dependant on the markup and classes, so make sure to NOT
+       * edit this code
+       * ---------------------------------------------------------------------------------------------------
+       */
+
+      /**
+       * This callback is called whenever the variant changes and allows to update data about the active variant
+       */
+
+    }, {
+      key: '_onVariantChanged',
+      value: function _onVariantChanged(previousVariant, newVariant) {
+        // 1st: the prices
+        this._updateProductPrices(newVariant, previousVariant);
+
+        // 2nd: update inventory
+        this._updateInventory(newVariant, previousVariant);
+
+        // 3rd: update SKU
+        this._updateSku(newVariant, previousVariant);
+
+        // 4th: update the price measurement
+        this._updateUnitPrice(newVariant, previousVariant);
+
+        // 5th: the add to cart button
+        this._updateAddToCartButton(newVariant, previousVariant);
+
+        // Finally, we send an event so that other system could hook and do their own logic
+        this.element.dispatchEvent(new CustomEvent('variant:changed', {
+          bubbles: true,
+          detail: { variant: newVariant, previousVariant: previousVariant }
+        }));
+      }
+
+      /**
+       * Update the prices (optionally showing compare at price)
+       */
+
+    }, {
+      key: '_updateProductPrices',
+      value: function _updateProductPrices(newVariant, previousVariant) {
+        var productMetaPrices = this.element.querySelector('.ProductMeta__PriceList');
+
+        if (!newVariant) {
+          productMetaPrices.style.display = 'none';
+        } else {
+          if (previousVariant && previousVariant['price'] === newVariant['price'] && previousVariant['compare_at_price'] === newVariant['compare_at_price']) {
+            return; // The price do not have changed so let's return to avoid changing the DOM for nothing
+          }
+
+          productMetaPrices.innerHTML = '';
+
+          if (newVariant['compare_at_price'] > newVariant['price']) {
+            productMetaPrices.innerHTML += '<span class="ProductMeta__Price Price Price--highlight Text--subdued u-h4" data-money-convertible>' + __WEBPACK_IMPORTED_MODULE_4__helper_Currency__["default"].formatMoney(newVariant['price'], window.theme.moneyFormat) + '</span>';
+            productMetaPrices.innerHTML += '<span class="ProductMeta__Price Price Price--compareAt Text--subdued u-h4" data-money-convertible>' + __WEBPACK_IMPORTED_MODULE_4__helper_Currency__["default"].formatMoney(newVariant['compare_at_price'], window.theme.moneyFormat) + '</span>';
+          } else {
+            productMetaPrices.innerHTML += '<span class="ProductMeta__Price Price Text--subdued u-h4" data-money-convertible>' + __WEBPACK_IMPORTED_MODULE_4__helper_Currency__["default"].formatMoney(newVariant['price'], window.theme.moneyFormat) + '</span>';
+          }
+
+          productMetaPrices.style.display = '';
+        }
+      }
+
+      /**
+       * Update the inventory (if needed)
+       */
+
+    }, {
+      key: '_updateInventory',
+      value: function _updateInventory(newVariant) {
+        if (!this.options['showInventoryQuantity']) {
+          return;
+        }
+
+        var productFormInventory = this.element.querySelector('.ProductForm__Inventory'),
+            variantInventory = newVariant ? this.variantsInventories[newVariant['id']] : null;
+
+        if (!newVariant || null === variantInventory['inventory_management'] || variantInventory['inventory_quantity'] <= 0 || this.options['inventoryQuantityThreshold'] > 0 && variantInventory['inventory_quantity'] > this.options['inventoryQuantityThreshold']) {
+          productFormInventory.style.display = 'none';
+        } else {
+          productFormInventory.textContent = variantInventory['inventory_message'];
+          productFormInventory.style.display = '';
+        }
+      }
+
+      /**
+       * Update the SKU
+       */
+
+    }, {
+      key: '_updateSku',
+      value: function _updateSku(newVariant) {
+        if (!this.options['showSku'] || !newVariant) {
+          return;
+        }
+
+        var productSkuNumber = this.element.querySelector('.ProductMeta__SkuNumber');
+
+        if (productSkuNumber && newVariant['sku']) {
+          productSkuNumber.innerText = newVariant['sku'];
+        }
+      }
+
+      /**
+       * Update the unit price
+       */
+
+    }, {
+      key: '_updateUnitPrice',
+      value: function _updateUnitPrice(newVariant) {
+        if (!newVariant) {
+          return;
+        }
+
+        var unitPriceMeasurement = this.element.querySelector('.ProductMeta__UnitPriceMeasurement');
+
+        if (!newVariant.hasOwnProperty('unit_price')) {
+          unitPriceMeasurement.style.display = 'none';
+          return;
+        }
+
+        unitPriceMeasurement.style.display = 'block';
+
+        unitPriceMeasurement.querySelector('.UnitPriceMeasurement__Price').innerHTML = __WEBPACK_IMPORTED_MODULE_4__helper_Currency__["default"].formatMoney(newVariant['unit_price'], window.theme.moneyFormat);
+        unitPriceMeasurement.querySelector('.UnitPriceMeasurement__ReferenceUnit').textContent = newVariant['unit_price_measurement']['reference_unit'];
+
+        var unitPriceReferenceValue = unitPriceMeasurement.querySelector('.UnitPriceMeasurement__ReferenceValue');
+        unitPriceReferenceValue.textContent = newVariant['unit_price_measurement']['reference_value'];
+        unitPriceReferenceValue.style.display = newVariant['unit_price_measurement']['reference_value'] === 1 ? 'none' : 'inline';
+      }
+
+      /**
+       * Update the add to cart
+       */
+
+    }, {
+      key: '_updateAddToCartButton',
+      value: function _updateAddToCartButton(newVariant) {
+        var addToCartButton = this.element.querySelector('.ProductForm__AddToCart'),
+            shopifyPaymentButton = this.element.querySelector('.shopify-payment-button'),
+            newButton = document.createElement('button');
+
+        newButton.setAttribute('type', 'submit');
+        newButton.className = 'ProductForm__AddToCart Button Button--full';
+
+        if (!newVariant) {
+          newButton.setAttribute('disabled', 'disabled');
+          newButton.removeAttribute('data-action');
+          newButton.classList.add('Button--secondary');
+          newButton.innerHTML = window.languages.productFormUnavailable;
+        } else {
+          if (newVariant['available']) {
+            newButton.removeAttribute('disabled');
+            newButton.classList.add(this.options['showPaymentButton'] ? 'Button--secondary' : 'Button--primary');
+            newButton.setAttribute('data-action', 'add-to-cart');
+
+            if (undefined === this.options['showPriceInButton'] || this.options['showPriceInButton']) {
+              newButton.innerHTML = '\n            <span>' + window.languages.productFormAddToCart + '</span>\n            <span class="Button__SeparatorDot"></span>\n            <span data-money-convertible>' + __WEBPACK_IMPORTED_MODULE_4__helper_Currency__["default"].formatMoney(newVariant['price'], window.theme.moneyFormat) + '</span>\n          ';
+            } else {
+              newButton.innerHTML = '<span>' + window.languages.productFormAddToCart + '</span>';
+            }
+          } else {
+            newButton.setAttribute('disabled', 'disabled');
+            newButton.classList.add('Button--secondary');
+            newButton.removeAttribute('data-action');
+            newButton.innerHTML = window.languages.productFormSoldOut;
+          }
+        }
+
+        if (this.options['showPaymentButton'] && shopifyPaymentButton) {
+          if (!newVariant || !newVariant['available']) {
+            shopifyPaymentButton.style.display = 'none';
+          } else {
+            shopifyPaymentButton.style.display = 'block';
+          }
+        }
+
+        // We replace the HTML instead of editing as it prevents for the CSS transition to show up
+        addToCartButton.parentNode.replaceChild(newButton, addToCartButton);
+      }
+
+      /**
+       * ---------------------------------------------------------------------------------------------------
+       * INTERNAL CODE THAT HANDLE VARIANT CHANGES
+       * ---------------------------------------------------------------------------------------------------
+       */
+
+      /**
+       * Whenever an option is changed, this code fetch the corresponding active variant
+       */
+
+    }, {
+      key: '_onOptionChanged',
+      value: function _onOptionChanged(newValue, target, activator) {
+        // We change the value associated with the activator, and check if we have a color swatch
+        if (activator) {
+          this['option' + target.getAttribute('data-option-position')] = newValue;
+          activator.querySelector('.ProductForm__SelectedValue').innerHTML = newValue;
+        } else {
+          this['option' + target.getAttribute('data-option-position')] = target.value;
+          var selectedValue = target.closest('.ProductForm__Option').querySelector('.ProductForm__SelectedValue');
+
+          if (selectedValue) {
+            selectedValue.innerHTML = target.value;
+          }
+        }
+
+        // Finally, we get the new variant
+        var previousVariant = this.currentVariant;
+        this.currentVariant = this._getCurrentVariantFromOptions();
+
+        this._onVariantChanged(previousVariant, this.currentVariant);
+
+        if (this.currentVariant) {
+          if (this.options['enableHistoryState']) {
+            this._updateHistoryState(this.currentVariant);
+          }
+
+          // We need to modify the hidden select that contain the id attribute as well
+          this.masterSelector.querySelector('[selected]').removeAttribute('selected');
+          this.masterSelector.querySelector('[value="' + this.currentVariant['id'] + '"]').setAttribute('selected', 'selected');
+        }
+      }
+
+      /**
+       * Get the active variant based on the options
+       */
+
+    }, {
+      key: '_getCurrentVariantFromOptions',
+      value: function _getCurrentVariantFromOptions() {
+        var _this6 = this;
+
+        var found = false;
+
+        this.productData['variants'].forEach(function (variant) {
+          if (variant['option1'] === _this6.option1 && variant['option2'] === _this6.option2 && variant['option3'] === _this6.option3) {
+            found = variant;
+          }
+        });
+
+        return found || null;
+      }
+
+      /**
+       * Update the history state for browsers that support it
+       */
+
+    }, {
+      key: '_updateHistoryState',
+      value: function _updateHistoryState(variant) {
+        if (!history.replaceState) {
+          return;
+        }
+
+        var newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + variant.id;
+
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+      }
+
+      /**
+       * ---------------------------------------------------------------------------------------------------
+       * INTERNAL CODE THAT HANDLE PRODUCT ADD TO CART
+       * ---------------------------------------------------------------------------------------------------
+       */
+
+    }, {
+      key: '_addToCart',
+      value: function _addToCart(event) {
+        var _this7 = this;
+
+        if (!this.options['useAjaxCart']) {
+          return; // When using a cart type of page, we just simply redirect to the cart page
+        }
+
+        event.preventDefault(); // Prevent form to be submitted
+
+        var addToCartButton = this.element.querySelector('.ProductForm__AddToCart');
+
+        // First, we switch the status of the button
+        addToCartButton.setAttribute('disabled', 'disabled');
+        document.dispatchEvent(new CustomEvent('theme:loading:start'));
+
+        // Then we add the product in Ajax
+        var formElement = this.element.querySelector('form[action*="/cart/add"]');
+
+        fetch(window.routes.cartAddUrl + '.js', {
+          body: JSON.stringify(__WEBPACK_IMPORTED_MODULE_2__helper_Form__["default"].serialize(formElement)),
+          credentials: 'same-origin',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' // This is needed as currently there is a bug in Shopify that assumes this header
+          }
+        }).then(function (response) {
+          document.dispatchEvent(new CustomEvent('theme:loading:end'));
+          if (response.ok) {
+            addToCartButton.removeAttribute('disabled');
+            // We simply trigger an event so the mini-cart can re-render
+            _this7.element.dispatchEvent(new CustomEvent('product:added', {
+              bubbles: true,
+              detail: {
+                variant: _this7.currentVariant,
+                quantity: parseInt(formElement.querySelector('[name="quantity"]').value)
+              }
+            }));
+          } else {
+            response.json().then(function (content) {
+              var errorMessageElement = document.createElement('span');
+              errorMessageElement.className = 'ProductForm__Error Alert Alert--error';
+              errorMessageElement.innerHTML = content['description'];
+              addToCartButton.removeAttribute('disabled');
+              addToCartButton.insertAdjacentElement('afterend', errorMessageElement);
+              setTimeout(function () {
+                errorMessageElement.remove();
+              }, 2500);
+            });
+          }
+        });
+
+        event.preventDefault();
+      }
+
+      /**
+       * ---------------------------------------------------------------------------------------------------
+       * OTHER
+       * ---------------------------------------------------------------------------------------------------
+       */
+
+      /**
+       * When using the quantity selector, this can be used to decrease the quantity (be ensuring it won't be lower than 1)
+       */
+
+    }, {
+      key: '_decreaseQuantity',
+      value: function _decreaseQuantity(event, target) {
+        target.nextElementSibling.value = Math.max(parseInt(target.nextElementSibling.value) - 1, 1);
+      }
+
+      /**
+       * When using the quantity selector, this can be used to increase the quantity
+       */
+
+    }, {
+      key: '_increaseQuantity',
+      value: function _increaseQuantity(event, target) {
+        target.previousElementSibling.value = parseInt(target.previousElementSibling.value) + 1;
+      }
+
+      /**
+       * Make sure the quantity does not go below when manually changed
+       */
+
+    }, {
+      key: '_validateQuantity',
+      value: function _validateQuantity(event, target) {
+        target.value = Math.max(parseInt(target.value) || 1, 1);
+      }
+    }]);
+
+    return ProductVariants;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductVariants;
+
+  /***/
+},
+/* 12 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var CountrySelector = function () {
+    function CountrySelector(countrySelect, provinceSelect) {
+      _classCallCheck(this, CountrySelector);
+
+      this.countrySelect = countrySelect;
+      this.provinceSelect = provinceSelect;
+
+      if (this.countrySelect && this.provinceSelect) {
+        this._attachListeners();
+        this._initSelectors();
       }
     }
 
-    $videoWrapper.removeClass(classes.playing);
-  }
-
-  function closeVideo(playerId) {
-    var videoData = videos[playerId];
-    var $videoWrapper = videoData.$videoWrapper;
-    var classesToRemove = [classes.paused, classes.playing].join(' ');
-
-    if (isMobile()) {
-      $videoWrapper.removeAttr('style');
-    }
-
-    $('#' + videoData.id).attr('tabindex', '-1');
-
-    videoData.status = 'closed';
-
-    switch (videoData.type) {
-      case 'image_with_play':
-        videoPlayers[playerId].stopVideo();
-        setAsPaused(videoData); // in case the video is already paused
-        break;
-      case 'background':
-        videoPlayers[playerId].mute();
-        setBackgroundVideo(playerId);
-        break;
-    }
-
-    $videoWrapper.removeClass(classesToRemove);
-  }
-
-  function getVideoOptions(evt) {
-    var id = evt.target.getIframe().id;
-    return videos[id];
-  }
-
-  function toggleExpandVideo(playerId, expand) {
-    var video = videos[playerId];
-    var elementTop = video.$videoWrapper.offset().top;
-    var $playButton = video.$videoWrapper.find(selectors.playVideoBtn);
-    var offset = 0;
-    var newHeight = 0;
-
-    if (isMobile()) {
-      video.$videoWrapper.parent().toggleClass('page-width', !expand);
-    }
-
-    if (expand) {
-      if (isMobile()) {
-        newHeight = $(window).width() / videoOptions.ratio;
-      } else {
-        newHeight = video.$videoWrapper.width() / videoOptions.ratio;
+    _createClass(CountrySelector, [{
+      key: 'destroy',
+      value: function destroy() {
+        if (this.countrySelect) {
+          this.countrySelect.removeEventListener('change', this._onCountryChangedListener);
+        }
       }
-      offset = ($(window).height() - newHeight) / 2;
+    }, {
+      key: '_initSelectors',
+      value: function _initSelectors() {
+        // Check first the default value of country
+        var defaultCountry = this.countrySelect.getAttribute('data-default');
 
-      video.$videoWrapper
-        .removeClass(classes.wrapperMinHeight)
-        .animate({ height: newHeight }, 600);
+        if (defaultCountry) {
+          for (var i = 0; i !== this.countrySelect.options.length; ++i) {
+            if (this.countrySelect.options[i].text === defaultCountry) {
+              this.countrySelect.selectedIndex = i;
+              break;
+            }
+          }
+        } else {
+          this.countrySelect.selectedIndex = 0;
+        }
 
-      // Animate doesn't work in mobile editor, so we don't use it
-      if (!(isMobile() && Shopify.designMode)) {
-        $('html, body').animate(
-          {
-            scrollTop: elementTop - offset
-          },
-          videoOptions.scrollAnimationDuration
-        );
+        var event = new Event('change', { bubbles: true });
+        this.countrySelect.dispatchEvent(event);
+
+        // Then the province
+        var defaultProvince = this.provinceSelect.getAttribute('data-default');
+
+        if (defaultProvince) {
+          this.provinceSelect.value = defaultProvince;
+        }
       }
-    } else {
-      if (isMobile()) {
-        newHeight = video.$videoWrapper.data('mobile-height');
-      } else {
-        newHeight = video.$videoWrapper.data('desktop-height');
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._onCountryChangedListener = this._onCountryChanged.bind(this);
+        this.countrySelect.addEventListener('change', this._onCountryChangedListener);
       }
+    }, {
+      key: '_onCountryChanged',
+      value: function _onCountryChanged() {
+        var _this8 = this;
 
-      video.$videoWrapper
-        .height(video.$videoWrapper.width() / videoOptions.ratio)
-        .animate({ height: newHeight }, 600);
-      setTimeout(function() {
-        video.$videoWrapper.addClass(classes.wrapperMinHeight);
-      }, 600);
-      $playButton.focus();
-    }
-  }
+        var selectedOption = this.countrySelect.options[this.countrySelect.selectedIndex],
+            provinces = JSON.parse(selectedOption.getAttribute('data-provinces') || '[]');
 
-  function togglePause(playerId) {
-    var $pauseButton = videos[playerId].$videoWrapper.find(
-      selectors.pauseVideoBtn
-    );
-    var paused = $pauseButton.hasClass(classes.userPaused);
-    if (paused) {
-      $pauseButton.removeClass(classes.userPaused);
-      customPlayVideo(playerId);
-    } else {
-      $pauseButton.addClass(classes.userPaused);
-      pauseVideo(playerId);
-    }
-    $pauseButton.attr('aria-pressed', !paused);
-  }
+        // First remove all options
+        this.provinceSelect.innerHTML = '';
 
-  function startVideoOnClick(playerId) {
-    var video = videos[playerId];
+        if (provinces.length === 0) {
+          this.provinceSelect.parentNode.style.display = 'none';
+          return;
+        }
 
-    // add loading class to wrapper
-    video.$videoWrapper.addClass(classes.loading);
+        // We need to build the provinces array
+        provinces.forEach(function (data) {
+          _this8.provinceSelect.options.add(new Option(data[1], data[0]));
+        });
 
-    // Explicity set the video wrapper height (needed for height transition)
-    video.$videoWrapper.attr(
-      'style',
-      'height: ' + video.$videoWrapper.height() + 'px'
-    );
+        this.provinceSelect.parentNode.style.display = 'block';
+      }
+    }]);
 
-    video.status = 'open';
+    return CountrySelector;
+  }();
+  /* harmony export (immutable) */
 
-    switch (video.type) {
-      case 'image_with_play':
-        privatePlayVideo(playerId, true);
-        break;
-      case 'background':
-        unsetBackgroundVideo(playerId, video);
-        videoPlayers[playerId].unMute();
-        privatePlayVideo(playerId, true);
-        break;
-    }
+  __webpack_exports__["default"] = CountrySelector;
 
-    toggleExpandVideo(playerId, true);
+  /***/
+},
+/* 13 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-    // esc to close video player
-    $(document).on('keydown.videoPlayer', function(evt) {
-      var playerId = $(document.activeElement).data('controls');
-      if (evt.keyCode !== slate.utils.keyboardKeys.ESCAPE || !playerId) {
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * This class allows to automatically scrolls within a div when this div does not fit into the visible space
+   */
+
+  var OverflowScroller = function () {
+    function OverflowScroller(element) {
+      _classCallCheck(this, OverflowScroller);
+
+      if (!element) {
         return;
       }
 
-      closeVideo(playerId);
-      toggleExpandVideo(playerId, false);
-    });
-  }
+      this.element = element;
+      this.lastKnownY = window.scrollY;
+      this.currentTop = 0;
+      this.initialTopOffset = parseInt(window.getComputedStyle(this.element).top);
 
-  function sizeBackgroundVideos() {
-    $('.' + classes.backgroundVideo).each(function(index, el) {
-      sizeBackgroundVideo($(el));
-    });
-  }
-
-  function sizeBackgroundVideo($videoPlayer) {
-    if (!youtubeLoaded) {
-      return;
+      this._attachListeners();
     }
 
-    if (isMobile()) {
-      $videoPlayer.removeAttr('style');
-    } else {
-      var $videoWrapper = $videoPlayer.closest(selectors.videoWrapper);
-      var videoWidth = $videoWrapper.width();
-      var playerWidth = $videoPlayer.width();
-      var desktopHeight = $videoWrapper.data('desktop-height');
+    _createClass(OverflowScroller, [{
+      key: 'destroy',
+      value: function destroy() {
+        window.removeEventListener('scroll', this._checkPositionListener);
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._checkPositionListener = this._checkPosition.bind(this);
+        window.addEventListener('scroll', this._checkPositionListener);
+      }
+    }, {
+      key: '_checkPosition',
+      value: function _checkPosition() {
+        var _this9 = this;
 
-      // when screen aspect ratio differs from video, video must center and underlay one dimension
-      if (videoWidth / videoOptions.ratio < desktopHeight) {
-        playerWidth = Math.ceil(desktopHeight * videoOptions.ratio); // get new player width
-        $videoPlayer
-          .width(playerWidth)
-          .height(desktopHeight)
-          .css({
-            left: (videoWidth - playerWidth) / 2,
-            top: 0
-          }); // player width is greater, offset left; reset top
-      } else {
-        // new video width < window width (gap to right)
-        desktopHeight = Math.ceil(videoWidth / videoOptions.ratio); // get new player height
-        $videoPlayer
-          .width(videoWidth)
-          .height(desktopHeight)
-          .css({
-            left: 0,
-            top: (desktopHeight - desktopHeight) / 2
-          }); // player height is greater, offset top; reset left
+        fastdom.measure(function () {
+          var bounds = _this9.element.getBoundingClientRect(),
+              maxTop = bounds.top + window.scrollY - _this9.element.offsetTop + _this9.initialTopOffset,
+              minTop = _this9.element.clientHeight - window.innerHeight;
+
+          if (window.scrollY < _this9.lastKnownY) {
+            _this9.currentTop -= window.scrollY - _this9.lastKnownY;
+          } else {
+            _this9.currentTop += _this9.lastKnownY - window.scrollY;
+          }
+
+          _this9.currentTop = Math.min(Math.max(_this9.currentTop, -minTop), maxTop, _this9.initialTopOffset);
+          _this9.lastKnownY = window.scrollY;
+        });
+
+        fastdom.mutate(function () {
+          _this9.element.style.top = _this9.currentTop + 'px';
+        });
+      }
+    }]);
+
+    return OverflowScroller;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = OverflowScroller;
+
+  /***/
+},
+/* 14 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Image__ = __webpack_require__(10);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__ = __webpack_require__(1);
+
+  var ProductImageZoom = function () {
+    function ProductImageZoom(element, slideshow) {
+      _classCallCheck(this, ProductImageZoom);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.delegateRoot = new domDelegate.Delegate(document.body);
+
+      this.slideshow = slideshow;
+
+      this._attachListeners();
+    }
+
+    _createClass(ProductImageZoom, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.delegateElement.off('click');
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '[data-action="open-product-zoom"]', this._initPhotoSwipe.bind(this));
+        this.delegateElement.on('click', '.Product__SlideItem--image', this._initPhotoSwipeFromImageClick.bind(this));
       }
 
-      $videoPlayer.prepareTransition();
-      $videoWrapper.addClass(classes.loaded);
-    }
-  }
+      /**
+       * To save performance, we only initialize PhotoSwipe when it's requested. All high resolution images
+       * are also loaded only on demand. Also, please note that PhotoSwipe is always completely destroyed
+       * whenever it is closed, so it stays super snappy
+       */
 
-  function unsetBackgroundVideo(playerId) {
-    // Switch the background video to a chrome-only player once played
-    $('#' + playerId)
-      .removeClass(classes.backgroundVideo)
-      .addClass(classes.videoWithImage);
+    }, {
+      key: '_initPhotoSwipe',
+      value: function _initPhotoSwipe() {
+        var images = [];
 
-    setTimeout(function() {
-      $('#' + playerId).removeAttr('style');
-    }, 600);
-
-    videos[playerId].$videoWrapper
-      .removeClass(classes.backgroundVideoWrapper)
-      .addClass(classes.playing);
-
-    videos[playerId].status = 'open';
-  }
-
-  function setBackgroundVideo(playerId) {
-    $('#' + playerId)
-      .removeClass(classes.videoWithImage)
-      .addClass(classes.backgroundVideo);
-
-    videos[playerId].$videoWrapper.addClass(classes.backgroundVideoWrapper);
-
-    videos[playerId].status = 'background';
-    sizeBackgroundVideo($('#' + playerId));
-  }
-
-  function isMobile() {
-    return $(window).width() < theme.breakpoints.medium;
-  }
-
-  function initEvents() {
-    $(document).on('click.videoPlayer', selectors.playVideoBtn, function(evt) {
-      var playerId = $(evt.currentTarget).data('controls');
-
-      startVideoOnClick(playerId);
-    });
-
-    $(document).on('click.videoPlayer', selectors.closeVideoBtn, function(evt) {
-      var playerId = $(evt.currentTarget).data('controls');
-
-      $(evt.currentTarget).blur();
-      closeVideo(playerId);
-      toggleExpandVideo(playerId, false);
-    });
-
-    $(document).on('click.videoPlayer', selectors.pauseVideoBtn, function(evt) {
-      var playerId = $(evt.currentTarget).data('controls');
-      togglePause(playerId);
-    });
-
-    // Listen to resize to keep a background-size:cover-like layout
-    $(window).on(
-      'resize.videoPlayer',
-      $.debounce(200, function() {
-        if (!youtubeLoaded) return;
-        var key;
-        var fullscreen = window.innerHeight === screen.height;
-
-        sizeBackgroundVideos();
-
-        if (isMobile()) {
-          for (key in videos) {
-            if (videos.hasOwnProperty(key)) {
-              if (videos[key].$videoWrapper.hasClass(classes.playing)) {
-                if (!fullscreen) {
-                  pauseVideo(key);
-                  setAsPaused(videos[key]);
-                }
-              }
-              videos[key].$videoWrapper.height(
-                $(document).width() / videoOptions.ratio
-              );
-            }
+        this.slideshow.flickityInstance.cells.forEach(function (item) {
+          if (item.element.classList.contains('Product__SlideItem--image')) {
+            images.push(item.element.querySelector('img'));
           }
-          setAutoplaySupport(false);
+        });
+
+        this._createPhotoSwipeInstance(this._createPhotoSwipeItemsFromImages(images), parseInt(this.slideshow.flickityInstance.selectedElement.getAttribute('data-image-media-position')));
+      }
+
+      /**
+       * On desktop we do not have the dedicated small icon, instead the zoom is triggered when clicking directly on the image
+       */
+
+    }, {
+      key: '_initPhotoSwipeFromImageClick',
+      value: function _initPhotoSwipeFromImageClick(event, target) {
+        // Opening this way is only available on desktop
+        if (__WEBPACK_IMPORTED_MODULE_2__helper_Responsive__["default"].matchesBreakpoint('pocket')) {
+          return;
+        }
+
+        var images = __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.Product__SlideItem--image img'));
+
+        this._createPhotoSwipeInstance(this._createPhotoSwipeItemsFromImages(images), parseInt(target.getAttribute('data-image-media-position')));
+      }
+
+      /**
+       * Take a list of images and create a PhotoSwipe array. This is called whenever the gallery is initialized.
+       */
+
+    }, {
+      key: '_createPhotoSwipeItemsFromImages',
+      value: function _createPhotoSwipeItemsFromImages(images) {
+        return images.map(function (image) {
+          var maxWidth = parseInt(image.getAttribute('data-max-width')),
+              maxHeight = parseInt(image.getAttribute('data-max-height')),
+              maxDimension = __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__["default"].matchesBreakpoint('phone') ? 1200 : 1800,
+              // 1200 is max size for mobile and 1800 for larger devices
+          reduceFactor = 1.0;
+
+          if (maxWidth >= maxHeight) {
+            reduceFactor = Math.max(maxWidth / maxDimension, 1.0);
+          } else {
+            reduceFactor = Math.max(maxHeight / maxDimension, 1.0);
+          }
+
+          var requestedWidth = Math.floor(maxWidth / reduceFactor);
+          var requestedHeight = Math.floor(maxHeight / reduceFactor);
+
+          return {
+            msrc: image.currentSrc || image.src, // For browser that supports srcset, currentSrc is the currently used image
+            w: requestedWidth,
+            h: requestedHeight,
+            initialZoomLevel: 0.65,
+            src: __WEBPACK_IMPORTED_MODULE_1__helper_Image__["default"].getSizedImageUrl(image.getAttribute('data-original-src'), requestedWidth + 'x' + requestedHeight)
+          };
+        });
+      }
+
+      /**
+       * Take a list of nodes containing all images and create a PhotoSwipe array. This is called
+       * whenever the gallery is initialized.
+       */
+
+    }, {
+      key: '_createPhotoSwipeInstance',
+      value: function _createPhotoSwipeInstance(items, selectedImageIndex) {
+        var _this10 = this;
+
+        var photoswipeContainer = document.querySelector('.pswp');
+
+        this.photoSwipeInstance = new PhotoSwipe(photoswipeContainer, false, items, {
+          index: selectedImageIndex,
+          showHideOpacity: true,
+          showAnimationDuration: 500,
+          loop: false,
+          history: false,
+          closeOnVerticalDrag: false,
+          allowPanToNext: false,
+          pinchToClose: false,
+          errorMsg: '<p class="pswp__error-msg">' + window.languages.productImageLoadingError + '</p>',
+          scaleMode: 'zoom',
+          getDoubleTapZoom: function getDoubleTapZoom(isMouseClick, item) {
+            if (isMouseClick) {
+              return 1.6;
+            } else {
+              return item.initialZoomLevel < 0.7 ? 1 : 1.33;
+            }
+          },
+          getThumbBoundsFn: function getThumbBoundsFn(index) {
+            var thumbnail = _this10.element.querySelector('.Product__Slideshow .Carousel__Cell[data-image-media-position="' + parseInt(index) + '"] img'),
+                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                rect = thumbnail.getBoundingClientRect();
+
+            return { x: rect.left, y: rect.top + pageYScroll, w: rect.width };
+          }
+        });
+
+        this.photoSwipeInstance.listen('beforeChange', this._onSlideChanged.bind(this));
+        this.photoSwipeInstance.listen('destroy', this._destroyPhotoSwipe.bind(this));
+        this.photoSwipeInstance.listen('doubleTap', this._onDoubleTap.bind(this));
+        this.photoSwipeInstance.listen('initialZoomIn', this._onInitialZoomIn.bind(this));
+        this.photoSwipeInstance.listen('initialZoomOut', this._onInitialZoomOut.bind(this));
+
+        this.delegateRoot.on('pswpTap', '.pswp__scroll-wrap', this._onSingleTap.bind(this));
+        this.delegateRoot.on('pswpTap', '.pswp__button--close', this.photoSwipeInstance.close);
+        this.delegateRoot.on('pswpTap', '.pswp__button--prev', this.photoSwipeInstance.prev);
+        this.delegateRoot.on('pswpTap', '.pswp__button--next', this.photoSwipeInstance.next);
+
+        this.photoSwipeInstance.init();
+      }
+
+      /**
+       * Update the nav
+       */
+
+    }, {
+      key: '_onSlideChanged',
+      value: function _onSlideChanged() {
+        if (this.photoSwipeInstance.getCurrentIndex() === 0) {
+          this.photoSwipeInstance.scrollWrap.querySelector('.pswp__button--prev').setAttribute('disabled', 'disabled');
         } else {
-          setAutoplaySupport(true);
-          for (key in videos) {
-            if (
-              videos[key].$videoWrapper.find('.' + classes.videoWithImage)
-                .length
-            ) {
-              continue;
-            }
-            videoPlayers[key].playVideo();
-            setAsPlaying(videos[key]);
+          this.photoSwipeInstance.scrollWrap.querySelector('.pswp__button--prev').removeAttribute('disabled');
+        }
+
+        if (this.photoSwipeInstance.getCurrentIndex() + 1 === this.photoSwipeInstance.options.getNumItemsFn()) {
+          this.photoSwipeInstance.scrollWrap.querySelector('.pswp__button--next').setAttribute('disabled', 'disabled');
+        } else {
+          this.photoSwipeInstance.scrollWrap.querySelector('.pswp__button--next').removeAttribute('disabled');
+        }
+      }
+
+      /**
+       * This event is a bit different and is triggered when the user click somewhere. We use it do allow to zoom in and
+       * zoom out in the image on desktop and use for the UI
+       */
+
+    }, {
+      key: '_onSingleTap',
+      value: function _onSingleTap(event) {
+        if (!event.detail || event.detail.pointerType === 'mouse') {
+          if (event.target.classList.contains('pswp__img')) {
+            this.photoSwipeInstance.toggleDesktopZoom(event.detail.releasePoint);
           }
-        }
-      })
-    );
-
-    $(window).on(
-      'scroll.videoPlayer',
-      $.debounce(50, function() {
-        if (!youtubeLoaded) return;
-
-        for (var key in videos) {
-          if (videos.hasOwnProperty(key)) {
-            var $videoWrapper = videos[key].$videoWrapper;
-
-            // Close the video if more than 75% of it is scrolled out of view
-            if (
-              $videoWrapper.hasClass(classes.playing) &&
-              ($videoWrapper.offset().top + $videoWrapper.height() * 0.75 <
-                $(window).scrollTop() ||
-                $videoWrapper.offset().top + $videoWrapper.height() * 0.25 >
-                  $(window).scrollTop() + $(window).height())
-            ) {
-              closeVideo(key);
-              toggleExpandVideo(key, false);
-            }
+        } else {
+          if (event.target.classList.contains('pswp__button')) {
+            return;
           }
-        }
-      })
-    );
-  }
 
-  function createPlayer(key) {
-    var args = $.extend({}, videoOptions, videos[key]);
-    args.playerVars.controls = args.controls;
-    videoPlayers[key] = new YT.Player(key, args);
-  }
-
-  function removeEvents() {
-    $(document).off('.videoPlayer');
-    $(window).off('.videoPlayer');
-  }
-
-  function setButtonLabels($videoWrapper, title) {
-    var $playButtons = $videoWrapper.find(selectors.playVideoBtn);
-    var $closeButton = $videoWrapper.find(selectors.closeVideoBtn);
-    var $pauseButton = $videoWrapper.find(selectors.pauseVideoBtn);
-    var $closeButtonText = $closeButton.find(selectors.fallbackText);
-    var $pauseButtonStopText = $pauseButton
-      .find(selectors.pauseVideoStop)
-      .find(selectors.fallbackText);
-    var $pauseButtonResumeText = $pauseButton
-      .find(selectors.pauseVideoResume)
-      .find(selectors.fallbackText);
-
-    // Insert the video title retrieved from YouTube into the instructional text
-    // for each button
-    $playButtons.each(function() {
-      var $playButton = $(this);
-      var $playButtonText = $playButton.find(selectors.fallbackText);
-
-      $playButtonText.text(
-        $playButtonText.text().replace('[video_title]', title)
-      );
-    });
-    $closeButtonText.text(
-      $closeButtonText.text().replace('[video_title]', title)
-    );
-    $pauseButtonStopText.text(
-      $pauseButtonStopText.text().replace('[video_title]', title)
-    );
-    $pauseButtonResumeText.text(
-      $pauseButtonResumeText.text().replace('[video_title]', title)
-    );
-  }
-
-  return {
-    init: init,
-    editorLoadVideo: editorLoadVideo,
-    loadVideos: loadVideos,
-    playVideo: customPlayVideo,
-    pauseVideo: pauseVideo,
-    removeEvents: removeEvents
-  };
-})();
-
-theme.ProductVideo = (function() {
-  var videos = {};
-
-  var hosts = {
-    html5: 'html5',
-    youtube: 'youtube'
-  };
-
-  var selectors = {
-    productMediaWrapper: '[data-product-single-media-wrapper]'
-  };
-
-  var attributes = {
-    enableVideoLooping: 'enable-video-looping',
-    videoId: 'video-id'
-  };
-
-  function init(videoContainer, sectionId) {
-    if (!videoContainer.length) {
-      return;
-    }
-
-    var videoElement = videoContainer.find('iframe, video')[0];
-    var mediaId = videoContainer.data('mediaId');
-
-    if (!videoElement) {
-      return;
-    }
-
-    videos[mediaId] = {
-      mediaId: mediaId,
-      sectionId: sectionId,
-      host: hostFromVideoElement(videoElement),
-      container: videoContainer,
-      element: videoElement,
-      ready: function() {
-        createPlayer(this);
-      }
-    };
-
-    var video = videos[mediaId];
-
-    switch (video.host) {
-      case hosts.html5:
-        window.Shopify.loadFeatures([
-          {
-            name: 'video-ui',
-            version: '1.0',
-            onLoad: setupPlyrVideos
-          }
-        ]);
-        theme.LibraryLoader.load('plyrShopifyStyles');
-        break;
-      case hosts.youtube:
-        theme.LibraryLoader.load('youtubeSdk', setupYouTubeVideos);
-        break;
-    }
-  }
-
-  function setupPlyrVideos(errors) {
-    if (errors) {
-      fallbackToNativeVideo();
-      return;
-    }
-
-    loadVideos(hosts.html5);
-  }
-
-  function setupYouTubeVideos() {
-    if (!window.YT.Player) return;
-
-    loadVideos(hosts.youtube);
-  }
-
-  function createPlayer(video) {
-    if (video.player) {
-      return;
-    }
-
-    var productMediaWrapper = video.container.closest(
-      selectors.productMediaWrapper
-    );
-    var enableLooping = productMediaWrapper.data(attributes.enableVideoLooping);
-
-    switch (video.host) {
-      case hosts.html5:
-        // eslint-disable-next-line no-undef
-        video.player = new Shopify.Plyr(video.element, {
-          loop: { active: enableLooping }
-        });
-        break;
-      case hosts.youtube:
-        var videoId = productMediaWrapper.data(attributes.videoId);
-
-        video.player = new YT.Player(video.element, {
-          videoId: videoId,
-          events: {
-            onStateChange: function(event) {
-              if (event.data === 0 && enableLooping) event.target.seekTo(0);
-            }
-          }
-        });
-        break;
-    }
-
-    productMediaWrapper.on('mediaHidden xrLaunch', function() {
-      if (!video.player) return;
-
-      if (video.host === hosts.html5) {
-        video.player.pause();
-      }
-
-      if (video.host === hosts.youtube && video.player.pauseVideo) {
-        video.player.pauseVideo();
-      }
-    });
-
-    productMediaWrapper.on('mediaVisible', function() {
-      if (theme.Helpers.isTouch()) return;
-      if (!video.player) return;
-
-      if (video.host === hosts.html5) {
-        video.player.play();
-      }
-
-      if (video.host === hosts.youtube && video.player.playVideo) {
-        video.player.playVideo();
-      }
-    });
-  }
-
-  function hostFromVideoElement(video) {
-    if (video.tagName === 'VIDEO') {
-      return hosts.html5;
-    }
-
-    if (video.tagName === 'IFRAME') {
-      if (
-        /^(https?:\/\/)?(www\.)?(youtube\.com|youtube-nocookie\.com|youtu\.?be)\/.+$/.test(
-          video.src
-        )
-      ) {
-        return hosts.youtube;
-      }
-    }
-    return null;
-  }
-
-  function loadVideos(host) {
-    for (var key in videos) {
-      if (videos.hasOwnProperty(key)) {
-        var video = videos[key];
-        if (video.host === host) {
-          video.ready();
+          event.target.closest('.pswp').querySelector('.pswp__ui').classList.toggle('pswp__ui--hidden');
         }
       }
-    }
-  }
+    }, {
+      key: '_onDoubleTap',
+      value: function _onDoubleTap(point) {
+        var initialZoomLevel = this.photoSwipeInstance.currItem.initialZoomLevel;
 
-  function fallbackToNativeVideo() {
-    for (var key in videos) {
-      if (videos.hasOwnProperty(key)) {
-        var video = videos[key];
-
-        if (video.nativeVideo) continue;
-
-        if (video.host === hosts.html5) {
-          video.element.setAttribute('controls', 'controls');
-          video.nativeVideo = true;
+        if (this.photoSwipeInstance.getZoomLevel() !== initialZoomLevel) {
+          this.photoSwipeInstance.zoomTo(initialZoomLevel, point, 333);
+        } else {
+          this.photoSwipeInstance.zoomTo(initialZoomLevel < 0.7 ? 1 : 1.33, point, 333);
         }
       }
-    }
-  }
-
-  function removeSectionVideos(sectionId) {
-    for (var key in videos) {
-      if (videos.hasOwnProperty(key)) {
-        var video = videos[key];
-
-        if (video.sectionId === sectionId) {
-          if (video.player) video.player.destroy();
-          delete videos[key];
-        }
+    }, {
+      key: '_onInitialZoomIn',
+      value: function _onInitialZoomIn() {
+        document.querySelector('.pswp__ui').classList.remove('pswp__ui--hidden');
       }
-    }
-  }
-
-  return {
-    init: init,
-    hosts: hosts,
-    loadVideos: loadVideos,
-    removeSectionVideos: removeSectionVideos
-  };
-})();
-
-theme.ProductModel = (function() {
-  var modelJsonSections = {};
-  var models = {};
-  var xrButtons = {};
-
-  var selectors = {
-    mediaGroup: '[data-product-single-media-group]',
-    xrButton: '[data-shopify-xr]'
-  };
-
-  function init(modelViewerContainers, sectionId) {
-    modelJsonSections[sectionId] = {
-      loaded: false
-    };
-
-    modelViewerContainers.each(function(index) {
-      var $modelViewerContainer = $(this);
-      var mediaId = $modelViewerContainer.data('media-id');
-      var $modelViewerElement = $(
-        $modelViewerContainer.find('model-viewer')[0]
-      );
-      var modelId = $modelViewerElement.data('model-id');
-
-      if (index === 0) {
-        var $xrButton = $modelViewerContainer
-          .closest(selectors.mediaGroup)
-          .find(selectors.xrButton);
-        xrButtons[sectionId] = {
-          $element: $xrButton,
-          defaultId: modelId
-        };
+    }, {
+      key: '_onInitialZoomOut',
+      value: function _onInitialZoomOut() {
+        document.querySelector('.pswp__ui').classList.add('pswp__ui--hidden');
       }
 
-      models[mediaId] = {
-        modelId: modelId,
-        sectionId: sectionId,
-        $container: $modelViewerContainer,
-        $element: $modelViewerElement
-      };
-    });
+      /**
+       * PhotoSwipe instance is automatically destroyed for us when it's closed. What we need to do is simply re-set
+       * our in-memory instance to null and our own events
+       */
 
-    window.Shopify.loadFeatures([
-      {
-        name: 'shopify-xr',
-        version: '1.0',
-        onLoad: setupShopifyXr
-      },
-      {
+    }, {
+      key: '_destroyPhotoSwipe',
+      value: function _destroyPhotoSwipe() {
+        this.delegateRoot.off('pswpTap');
+        this.photoSwipeInstance = null;
+      }
+    }]);
+
+    return ProductImageZoom;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductImageZoom;
+
+  /***/
+},
+/* 15 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Responsive__ = __webpack_require__(1);
+
+  var ProductModel = function () {
+    function ProductModel(element, stackProductImages) {
+      _classCallCheck(this, ProductModel);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.delegateRoot = new domDelegate.Delegate(document.documentElement);
+      this.stackProductImages = stackProductImages;
+
+      this._attachListeners();
+
+      var stylesheet = document.createElement('link');
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = 'https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css';
+      document.head.appendChild(stylesheet);
+
+      window.Shopify.loadFeatures([{
         name: 'model-viewer-ui',
         version: '1.0',
-        onLoad: setupModelViewerUi
-      }
-    ]);
-    theme.LibraryLoader.load('modelViewerUiStyles');
-  }
-
-  function setupShopifyXr(errors) {
-    if (errors) return;
-
-    if (!window.ShopifyXR) {
-      document.addEventListener('shopify_xr_initialized', function() {
-        setupShopifyXr();
-      });
-      return;
+        onLoad: this._setupModelViewerUI.bind(this)
+      }, {
+        name: 'shopify-xr',
+        version: '1.0'
+      }]);
     }
 
-    for (var sectionId in modelJsonSections) {
-      if (modelJsonSections.hasOwnProperty(sectionId)) {
-        var modelSection = modelJsonSections[sectionId];
+    _createClass(ProductModel, [{
+      key: 'destroy',
+      value: function destroy() {}
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        var _this11 = this;
 
-        if (modelSection.loaded) continue;
-        var $modelJson = $('#ModelJson-' + sectionId);
-
-        window.ShopifyXR.addModels(JSON.parse($modelJson.html()));
-        modelSection.loaded = true;
+        this.element.querySelector('model-viewer').addEventListener('shopify_model_viewer_ui_toggle_play', function () {
+          _this11.element.dispatchEvent(new CustomEvent('model:played', { bubbles: true }));
+        });
+        this.element.querySelector('model-viewer').addEventListener('shopify_model_viewer_ui_toggle_pause', function () {
+          _this11.element.dispatchEvent(new CustomEvent('model:paused', { bubbles: true }));
+        });
       }
-    }
-    window.ShopifyXR.setupXRElements();
-  }
-
-  function setupModelViewerUi(errors) {
-    if (errors) return;
-
-    for (var key in models) {
-      if (models.hasOwnProperty(key)) {
-        var model = models[key];
-        if (!model.modelViewerUi) {
-          model.modelViewerUi = new Shopify.ModelViewerUI(model.$element);
-        }
-        setupModelViewerListeners(model);
-      }
-    }
-  }
-
-  function setupModelViewerListeners(model) {
-    var xrButton = xrButtons[model.sectionId];
-
-    model.$container.on('mediaVisible', function() {
-      xrButton.$element.attr('data-shopify-model3d-id', model.modelId);
-      if (theme.Helpers.isTouch()) return;
-      model.modelViewerUi.play();
-    });
-
-    model.$container
-      .on('mediaHidden', function() {
-        xrButton.$element.attr('data-shopify-model3d-id', xrButton.defaultId);
-        model.modelViewerUi.pause();
-      })
-      .on('xrLaunch', function() {
-        model.modelViewerUi.pause();
-      });
-  }
-
-  function removeSectionModels(sectionId) {
-    for (var key in models) {
-      if (models.hasOwnProperty(key)) {
-        var model = models[key];
-        if (model.sectionId === sectionId) {
-          models[key].modelViewerUi.destroy();
-          delete models[key];
+    }, {
+      key: 'hasBeenSelected',
+      value: function hasBeenSelected() {
+        // As per guidelines, we only need to autoplay when it's not a touch device
+        if (__WEBPACK_IMPORTED_MODULE_0__helper_Responsive__["default"].matchesBreakpoint('supports-hover')) {
+          this.modelUi.play();
         }
       }
-    }
-    delete modelJsonSections[sectionId];
-  }
+    }, {
+      key: 'hasBeenDeselected',
+      value: function hasBeenDeselected() {
+        // In all cases, we just turn it off
+        this.modelUi.pause();
+      }
+    }, {
+      key: '_setupModelViewerUI',
+      value: function _setupModelViewerUI() {
+        this.modelElement = this.element.querySelector('model-viewer');
+        this.modelUi = new window.Shopify.ModelViewerUI(this.modelElement);
+      }
+    }]);
 
-  return {
-    init: init,
-    removeSectionModels: removeSectionModels
-  };
-})();
+    return ProductModel;
+  }();
+  /* harmony export (immutable) */
 
-window.theme = window.theme || {};
+  __webpack_exports__["default"] = ProductModel;
 
-theme.FormStatus = (function() {
-  var selectors = {
-    statusMessage: '[data-form-status]'
-  };
+  /***/
+},
+/* 16 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-  function init() {
-    this.$statusMessage = $(selectors.statusMessage);
+  "use strict";
 
-    if (!this.$statusMessage) return;
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-    this.$statusMessage.attr('tabindex', -1).focus();
+  var ProductReviews = function () {
+    function ProductReviews(container) {
+      _classCallCheck(this, ProductReviews);
 
-    this.$statusMessage.on('blur', handleBlur.bind(this));
-  }
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
 
-  function handleBlur() {
-    this.$statusMessage.removeAttr('tabindex');
-  }
+      this.delegateElement.on('click', '.spr-summary-actions-newreview', this._onNewReviewClicked.bind(this));
 
-  return {
-    init: init
-  };
-})();
+      // Extending Shopify Reviews is a bit manual, but let's do it!
 
-theme.Hero = (function() {
-  var classes = {
-    indexSectionFlush: 'index-section--flush'
-  };
-
-  var selectors = {
-    heroFixedWidthContent: '.hero-fixed-width__content',
-    heroFixedWidthImage: '.hero-fixed-width__image'
-  };
-
-  function hero(el, sectionId) {
-    this.$hero = $(el);
-    this.layout = this.$hero.data('layout');
-    var $parentSection = $('#shopify-section-' + sectionId);
-    var $heroContent = $parentSection.find(selectors.heroFixedWidthContent);
-    var $heroImage = $parentSection.find(selectors.heroFixedWidthImage);
-
-    if (this.layout !== 'fixed_width') {
-      return;
+      window.SPRCallbacks = {};
+      window.SPRCallbacks.onFormSuccess = this._onFormSuccess.bind(this);
+      window.SPRCallbacks.onReviewsLoad = this._onReviewsLoad.bind(this);
     }
 
-    $parentSection.removeClass(classes.indexSectionFlush);
-    heroFixedHeight();
-    $(window).resize(
-      $.debounce(50, function() {
-        heroFixedHeight();
-      })
-    );
+    _createClass(ProductReviews, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.delegateElement.off();
+      }
+    }, {
+      key: '_updatePagination',
+      value: function _updatePagination(event, target) {
+        // Unfortunately, we have to use this ugly jQuery style stuff
+        SPR.$(target).data('page', parseInt(target.getAttribute('data-page')) + 1);
+      }
+    }, {
+      key: '_onFormSuccess',
+      value: function _onFormSuccess() {
+        var formSuccess = this.element.querySelector('.spr-form-message-success');
+        window.scrollTo(0, formSuccess.offsetTop - 45);
+      }
+    }, {
+      key: '_onReviewsLoad',
+      value: function _onReviewsLoad() {
+        // We want to move "spr-pagination-next" before the "new review" button in the "spr-summary-actions" div
 
-    function heroFixedHeight() {
-      var contentHeight = $heroContent.height() + 50;
-      var imageHeight = $heroImage.height();
+        var sprSummaryActions = this.element.querySelector('.spr-summary-actions'),
+            previousSprPaginationNext = sprSummaryActions.querySelector('.spr-pagination-next'),
+            sprPaginationNext = this.element.querySelector('.spr-pagination .spr-pagination-next');
 
-      if (contentHeight > imageHeight) {
-        $heroImage.css('min-height', contentHeight);
+        if (previousSprPaginationNext) {
+          previousSprPaginationNext.remove();
+        }
+
+        if (sprPaginationNext) {
+          sprSummaryActions.insertBefore(sprPaginationNext, sprSummaryActions.firstChild);
+        }
+      }
+    }, {
+      key: '_onNewReviewClicked',
+      value: function _onNewReviewClicked(event, target) {
+        target.style.display = 'none';
+
+        if (target.previousElementSibling) {
+          target.previousElementSibling.style.display = 'none';
+        }
+      }
+    }]);
+
+    return ProductReviews;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductReviews;
+
+  /***/
+},
+/* 17 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__ = __webpack_require__(5);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Dom__ = __webpack_require__(0);
+  /**
+   * Variant selector is a bit similar to the popover, but due to some differences, I've created a distinct class
+   */
+
+  var VariantSelector = function () {
+    function VariantSelector(element) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _classCallCheck(this, VariantSelector);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+
+      this.activator = options['activator'] || document.querySelector('[aria-controls="' + element.getAttribute('id') + '"]');
+      this.onValueChangedCallback = options['onValueChanged'] || function () {};
+      this.isOpen = false;
+
+      this.pageOverlayElement = document.querySelector('.PageOverlay');
+
+      this.variantChoiceList = __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.VariantSelector__Choice'));
+      this.variantCarousel = new __WEBPACK_IMPORTED_MODULE_1__Carousel__["default"](this.element.querySelector('.VariantSelector__Carousel'), {
+        onSelect: this._variantChanged.bind(this),
+        onClick: this._variantSelected.bind(this)
+      });
+
+      this._attachListeners();
+    }
+
+    _createClass(VariantSelector, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.element.removeEventListener('keyup', this._handleKeyboardListener);
+        this.delegateElement.off('click');
+        this.activator.removeEventListener('click', this._toggleListener);
+        this.variantCarousel.destroy();
+      }
+    }, {
+      key: 'toggle',
+      value: function toggle() {
+        this.isOpen ? this.close() : this.open();
+      }
+    }, {
+      key: 'open',
+      value: function open() {
+        if (this.isOpen) {
+          return;
+        }
+
+        this.element.setAttribute('aria-hidden', 'false');
+        this.activator.setAttribute('aria-expanded', 'true');
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].trapFocus(this.element, 'variant-selector');
+
+        document.documentElement.classList.add('no-scroll'); // Prevent scrolling when popover is open
+
+        this.element.setAttribute('style', '');
+        this.pageOverlayElement.classList.add('is-visible');
+        this.pageOverlayElement.addEventListener('click', this._closeListener);
+
+        this.isOpen = true;
+      }
+    }, {
+      key: 'close',
+      value: function close() {
+        if (!this.isOpen) {
+          return;
+        }
+
+        this.element.setAttribute('aria-hidden', 'true');
+        this.activator.setAttribute('aria-expanded', 'false');
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].removeTrapFocus(this.element, 'variant-selector');
+
+        document.documentElement.classList.remove('no-scroll');
+
+        this.pageOverlayElement.classList.remove('is-visible');
+        this.pageOverlayElement.removeEventListener('click', this._closeListener);
+
+        this.isOpen = false;
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._handleKeyboardListener = this._handleKeyboard.bind(this);
+        this._closeListener = this.close.bind(this);
+        this._toggleListener = this.toggle.bind(this);
+
+        this.element.addEventListener('keyup', this._handleKeyboardListener);
+        this.activator.addEventListener('click', this._toggleListener);
+        this.delegateElement.on('click', '[data-action="select-variant"]', this._onVariantSelect.bind(this));
+      }
+
+      /**
+       * Called when the variant is changed (but not yet selected)
+       */
+
+    }, {
+      key: '_variantChanged',
+      value: function _variantChanged(selectedIndex) {
+        var activeChoice = this.variantChoiceList[selectedIndex];
+
+        activeChoice.classList.add('is-selected');
+        __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].getSiblings(activeChoice, '.is-selected').forEach(function (item) {
+          return item.classList.remove('is-selected');
+        });
+      }
+
+      /**
+       * Called when a variant is clicked or selected
+       */
+
+    }, {
+      key: '_variantSelected',
+      value: function _variantSelected(cellElement, cellIndex) {
+        if (this.variantCarousel.getSelectedIndex() === cellIndex) {
+          this.onValueChangedCallback(cellElement.getAttribute('data-option-value'), cellElement, this.activator);
+          this.close();
+        } else {
+          this.variantCarousel.selectCell(cellIndex);
+        }
+      }
+
+      /**
+       * Called when the button "choose this variant" is explicitly clicked
+       */
+
+    }, {
+      key: '_onVariantSelect',
+      value: function _onVariantSelect() {
+        var selectedCell = this.variantCarousel.flickityInstance.selectedCell.element;
+
+        this.onValueChangedCallback(selectedCell.getAttribute('data-option-value'), selectedCell, this.activator);
+        this.close();
+      }
+
+      /**
+       * Handle a11y events
+       */
+
+    }, {
+      key: '_handleKeyboard',
+      value: function _handleKeyboard(event) {
+        if (this.isOpen && event.keyCode === 27) {
+          this.close();
+        }
+      }
+    }]);
+
+    return VariantSelector;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = VariantSelector;
+
+  /***/
+},
+/* 18 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Responsive__ = __webpack_require__(1);
+
+  var ProductVideo = function () {
+    function ProductVideo(element, stackProductImages, enableVideoLooping) {
+      _classCallCheck(this, ProductVideo);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.stackProductImages = stackProductImages;
+      this.enableVideoLooping = enableVideoLooping;
+      this.player = null;
+
+      switch (this.element.getAttribute('data-media-type')) {
+        case 'video':
+          var stylesheet = document.createElement('link');
+          stylesheet.rel = 'stylesheet';
+          stylesheet.href = 'https://cdn.shopify.com/shopifycloud/shopify-plyr/v1.0/shopify-plyr.css';
+          document.head.appendChild(stylesheet);
+
+          window.Shopify.loadFeatures([{
+            name: 'video-ui',
+            version: '1.0',
+            onLoad: this._setupHtml5Video.bind(this)
+          }]);
+          break;
+
+        case 'external_video':
+          this._setupExternalVideo();
+          break;
       }
     }
-  }
 
-  return hero;
-})();
+    _createClass(ProductVideo, [{
+      key: 'destroy',
+      value: function destroy() {
+        if (this.player) {
+          this.player.destroy(); // Both Plyr and YouTube API use the same name
+        }
+      }
+    }, {
+      key: 'hasBeenSelected',
+      value: function hasBeenSelected() {
+        // As per guidelines, we only need to autoplay when it's not a touch device
+        if (__WEBPACK_IMPORTED_MODULE_0__helper_Responsive__["default"].matchesBreakpoint('supports-hover')) {
+          this.play();
+        }
+      }
+    }, {
+      key: 'hasBeenDeselected',
+      value: function hasBeenDeselected() {
+        this.pause();
+      }
+    }, {
+      key: 'play',
+      value: function play() {
+        switch (this.element.getAttribute('data-media-type')) {
+          case 'video':
+            this.player.play();
+            break;
 
-// prettier-ignore
-window.theme = window.theme || {};
+          case 'external_video':
+            this.player.playVideo();
+            break;
+        }
+      }
+    }, {
+      key: 'pause',
+      value: function pause() {
+        switch (this.element.getAttribute('data-media-type')) {
+          case 'video':
+            this.player.pause();
+            break;
 
-theme.SearchResultsTemplate = (function() {
-  function renderResults(products, isLoading, searchQuery) {
-    return [
-      '<div class="predictive-search">',
-      renderHeader(products, isLoading),
-      renderProducts(products, searchQuery),
-      '</div>'
-    ].join('');
-  }
+          case 'external_video':
+            this.player.pauseVideo();
+            break;
+        }
+      }
+    }, {
+      key: '_setupHtml5Video',
+      value: function _setupHtml5Video() {
+        var _this12 = this;
 
-  function renderHeader(products, isLoading) {
-    if (products.length === 0) {
-      return '';
+        this.player = new Shopify.Plyr(this.element.querySelector('video'), {
+          controls: ['play', 'progress', 'mute', 'volume', 'play-large', 'fullscreen'],
+          loop: { active: this.enableVideoLooping },
+          hideControlsOnPause: true,
+          clickToPlay: true,
+          iconUrl: '//cdn.shopify.com/shopifycloud/shopify-plyr/v1.0/shopify-plyr.svg',
+          tooltips: {
+            controls: false,
+            seek: true
+          }
+        });
+
+        this.player.on('play', function () {
+          _this12.element.dispatchEvent(new CustomEvent('video:played', { bubbles: true }));
+        });
+        this.player.on('pause', function () {
+          _this12.element.dispatchEvent(new CustomEvent('video:paused', { bubbles: true }));
+        });
+      }
+    }, {
+      key: '_setupExternalVideo',
+      value: function _setupExternalVideo() {
+        if (this.element.getAttribute('data-video-host') === 'youtube') {
+          this._loadYouTubeScript().then(this._setupYouTubePlayer.bind(this));
+        }
+      }
+    }, {
+      key: '_setupYouTubePlayer',
+      value: function _setupYouTubePlayer() {
+        var _this13 = this;
+
+        var playerLoadingInterval = setInterval(function () {
+          if (window.YT !== undefined && window.YT.Player !== undefined) {
+            _this13.player = new YT.Player(_this13.element.querySelector('iframe'), {
+              videoId: _this13.element.getAttribute('data-video-id'),
+              events: {
+                onStateChange: function onStateChange(event) {
+                  if (event.data === window.YT.PlayerState.PLAYING) {
+                    _this13.element.dispatchEvent(new CustomEvent('video:played', { bubbles: true }));
+                  } else if (event.data === YT.PlayerState.PAUSED) {
+                    _this13.element.dispatchEvent(new CustomEvent('video:paused', { bubbles: true }));
+                  }
+
+                  if (event.data === window.YT.PlayerState.ENDED && _this13.enableVideoLooping) {
+                    event.target.seekTo(0);
+                  }
+                }
+              }
+            });
+
+            clearInterval(playerLoadingInterval);
+          }
+        }, 50);
+      }
+    }, {
+      key: '_loadYouTubeScript',
+      value: function _loadYouTubeScript() {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement('script');
+          document.body.appendChild(script);
+          script.onload = resolve;
+          script.onerror = reject;
+          script.async = true;
+          script.src = '//www.youtube.com/iframe_api';
+        });
+      }
+    }]);
+
+    return ProductVideo;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductVideo;
+
+  /***/
+},
+/* 19 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * This code has been heavily inspired by this: https://kitaitimakoto.gitlab.io/scrollspy-example/index.en.html#whatsthis
+   */
+
+  var ScrollSpy = function () {
+    function ScrollSpy(container, elementsToSpy, observerOptions) {
+      var _this14 = this;
+
+      _classCallCheck(this, ScrollSpy);
+
+      this.container = container;
+      this.targets = [];
+      this.targetIndices = {};
+      this.indicesInViewPort = [];
+
+      this.observer = new IntersectionObserver(this._onIntersectionChange.bind(this), observerOptions);
+
+      elementsToSpy.forEach(function (elementToSpy, index) {
+        _this14.targets.push(elementToSpy);
+        _this14.targetIndices[elementToSpy.id] = index;
+        _this14.observer.observe(elementToSpy);
+      });
     }
 
-    return [
-      '<div class="predictive-search-title">',
-      '<h3 id="predictive-search" class="predictive-search-title__content">' +
-        theme.strings.products +
-        '</h3>',
-      '<span class="predictive-search-title__loading-spinner">' +
-        (isLoading
-          ? '<span class= "icon-predictive-search-spinner" ></span >'
-          : '') +
-        '</span>',
-      '</div>'
-    ].join('');
-  }
+    _createClass(ScrollSpy, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.observer.disconnect();
+      }
 
-  function loadingState() {
-    return [
-      '<div class="predictive-search">',
-      '<div class="predictive-search-loading">',
-      '<span class="visually-hidden">' + theme.strings.loading + '</span>',
-      '<span class="predictive-search-loading__icon">',
-      '<span class="icon-predictive-search-spinner"></span>',
-      '</span>',
-      '</div>',
-      '</div>'
-    ].join('');
-  }
+      /**
+       * Called whenever there is a change of visibility
+       */
 
-  function renderViewAll(searchQuery) {
-    return [
-      '<button type="submit" class="predictive-search-view-all__button" tabindex="-1">',
-      theme.strings.searchFor +
-        '<span class="predictive-search-view-all__query"> &ldquo;' +
-        _htmlEscape(searchQuery) +
-        '&rdquo;</span>',
-      '</button>'
-    ].join('');
-  }
+    }, {
+      key: '_onIntersectionChange',
+      value: function _onIntersectionChange(changes) {
+        var oldTargetIndex = this.indicesInViewPort[0] || 0;
 
-  function renderProducts(products, searchQuery) {
-    var resultsCount = products.length;
+        for (var i = changes.length - 1; i >= 0; i--) {
+          this._updateIndicesInViewPort(changes[i], oldTargetIndex);
+        }
 
-    return [
-      '<ul id="predictive-search-results" class="predictive-search__list" role="listbox" aria-labelledby="predictive-search">',
-      products
-        .map(function(product, index) {
-          return renderProduct(normalizeProduct(product), index, resultsCount);
-        })
-        .join(''),
-      '<li id="search-all" class="predictive-search-view-all" role="option" data-search-result>' +
-        renderViewAll(searchQuery) +
-        '</li>',
-      '</ul>'
-    ].join('');
-  }
+        // Firefox generates duplicates so make sure to remove
+        this.indicesInViewPort = this.indicesInViewPort.filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        });
 
-  function renderProduct(product, index, resultsCount) {
-    return [
-      '<li id="search-result-' +
-        index +
-        '" class="predictive-search-item" role="option" data-search-result>',
-      '<a class="predictive-search-item__link" href="' +
-        product.url +
-        '" tabindex="-1">',
-      '<div class="predictive-search__column predictive-search__column--image" data-image-with-placeholder-wrapper>',
-      renderProductImage(product),
-      '</div>',
-      '<div class="predictive-search__column predictive-search__column--content ' +
-        (getDetailsCount() ? '' : 'predictive-search__column--center') +
-        '">',
-      '<span class="predictive-search-item__title">',
-      '<span class="predictive-search-item__title-text">' +
-        product.title +
-        '</span>',
-      '</span>' + (getDetailsCount() ? renderProductDetails(product) : ''),
-      '<span class="visually-hidden">, </span>',
-      '<span class="visually-hidden">' +
-        getNumberOfResultsString(index + 1, resultsCount) +
-        '</span>',
-      '</div>',
-      '</a>',
-      '</li>'
-    ].join('');
-  }
+        if (this.indicesInViewPort.length === 0 || oldTargetIndex === this.indicesInViewPort[0]) {
+          return;
+        }
 
-  function renderProductImage(product) {
-    if (product.image === null) {
-      return '';
+        var event = new CustomEvent('scrollspy:target:changed', {
+          detail: {
+            newTarget: this.targets[this.indicesInViewPort[0]],
+            oldTarget: this.targets[oldTargetIndex]
+          }
+        });
+
+        this.container.dispatchEvent(event);
+      }
+
+      /**
+       * Update indices visible in the view port
+       */
+
+    }, {
+      key: '_updateIndicesInViewPort',
+      value: function _updateIndicesInViewPort(change, oldTargetIndex) {
+        var index = this.targetIndices[change.target.id];
+
+        if (change.intersectionRatio === 0) {
+          var indexInViewPort = this.indicesInViewPort.indexOf(index);
+
+          if (indexInViewPort !== -1) {
+            this.indicesInViewPort.splice(indexInViewPort, 1);
+          }
+        } else {
+          if (index < oldTargetIndex) {
+            this.indicesInViewPort.unshift(index);
+          } else if (index > this.indicesInViewPort[this.indicesInViewPort.length - 1]) {
+            this.indicesInViewPort.push(index);
+          } else {
+            this.indicesInViewPort.push(index);
+            this.indicesInViewPort.sort();
+          }
+        }
+      }
+    }]);
+
+    return ScrollSpy;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ScrollSpy;
+
+  /***/
+},
+/* 20 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Animation__ = __webpack_require__(6);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Currency__ = __webpack_require__(9);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__CountrySelector__ = __webpack_require__(12);
+
+  var ShippingEstimator = function () {
+    function ShippingEstimator(element) {
+      _classCallCheck(this, ShippingEstimator);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.countrySelector = new __WEBPACK_IMPORTED_MODULE_2__CountrySelector__["default"](this.element.querySelector('[name="country"]'), this.element.querySelector('[name="province"]'));
+
+      this._attachListeners();
     }
 
-    return [
-      '<div class="placeholder-background placeholder-background--animation" data-image-placeholder aria-hidden="true"></div>',
-      '<img class="predictive-search-item__image lazyload" src="' +
-        product.image.url +
-        '" data-src="' +
-        product.image.url +
-        '" data-image alt="' +
-        product.image.alt +
-        '" />'
-    ].join('');
-  }
+    _createClass(ShippingEstimator, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off('click');
+        this.countrySelector.destroy();
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '.ShippingEstimator__Submit', this._fetchRates.bind(this));
+      }
+    }, {
+      key: '_fetchRates',
+      value: function _fetchRates() {
+        var _this15 = this;
 
-  function renderProductDetails(product) {
-    return [
-      '<dl class="predictive-search-item__details price' +
-        (product.isOnSale ? ' price--on-sale' : '') +
-        (!product.available ? ' price--sold-out' : '') +
-        (!product.isPriceVaries && product.isCompareVaries
-          ? ' price--compare-price-hidden'
-          : '') +
-        '">',
-      '<div class="predictive-search-item__detail">',
-      renderVendor(product),
-      '</div>',
-      '<div class="predictive-search-item__detail predictive-search-item__detail--inline">' +
-        renderProductPrice(product),
-      '</div>',
-      '</dl>'
-    ].join('');
-  }
-  function renderProductPrice(product) {
-    if (!theme.settings.predictiveSearchShowPrice) {
-      return '';
+        var country = this.element.querySelector('[name="country"]').value,
+            province = this.element.querySelector('[name="province"]').value,
+            zip = this.element.querySelector('[name="zip"]').value;
+
+        document.dispatchEvent(new CustomEvent('theme:loading:start'));
+
+        fetch(window.routes.cartUrl + '/shipping_rates.json?shipping_address[zip]=' + zip + '&shipping_address[country]=' + country + '&shipping_address[province]=' + province, {
+          credentials: 'same-origin',
+          method: 'GET'
+        }).then(function (response) {
+          response.json().then(function (result) {
+            document.dispatchEvent(new CustomEvent('theme:loading:end'));
+
+            var resultsContainer = _this15.element.querySelector('.ShippingEstimator__Results'),
+                errorContainer = _this15.element.querySelector('.ShippingEstimator__Error');
+
+            if (response.ok) {
+              var shippingRates = result['shipping_rates'];
+
+              if (shippingRates.length === 0) {
+                resultsContainer.innerHTML = '<p>' + window.languages.shippingEstimatorNoResults + '</p>';
+              } else {
+                var html = '';
+
+                if (shippingRates.length === 1) {
+                  html += '<p>' + window.languages.shippingEstimatorOneResult + '</p><ul>';
+                } else {
+                  html += '<p>' + window.languages.shippingEstimatorMoreResults.replace('{{count}}', shippingRates.length) + '</p><ul>';
+                }
+
+                shippingRates.forEach(function (item) {
+                  html += '<li>' + item['name'] + ': ' + __WEBPACK_IMPORTED_MODULE_1__helper_Currency__["default"].formatMoney(item['price'], window.theme.moneyFormat) + '</li>';
+                });
+
+                html += '</ul>';
+
+                resultsContainer.firstElementChild.innerHTML = html;
+              }
+
+              TweenLite.fromTo(resultsContainer.firstElementChild, 0.6, { autoAlpha: 0, y: -15 }, { autoAlpha: 1, y: 0, delay: 0.35 });
+
+              errorContainer.style.display = 'none';
+              resultsContainer.style.display = 'block';
+
+              __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideDown(resultsContainer);
+            } else {
+              var errorHtml = '';
+
+              Object.keys(result).forEach(function (key) {
+                errorHtml += '<li class="Alert__ErrorItem">' + key + ' ' + result[key] + '</li>';
+              });
+
+              errorContainer.innerHTML = '<ul class="Alert__ErrorList">' + errorHtml + '</ul>';
+
+              resultsContainer.style.display = 'none';
+              errorContainer.style.display = 'block';
+            }
+          });
+        });
+      }
+    }]);
+
+    return ShippingEstimator;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ShippingEstimator;
+
+  /***/
+},
+/* 21 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__Carousel__ = __webpack_require__(2);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "Carousel", function () {
+    return __WEBPACK_IMPORTED_MODULE_0__Carousel__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__Collapsible__ = __webpack_require__(23);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "Collapsible", function () {
+    return __WEBPACK_IMPORTED_MODULE_1__Collapsible__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__Drawer__ = __webpack_require__(8);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "Drawer", function () {
+    return __WEBPACK_IMPORTED_MODULE_2__Drawer__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__LoadingBar__ = __webpack_require__(24);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "LoadingBar", function () {
+    return __WEBPACK_IMPORTED_MODULE_3__LoadingBar__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__Modal__ = __webpack_require__(25);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "Modal", function () {
+    return __WEBPACK_IMPORTED_MODULE_4__Modal__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__Popover__ = __webpack_require__(3);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "Popover", function () {
+    return __WEBPACK_IMPORTED_MODULE_5__Popover__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_6__PageTransition__ = __webpack_require__(26);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "PageTransition", function () {
+    return __WEBPACK_IMPORTED_MODULE_6__PageTransition__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_7__ProductItemColorSwatch__ = __webpack_require__(4);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductItemColorSwatch", function () {
+    return __WEBPACK_IMPORTED_MODULE_7__ProductItemColorSwatch__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_8__ProductImageZoom__ = __webpack_require__(14);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductImageZoom", function () {
+    return __WEBPACK_IMPORTED_MODULE_8__ProductImageZoom__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_9__ProductModel__ = __webpack_require__(15);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductModel", function () {
+    return __WEBPACK_IMPORTED_MODULE_9__ProductModel__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_10__ProductReviews__ = __webpack_require__(16);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductReviews", function () {
+    return __WEBPACK_IMPORTED_MODULE_10__ProductReviews__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_11__ProductVariants__ = __webpack_require__(11);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductVariants", function () {
+    return __WEBPACK_IMPORTED_MODULE_11__ProductVariants__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_12__ProductVideo__ = __webpack_require__(18);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductVideo", function () {
+    return __WEBPACK_IMPORTED_MODULE_12__ProductVideo__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_13__ScrollSpy__ = __webpack_require__(19);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ScrollSpy", function () {
+    return __WEBPACK_IMPORTED_MODULE_13__ScrollSpy__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_14__SearchBar__ = __webpack_require__(27);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "SearchBar", function () {
+    return __WEBPACK_IMPORTED_MODULE_14__SearchBar__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_15__ShippingEstimator__ = __webpack_require__(20);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ShippingEstimator", function () {
+    return __WEBPACK_IMPORTED_MODULE_15__ShippingEstimator__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_16__VariantSelector__ = __webpack_require__(17);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "VariantSelector", function () {
+    return __WEBPACK_IMPORTED_MODULE_16__VariantSelector__["default"];
+  });
+
+  /***/
+},
+/* 22 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * This implementation allows to serialize a form
+   */
+
+  var Form = function () {
+    function Form() {
+      _classCallCheck(this, Form);
     }
 
-    var accessibilityAnnounceComma = '<span class="visually-hidden">, </span>';
+    _createClass(Form, null, [{
+      key: 'serialize',
+      value: function serialize(form) {
+        function stringKey(key, value) {
+          var beginBracket = key.lastIndexOf('[');
 
-    var priceMarkup =
-      '<div class="price__regular">' + renderPrice(product) + '</div>';
+          if (beginBracket === -1) {
+            var _hash = {};
+            _hash[key] = value;
+            return _hash;
+          }
 
-    var salePriceMarkup =
-      '<div class="price__sale">' + renderSalePrice(product) + '</div>';
+          var newKey = key.substr(0, beginBracket);
+          var newValue = {};
 
-    return (
-      accessibilityAnnounceComma +
-      '<div class="price__pricing-group">' +
-      (product.isOnSale ? salePriceMarkup : priceMarkup) +
-      '</div>'
-    );
-  }
+          newValue[key.substring(beginBracket + 1, key.length - 1)] = value;
 
-  function renderSalePrice(product) {
-    return [
-      '<dt>',
-      '<span class="visually-hidden">' + theme.strings.salePrice + '</span>',
-      '</dt>',
-      '<dd>',
-      '<span class="predictive-search-item__price predictive-search-item__price--sale">' +
-        (product.isPriceVaries
-          ? theme.strings.fromLowestPrice.replace('[price]', product.price)
-          : product.price) +
-        '</span>',
-      '</dd>',
-      '<div class="price__compare">' + renderCompareAtPrice(product) + '</div>'
-    ].join('');
-  }
+          return stringKey(newKey, newValue);
+        }
 
-  function renderCompareAtPrice(product) {
-    return [
-      '<dt>',
-      '<span class="visually-hidden">' +
-        theme.strings.regularPrice +
-        '</span> ',
-      '</dt>',
-      '<dd>',
-      '<span class="predictive-search-item__price predictive-search-item__price--compare">' +
-        product.compareAtPrice +
-        '</span>',
-      '</dd>'
-    ].join('');
-  }
+        var hash = {};
 
-  function renderPrice(product) {
-    return [
-      '<dt>',
-      '<span class="visually-hidden">' + theme.strings.regularPrice + '</span>',
-      '</dt>',
-      '<dd>',
-      '<span class="predictive-search-item__price">' +
-        (product.isPriceVaries
-          ? theme.strings.fromLowestPrice.replace('[price]', product.price)
-          : product.price) +
-        '</span>',
-      '</dd>'
-    ].join('');
-  }
+        for (var i = 0, len = form.elements.length; i < len; i++) {
+          var formElement = form.elements[i];
 
-  function renderVendor(product) {
-    if (!theme.settings.predictiveSearchShowVendor || product.vendor === '') {
-      return '';
+          if (formElement.name === '' || formElement.disabled) {
+            continue;
+          }
+
+          if (formElement.name && !formElement.disabled && (formElement.checked || /select|textarea/i.test(formElement.nodeName) || /hidden|text|search|tel|url|email|password|datetime|date|month|week|time|datetime-local|number|range|color/i.test(formElement.type))) {
+            var stringKeys = stringKey(formElement.name, formElement.value);
+            hash = Form.extend(hash, stringKeys);
+          }
+        }
+
+        return hash;
+      }
+    }, {
+      key: 'extend',
+      value: function extend() {
+        var extended = {};
+        var i = 0;
+
+        // Merge the object into the extended object
+        var merge = function merge(obj) {
+          for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+              // If property is an object, merge properties
+              if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                extended[prop] = Form.extend(extended[prop], obj[prop]);
+              } else {
+                extended[prop] = obj[prop];
+              }
+            }
+          }
+        };
+
+        // Loop through each object and conduct a merge
+        for (; i < arguments.length; i++) {
+          merge(arguments[i]);
+        }
+
+        return extended;
+      }
+    }]);
+
+    return Form;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Form;
+
+  /***/
+},
+/* 23 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Animation__ = __webpack_require__(6);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__ = __webpack_require__(1);
+  /**
+   * Handle the collapsibles. This plugin is global, so it listens to any click on [data-action="toggle-collapsible"] element
+   */
+
+  var Collapsible = function () {
+    function Collapsible() {
+      _classCallCheck(this, Collapsible);
+
+      this.domDelegate = new domDelegate.Delegate(document.body);
+      this._attachListeners();
     }
 
-    return [
-      '<dt>',
-      '<span class="visually-hidden">' + theme.strings.vendor + '</span>',
-      '</dt>',
-      '<dd class="predictive-search-item__vendor">' + product.vendor + '</dd>'
-    ].join('');
-  }
+    _createClass(Collapsible, [{
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.domDelegate.on('click', '[data-action="toggle-collapsible"]', this._toggleCollapsible.bind(this));
+      }
 
-  function normalizeProduct(product) {
-    var productOrVariant =
-      product.variants.length > 0 ? product.variants[0] : product;
+      /**
+       * Toggle a given collapsible
+       */
 
-    return {
-      url: productOrVariant.url,
-      image: getProductImage(product),
-      title: product.title,
-      vendor: product.vendor || '',
-      price: theme.Currency.formatMoney(product.price_min, theme.moneyFormat),
-      compareAtPrice: theme.Currency.formatMoney(
-        product.compare_at_price_min,
-        theme.moneyFormat
-      ),
-      available: product.available,
-      isOnSale: isOnSale(product),
-      isPriceVaries: isPriceVaries(product),
-      isCompareVaries: isCompareVaries(product)
-    };
-  }
+    }, {
+      key: '_toggleCollapsible',
+      value: function _toggleCollapsible(event, target) {
+        var _this16 = this;
 
-  function getProductImage(product) {
-    var image;
-    var featuredImage;
+        // If this is an auto-expand and that it reaches the needed breakpoint, we do nothing
+        var parentCollapsible = target.closest('.Collapsible');
 
-    if (product.variants.length > 0 && product.variants[0].image !== null) {
-      featuredImage = product.variants[0].featured_image;
-    } else if (product.image) {
-      featuredImage = product.featured_image;
-    } else {
-      image = null;
+        if (parentCollapsible.classList.contains('Collapsible--autoExpand') && __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__["default"].matchesBreakpoint('tablet-and-up')) {
+          return;
+        }
+
+        var isOpen = target.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+          this._close(parentCollapsible, target);
+        } else {
+          this._open(parentCollapsible, target);
+        }
+
+        // We make sure to close any siblings collapsible as well
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].getSiblings(parentCollapsible).forEach(function (collapsibleToClose) {
+          return _this16._close(collapsibleToClose);
+        });
+        event.preventDefault();
+      }
+
+      /**
+       * Open a given collapsible
+       */
+
+    }, {
+      key: '_open',
+      value: function _open(collapsible) {
+        var toggleButton = collapsible.querySelector('.Collapsible__Button'),
+            collapsibleInner = collapsible.querySelector('.Collapsible__Inner');
+
+        if (!collapsibleInner || toggleButton.getAttribute('aria-expanded') === 'true') {
+          return; // It's already open
+        }
+
+        toggleButton.setAttribute('aria-expanded', 'true');
+        collapsibleInner.style.overflow = 'visible';
+        __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideDown(collapsibleInner);
+      }
+
+      /**
+       * Close a given collapsible
+       */
+
+    }, {
+      key: '_close',
+      value: function _close(collapsible) {
+        var toggleButton = collapsible.querySelector('.Collapsible__Button'),
+            collapsibleInner = collapsible.querySelector('.Collapsible__Inner');
+
+        if (!collapsibleInner || toggleButton.getAttribute('aria-expanded') === 'false') {
+          return; // It's already closed
+        }
+
+        toggleButton.setAttribute('aria-expanded', 'false');
+        collapsibleInner.style.overflow = 'hidden';
+        __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideUp(collapsibleInner);
+      }
+    }]);
+
+    return Collapsible;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Collapsible;
+
+  /***/
+},
+/* 24 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * Simple plugin that handles the loading bar actions
+   *
+   * This plugin uses delegate events so it's independent of the sections.
+   */
+
+  var LoadingBar = function () {
+    function LoadingBar() {
+      _classCallCheck(this, LoadingBar);
+
+      this.element = document.querySelector('.LoadingBar');
+
+      document.addEventListener('theme:loading:start', this._onLoadingStart.bind(this));
+      document.addEventListener('theme:loading:end', this._onLoadingEnd.bind(this));
+
+      this.element.addEventListener('transitionend', this._onTransitionEnd.bind(this));
     }
 
-    if (image !== null) {
-      image = {
-        url: theme.Images.getSizedImageUrl(featuredImage.url, '100x'),
-        alt: featuredImage.alt
-      };
+    _createClass(LoadingBar, [{
+      key: '_onLoadingStart',
+      value: function _onLoadingStart() {
+        this.element.classList.add('is-visible');
+        this.element.style.width = '40%';
+      }
+    }, {
+      key: '_onLoadingEnd',
+      value: function _onLoadingEnd() {
+        this.element.style.width = '100%';
+        this.element.classList.add('is-finished');
+      }
+    }, {
+      key: '_onTransitionEnd',
+      value: function _onTransitionEnd(event) {
+        if (event.propertyName === 'width' && this.element.classList.contains('is-finished')) {
+          this.element.classList.remove('is-visible');
+          this.element.classList.remove('is-finished');
+          this.element.style.width = '0';
+        }
+      }
+    }]);
+
+    return LoadingBar;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = LoadingBar;
+
+  /***/
+},
+/* 25 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__ = __webpack_require__(5);
+  /**
+   * Handle the modals. This plugin is global, so it basically listens to any click on [data-action="open-modal"] and
+   * [data-action="close-modal"] events
+   */
+
+  var Modal = function () {
+    function Modal() {
+      _classCallCheck(this, Modal);
+
+      this.domDelegate = new domDelegate.Delegate(document.body);
+      this.activeModal = null; // Keep track of the active modal
+      this.wasLocked = false;
+
+      this.pageOverlayElement = document.querySelector('.PageOverlay');
+
+      this._attachListeners();
+      this._checkOpenByHash();
     }
 
-    return image;
-  }
+    _createClass(Modal, [{
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._closeListener = this._closeModal.bind(this);
+        this._handleKeyboardListener = this._handleKeyboard.bind(this);
 
-  function isOnSale(product) {
-    return (
-      product.compare_at_price_min !== null &&
-      parseInt(product.compare_at_price_min, 10) >
-        parseInt(product.price_min, 10)
-    );
-  }
+        this.domDelegate.on('click', '[data-action="open-modal"]', this._openModalEvent.bind(this));
+        this.domDelegate.on('click', '[data-action="close-modal"]', this._closeModal.bind(this));
+      }
+    }, {
+      key: '_openModalEvent',
+      value: function _openModalEvent(event, target) {
+        this._openModal(document.getElementById(target.getAttribute('aria-controls')));
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, {
+      key: '_openModal',
+      value: function _openModal(modal) {
+        var _this17 = this;
 
-  function isPriceVaries(product) {
-    return product.price_max !== product.price_min;
-  }
+        if (this.activeModal || !modal) {
+          return; // If there is already an open modal, we return as we only allows one modal at a time
+        }
 
-  function isCompareVaries(product) {
-    return product.compare_at_price_max !== product.compare_at_price_min;
-  }
+        this.activeModal = modal;
+        this.domDelegate.on('keyup', this._handleKeyboardListener);
 
-  // Returns the number of optional product details to be shown,
-  // values of the detailsList need to be boolean.
-  function getDetailsCount() {
-    var detailsList = [
-      theme.settings.predictiveSearchShowPrice,
-      theme.settings.predictiveSearchShowVendor
-    ];
+        if (document.documentElement.classList.contains('no-scroll')) {
+          this.wasLocked = true;
+        }
 
-    var detailsCount = detailsList.reduce(function(acc, detail) {
-      return acc + (detail ? 1 : 0);
-    }, 0);
+        fastdom.mutate(function () {
+          __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].clearTrapFocus(); // Needed as the modal can be open on top of a popover
 
-    return detailsCount;
-  }
+          _this17._onTransitionEndedListener = _this17._onTransitionEnded.bind(_this17);
+          _this17.activeModal.addEventListener('transitionend', _this17._onTransitionEndedListener);
 
-  function getNumberOfResultsString(resultNumber, resultsCount) {
-    return theme.strings.number_of_results
-      .replace('[result_number]', resultNumber)
-      .replace('[results_count]', resultsCount);
-  }
+          _this17.activeModal.setAttribute('aria-hidden', 'false');
+          document.documentElement.classList.add('no-scroll');
 
-  function _htmlEscape(input) {
-    return input
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
+          // If the modal is not a fullscreen modal, then we also display the overlay
+          if (!_this17.activeModal.classList.contains('Modal--fullScreen')) {
+            _this17.pageOverlayElement.classList.add('is-visible');
+            _this17.pageOverlayElement.addEventListener('click', _this17._closeListener);
+          }
+        });
+      }
+    }, {
+      key: '_closeModal',
+      value: function _closeModal() {
+        var _this18 = this;
 
-  return function(data) {
-    var products = data.products || [];
-    var isLoading = data.isLoading;
-    var searchQuery = data.searchQuery || '';
+        if (!this.activeModal) {
+          return; // If no modal are open, we return immediately
+        }
 
-    if (isLoading && products.length === 0) {
-      return loadingState();
+        this.activeModal.removeEventListener('keyup', this._handleKeyboardListener);
+        this.domDelegate.off('keyup');
+
+        fastdom.mutate(function () {
+          // If the modal is of video type, we need to remove the iframe to stop the video
+          if (_this18.activeModal.classList.contains('Modal--videoContent')) {
+            _this18._resetVideoListener = _this18._resetVideo.bind(_this18);
+            _this18.activeModal.addEventListener('transitionend', _this18._resetVideoListener);
+          }
+
+          __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].removeTrapFocus(_this18.activeModal, 'modal');
+
+          if (!_this18.activeModal.classList.contains('Modal--fullScreen')) {
+            _this18.pageOverlayElement.classList.remove('is-visible');
+            _this18.pageOverlayElement.removeEventListener('click', _this18._closeListener);
+          }
+
+          _this18.activeModal.setAttribute('aria-hidden', 'true');
+          _this18.activeModal = null;
+
+          if (!_this18.wasLocked) {
+            document.documentElement.classList.remove('no-scroll');
+          }
+        });
+      }
+    }, {
+      key: '_onTransitionEnded',
+      value: function _onTransitionEnded(event) {
+        if (event.propertyName !== 'visibility') {
+          return;
+        }
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].trapFocus(this.activeModal, 'modal'); // Trap the focus first (as this trigger reflows)
+
+        this.activeModal.removeEventListener('transitionend', this._onTransitionEndedListener);
+      }
+    }, {
+      key: '_resetVideo',
+      value: function _resetVideo(event) {
+        if (event.propertyName !== 'visibility') {
+          return; // We check the visibility property as it's the one LazySizes uses for triggering lazyloading
+        }
+
+        var iframe = event.target.querySelector('iframe');
+        iframe.parentNode.innerHTML = '<iframe class="Image--lazyLoad" data-src=' + iframe.getAttribute('data-src') + ' frameborder="0" allowfullscreen>';
+
+        event.target.removeEventListener('transitionend', this._resetVideoListener);
+      }
+
+      /**
+       * Some forms needs to be open inside a modal, and on page reload we must make sure to properly open the modal again
+       */
+
+    }, {
+      key: '_checkOpenByHash',
+      value: function _checkOpenByHash() {
+        var hash = window.location.hash,
+            modal = document.getElementById(hash.replace('#', ''));
+
+        if (modal && modal.classList.contains('Modal')) {
+          this._openModal(modal);
+        }
+      }
+
+      /**
+       * Handle a11y events
+       */
+
+    }, {
+      key: '_handleKeyboard',
+      value: function _handleKeyboard(event) {
+        if (null !== this.activeModal && event.keyCode === 27) {
+          this._closeModal();
+        }
+      }
+    }]);
+
+    return Modal;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = Modal;
+
+  /***/
+},
+/* 26 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /**
+   * This class will coordinate all the transitions from the website
+   */
+
+  var PageTransition = function () {
+    _createClass(PageTransition, null, [{
+      key: 'getInstance',
+      value: function getInstance() {
+        if (!this.instance) {
+          this.instance = new PageTransition();
+        }
+
+        return this.instance;
+      }
+    }]);
+
+    function PageTransition() {
+      _classCallCheck(this, PageTransition);
+
+      this.domDelegate = new domDelegate.Delegate(document.body);
+      this.pageTransition = document.querySelector('.PageTransition');
+
+      this._attachListeners();
     }
 
-    return renderResults(products, isLoading, searchQuery);
-  };
-})();
+    _createClass(PageTransition, [{
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.domDelegate.on('click', 'a[href]:not([href^="#"]):not([href^="javascript:"]):not([href^="mailto:"]):not([href^="tel:"]):not([target="_blank"])', this._onPageUnload.bind(this));
+      }
 
-window.theme = window.theme || {};
+      /**
+       * This callback captures click and transition from one page to another by doing a transition
+       */
 
-(function() {
-  // (a11y) This function will be used by the Predictive Search Component
-  // to announce the number of search results
-  function numberOfResultsTemplateFct(data) {
-    if (data.products.length === 1) {
-      return theme.strings.one_result_found;
-    } else {
-      return theme.strings.number_of_results_found.replace(
-        '[results_count]',
-        data.products.length
-      );
+    }, {
+      key: '_onPageUnload',
+      value: function _onPageUnload(event, target) {
+        var _this19 = this;
+
+        if (event.defaultPrevented || event.ctrlKey || event.metaKey || !window.theme.showPageTransition || !this.pageTransition) {
+          return;
+        }
+
+        event.preventDefault(); // Prevent the click to happen
+
+        if (window.theme.showPageTransition && this.pageTransition) {
+          var doTransition = function doTransition(event) {
+            // Animation is finished, we can transition
+            if (event.propertyName === 'opacity') {
+              _this19.pageTransition.removeEventListener('transitionend', doTransition);
+              window.location.href = target.href;
+            }
+          };
+
+          this.pageTransition.addEventListener('transitionend', doTransition);
+
+          this.pageTransition.style.visibility = 'visible';
+          this.pageTransition.style.opacity = '1';
+        }
+      }
+    }]);
+
+    return PageTransition;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = PageTransition;
+
+  /***/
+},
+/* 27 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__ = __webpack_require__(5);
+
+  var SearchBar = function () {
+    function SearchBar() {
+      _classCallCheck(this, SearchBar);
+
+      this.documentDelegate = new domDelegate.Delegate(document.body);
+
+      this.searchElement = document.getElementById('Search');
+      this.searchInputElement = this.searchElement.querySelector('[name="q"]');
+      this.searchResultsElement = this.searchElement.querySelector('.Search__Results');
+      this.queryMap = {};
+      this.isOpen = false;
+
+      this.pageOverlayElement = document.querySelector('.PageOverlay');
+
+      this._attachListeners();
     }
-  }
 
-  // (a11y) This function will be used by the Predictive Search Component
-  // to announce that it's loading results
-  function loadingResultsMessageTemplateFct() {
-    return theme.strings.loading;
-  }
+    _createClass(SearchBar, [{
+      key: 'destroy',
+      value: function destroy() {
+        this.searchInputElement.removeEventListener('keydown', this._preventSubmissionListener);
+        this.searchInputElement.removeEventListener('input', this._onInputListener);
 
-  function isPredictiveSearchSupported() {
-    var shopifyFeatures = JSON.parse($('#shopify-features').text());
+        this.documentDelegate.off();
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._preventSubmissionListener = this._preventSubmission.bind(this);
+        this._onInputListener = this._debounce(this._onInput.bind(this), 250);
 
-    return shopifyFeatures.predictiveSearch;
-  }
+        this.searchInputElement.addEventListener('keydown', this._preventSubmissionListener);
+        this.searchInputElement.addEventListener('input', this._onInputListener);
 
-  function isPredictiveSearchEnabled() {
-    return window.theme.settings.predictiveSearchEnabled;
-  }
+        this.documentDelegate.on('click', '[data-action="toggle-search"]', this._toggleSearch.bind(this));
+        this.documentDelegate.on('click', '[data-action="open-search"]', this._openSearch.bind(this));
+        this.documentDelegate.on('click', '[data-action="close-search"]', this._closeSearch.bind(this));
 
-  function canInitializePredictiveSearch() {
-    return isPredictiveSearchSupported() && isPredictiveSearchEnabled();
-  }
+        this.documentDelegate.on('search:close', this._closeSearch.bind(this)); // Allow for third-party elements to close the bar
+      }
 
-  // listen for search submits and validate query
-  function validateSearchHandler(searchEl, submitEl) {
-    submitEl.addEventListener(
-      'click',
-      validateSearchInput.bind(this, searchEl)
-    );
-  }
+      /**
+       * Toggle the search
+       */
 
-  // if there is nothing in the search field, prevent submit
-  function validateSearchInput(searchEl, evt) {
-    var isInputValueEmpty = searchEl.value.trim().length === 0;
-    if (!isInputValueEmpty) {
-      return;
-    }
+    }, {
+      key: '_toggleSearch',
+      value: function _toggleSearch(event) {
+        if (this.isOpen) {
+          this._closeSearch(event);
+        } else {
+          this._openSearch(event);
+        }
 
-    if (typeof evt !== 'undefined') {
-      evt.preventDefault();
-    }
+        event.preventDefault();
+      }
 
-    searchEl.focus();
-  }
+      /**
+       * Open the search form and trap focus
+       */
 
-  window.theme.SearchPage = (function() {
-    var selectors = {
-      searchReset: '[data-search-page-predictive-search-clear]',
-      searchInput: '[data-search-page-predictive-search-input]',
-      searchSubmit: '[data-search-page-predictive-search-submit]',
-      searchResults: '[data-predictive-search-mount="default"]'
-    };
+    }, {
+      key: '_openSearch',
+      value: function _openSearch() {
+        var _this20 = this;
 
-    var componentInstance;
-    var searchInput = document.querySelector(selectors.searchInput);
-    var searchSubmit = document.querySelector(selectors.searchSubmit);
+        this.searchElement.setAttribute('aria-hidden', 'false');
 
-    function init(config) {
-      componentInstance = new window.Shopify.theme.PredictiveSearchComponent({
-        selectors: {
-          input: selectors.searchInput,
-          reset: selectors.searchReset,
-          result: selectors.searchResults
-        },
-        resultTemplateFct: window.theme.SearchResultsTemplate,
-        numberOfResultsTemplateFct: numberOfResultsTemplateFct,
-        loadingResultsMessageTemplateFct: loadingResultsMessageTemplateFct,
-        onOpen: function(nodes) {
-          if (config.isTabletAndUp) {
+        document.documentElement.classList.add('no-scroll');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].trapFocus(this.searchElement, 'search', this.searchElement.querySelector('[name="q"]'));
+
+        var onFocusListener = function onFocusListener() {
+          _this20.searchInputElement.focus();
+          _this20.searchElement.removeEventListener('transitionend', onFocusListener);
+        };
+
+        this.searchElement.addEventListener('transitionend', onFocusListener);
+        this.isOpen = true;
+
+        this.pageOverlayElement.classList.add('is-visible');
+        document.querySelector('#shopify-section-header').style.zIndex = 10;
+      }
+
+      /**
+       * Close the search form and clear focus
+       */
+
+    }, {
+      key: '_closeSearch',
+      value: function _closeSearch() {
+        var _this21 = this;
+
+        this.searchElement.setAttribute('aria-hidden', 'true');
+
+        document.documentElement.classList.remove('no-scroll');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Accessibility__["default"].removeTrapFocus(this.searchElement, 'search');
+
+        this.isOpen = false;
+
+        var onTransitionEnd = function onTransitionEnd(event) {
+          if (event.propertyName === 'visibility') {
+            document.querySelector('#shopify-section-header').style.zIndex = '';
+            _this21.pageOverlayElement.removeEventListener('transitionend', onTransitionEnd);
+          }
+        };
+
+        this.pageOverlayElement.addEventListener('transitionend', onTransitionEnd);
+        this.pageOverlayElement.classList.remove('is-visible');
+      }
+
+      /**
+       * In order to prevent an odd UX where hitting the enter always choose the product results, if the search is set to product + something else,
+       * then we disable submission using enter key
+       */
+
+    }, {
+      key: '_preventSubmission',
+      value: function _preventSubmission(event) {
+        if (event.keyCode === 13 && window.theme.searchMode !== 'product') {
+          event.preventDefault();
+        }
+      }
+
+      /**
+       * This is called when the user has stopped typing (after debounce delay)
+       */
+
+    }, {
+      key: '_onInput',
+      value: function _onInput(event) {
+        var _this22 = this;
+
+        if (event.keyCode === 13) {
+          return;
+        }
+
+        // Unfortunately, fetch does not support as of today cancelling a request. As a consequence what we do is that we manually
+        // keep track of sent requests, and only use the results of the last one
+        this.lastInputValue = event.target.value;
+
+        if (this.lastInputValue === '') {
+          this._resetSearch();
+          return;
+        }
+
+        var queryOptions = { method: 'GET', credentials: 'same-origin' };
+
+        var queries = [fetch(window.routes.searchUrl + '?view=ajax&q=' + encodeURIComponent(this.lastInputValue) + '*&type=product', queryOptions)];
+
+        if (window.theme.searchMode !== 'product') {
+          queries.push(fetch(window.routes.searchUrl + '?view=ajax&q=' + encodeURIComponent(this.lastInputValue) + '*&type=' + window.theme.searchMode.replace('product,', ''), queryOptions));
+        }
+
+        this.queryMap[this.lastInputValue] = true;
+
+        document.dispatchEvent(new CustomEvent('theme:loading:start'));
+
+        Promise.all(queries).then(function (responses) {
+          // If we receive the result for a query that is not the last one, we simply do not process the result
+          if (_this22.lastInputValue !== event.target.value) {
             return;
           }
 
-          var searchInputBoundingRect = $(
-            selectors.searchInput
-          )[0].getBoundingClientRect();
-          var bodyHeight = $('body').height();
-          var offset = 50;
-          var resultsMaxHeight =
-            bodyHeight - searchInputBoundingRect.bottom - offset;
-          $(nodes.result).css({
-            maxHeight: resultsMaxHeight
-          });
-        },
-        onBeforeDestroy: function(nodes) {
-          // If the viewport width changes from mobile to tablet
-          // reset the top position of the results
-          $(nodes.result).css({
-            maxHeight: ''
-          });
-        }
-      });
-
-      validateSearchHandler(searchInput, searchSubmit);
-    }
-
-    function unload() {
-      if (!componentInstance) {
-        return;
-      }
-      componentInstance.destroy();
-      componentInstance = null;
-    }
-
-    return {
-      init: init,
-      unload: unload
-    };
-  })();
-
-  window.theme.SearchHeader = (function() {
-    var selectors = {
-      searchInput: '[data-predictive-search-drawer-input]',
-      searchResults: '[data-predictive-search-mount="drawer"]',
-      searchFormContainer: '[data-search-form-container]',
-      searchSubmit: '[data-search-form-submit]'
-    };
-
-    var componentInstance;
-    var searchInput = document.querySelector(selectors.searchInput);
-    var searchSubmit = document.querySelector(selectors.searchSubmit);
-
-    function init(config) {
-      componentInstance = new window.Shopify.theme.PredictiveSearchComponent({
-        selectors: {
-          input: selectors.searchInput,
-          result: selectors.searchResults
-        },
-        resultTemplateFct: window.theme.SearchResultsTemplate,
-        numberOfResultsTemplateFct: numberOfResultsTemplateFct,
-        numberOfResults: config.numberOfResults,
-        loadingResultsMessageTemplateFct: loadingResultsMessageTemplateFct,
-        onInputBlur: function() {
-          return false;
-        },
-        onOpen: function(nodes) {
-          var searchInputBoundingRect = $(
-            searchInput
-          )[0].getBoundingClientRect();
-
-          // For tablet screens and up, stop the scroll area from extending past
-          // the bottom of the screen because we're locking the body scroll
-          var maxHeight =
-            window.innerHeight -
-            searchInputBoundingRect.bottom -
-            (config.isTabletAndUp ? 20 : 0);
-
-          $(nodes.result).css({
-            top: config.isTabletAndUp ? '' : searchInputBoundingRect.bottom,
-            maxHeight: maxHeight
-          });
-        },
-        onClose: function(nodes) {
-          $(nodes.result).css({
-            maxHeight: ''
-          });
-        },
-        onBeforeDestroy: function(nodes) {
-          // If the viewport width changes from mobile to tablet
-          // reset the top position of the results
-          $(nodes.result).css({
-            top: ''
-          });
-        }
-      });
-
-      validateSearchHandler(searchInput, searchSubmit);
-    }
-
-    function unload() {
-      if (!componentInstance) {
-        return;
-      }
-
-      componentInstance.destroy();
-      componentInstance = null;
-    }
-
-    function clearAndClose() {
-      if (!componentInstance) {
-        return;
-      }
-
-      componentInstance.clearAndClose();
-    }
-
-    return {
-      init: init,
-      unload: unload,
-      clearAndClose: clearAndClose
-    };
-  })();
-
-  window.theme.Search = (function() {
-    var classes = {
-      searchTemplate: 'template-search'
-    };
-    var selectors = {
-      siteHeader: '.site-header'
-    };
-    var mediaQueryList = {
-      mobile: window.matchMedia('(max-width: 749px)'),
-      tabletAndUp: window.matchMedia('(min-width: 750px)')
-    };
-
-    function init() {
-      if (!$(selectors.siteHeader).length) {
-        return;
-      }
-
-      if (!canInitializePredictiveSearch()) {
-        return;
-      }
-
-      Object.keys(mediaQueryList).forEach(function(device) {
-        mediaQueryList[device].addListener(initSearchAccordingToViewport);
-      });
-
-      initSearchAccordingToViewport();
-    }
-
-    function initSearchAccordingToViewport() {
-      theme.SearchDrawer.close();
-      theme.SearchHeader.unload();
-      theme.SearchPage.unload();
-
-      if (mediaQueryList.mobile.matches) {
-        theme.SearchHeader.init({
-          numberOfResults: 4,
-          isTabletAndUp: false
-        });
-
-        if (isSearchPage()) {
-          theme.SearchPage.init({ isTabletAndUp: false });
-        }
-      } else {
-        // Tablet and up
-        theme.SearchHeader.init({
-          numberOfResults: 4,
-          isTabletAndUp: true
-        });
-
-        if (isSearchPage()) {
-          theme.SearchPage.init({ isTabletAndUp: true });
-        }
-      }
-    }
-
-    function isSearchPage() {
-      return $('body').hasClass(classes.searchTemplate);
-    }
-
-    function unload() {
-      theme.SearchHeader.unload();
-      theme.SearchPage.unload();
-    }
-
-    return {
-      init: init,
-      unload: unload
-    };
-  })();
-})();
-
-window.theme = window.theme || {};
-
-theme.SearchDrawer = (function() {
-  var selectors = {
-    headerSection: '[data-header-section]',
-    drawer: '[data-predictive-search-drawer]',
-    drawerOpenButton: '[data-predictive-search-open-drawer]',
-    headerSearchInput: '[data-predictive-search-drawer-input]',
-    predictiveSearchWrapper: '[data-predictive-search-mount="drawer"]'
-  };
-
-  var drawerInstance;
-
-  function init() {
-    setAccessibilityProps();
-
-    drawerInstance = new theme.Drawers('SearchDrawer', 'top', {
-      onDrawerOpen: function() {
-        setHeight();
-        theme.MobileNav.closeMobileNav();
-        lockBodyScroll();
-      },
-      onDrawerClose: function() {
-        theme.SearchHeader.clearAndClose();
-        $(selectors.drawerOpenButton).focus();
-        unlockBodyScroll();
-      },
-      withPredictiveSearch: true,
-      $elementToFocusOnOpen: $(selectors.headerSearchInput)
-    });
-  }
-
-  function setAccessibilityProps() {
-    $(selectors.drawerOpenButton)
-      .attr('aria-controls', 'SearchDrawer')
-      .attr('aria-expanded', 'false')
-      .attr('aria-haspopup', 'dialog');
-  }
-
-  function setHeight() {
-    $(selectors.drawer).css({
-      height: $(selectors.headerSection).outerHeight()
-    });
-  }
-
-  function close() {
-    drawerInstance.close();
-  }
-
-  function lockBodyScroll() {
-    theme.Helpers.enableScrollLock();
-  }
-
-  function unlockBodyScroll() {
-    theme.Helpers.disableScrollLock();
-  }
-
-  return {
-    init: init,
-    close: close
-  };
-})();
-
-theme.Disclosure = (function() {
-  var selectors = {
-    disclosureList: '[data-disclosure-list]',
-    disclosureToggle: '[data-disclosure-toggle]',
-    disclosureInput: '[data-disclosure-input]',
-    disclosureOptions: '[data-disclosure-option]'
-  };
-
-  var classes = {
-    listVisible: 'disclosure-list--visible'
-  };
-
-  function Disclosure($disclosure) {
-    this.$container = $disclosure;
-    this.cache = {};
-    this._cacheSelectors();
-    this._connectOptions();
-    this._connectToggle();
-    this._onFocusOut();
-  }
-
-  Disclosure.prototype = Object.assign({}, Disclosure.prototype, {
-    _cacheSelectors: function() {
-      this.cache = {
-        $disclosureList: this.$container.find(selectors.disclosureList),
-        $disclosureToggle: this.$container.find(selectors.disclosureToggle),
-        $disclosureInput: this.$container.find(selectors.disclosureInput),
-        $disclosureOptions: this.$container.find(selectors.disclosureOptions)
-      };
-    },
-
-    _connectToggle: function() {
-      this.cache.$disclosureToggle.on(
-        'click',
-        function(evt) {
-          var ariaExpanded =
-            $(evt.currentTarget).attr('aria-expanded') === 'true';
-          $(evt.currentTarget).attr('aria-expanded', !ariaExpanded);
-
-          this.cache.$disclosureList.toggleClass(classes.listVisible);
-        }.bind(this)
-      );
-    },
-
-    _connectOptions: function() {
-      this.cache.$disclosureOptions.on(
-        'click',
-        function(evt) {
-          this._submitForm($(evt.currentTarget).data('value'));
-        }.bind(this)
-      );
-    },
-
-    _onFocusOut: function() {
-      this.cache.$disclosureToggle.on(
-        'focusout',
-        function(evt) {
-          var disclosureLostFocus =
-            this.$container.has(evt.relatedTarget).length === 0;
-
-          if (disclosureLostFocus) {
-            this._hideList();
-          }
-        }.bind(this)
-      );
-
-      this.cache.$disclosureList.on(
-        'focusout',
-        function(evt) {
-          var childInFocus =
-            $(evt.currentTarget).has(evt.relatedTarget).length > 0;
-          var isVisible = this.cache.$disclosureList.hasClass(
-            classes.listVisible
-          );
-
-          if (isVisible && !childInFocus) {
-            this._hideList();
-          }
-        }.bind(this)
-      );
-
-      this.$container.on(
-        'keyup',
-        function(evt) {
-          if (evt.which !== slate.utils.keyboardKeys.ESCAPE) return;
-          this._hideList();
-          this.cache.$disclosureToggle.focus();
-        }.bind(this)
-      );
-
-      $('body').on(
-        'click',
-        function(evt) {
-          var isOption = this.$container.has(evt.target).length > 0;
-          var isVisible = this.cache.$disclosureList.hasClass(
-            classes.listVisible
-          );
-
-          if (isVisible && !isOption) {
-            this._hideList();
-          }
-        }.bind(this)
-      );
-    },
-
-    _submitForm: function(value) {
-      this.cache.$disclosureInput.val(value);
-      this.$container.parents('form').submit();
-    },
-
-    _hideList: function() {
-      this.cache.$disclosureList.removeClass(classes.listVisible);
-      this.cache.$disclosureToggle.attr('aria-expanded', false);
-    },
-
-    unload: function() {
-      this.cache.$disclosureOptions.off();
-      this.cache.$disclosureToggle.off();
-      this.cache.$disclosureList.off();
-      this.$container.off();
-    }
-  });
-
-  return Disclosure;
-})();
-
-theme.Zoom = (function() {
-  var selectors = {
-    imageZoom: '[data-image-zoom]'
-  };
-
-  var classes = {
-    zoomImg: 'zoomImg'
-  };
-
-  var attributes = {
-    imageZoomTarget: 'data-image-zoom-target'
-  };
-
-  function Zoom(container) {
-    this.container = container;
-    this.cache = {};
-    this.url = container.dataset.zoom;
-
-    this._cacheSelectors();
-
-    if (!this.cache.sourceImage) return;
-
-    this._duplicateImage();
-  }
-
-  Zoom.prototype = Object.assign({}, Zoom.prototype, {
-    _cacheSelectors: function() {
-      this.cache = {
-        sourceImage: this.container.querySelector(selectors.imageZoom)
-      };
-    },
-
-    _init: function() {
-      var targetWidth = this.cache.targetImage.width;
-      var targetHeight = this.cache.targetImage.height;
-
-      if (this.cache.sourceImage === this.cache.targetImage) {
-        this.sourceWidth = targetWidth;
-        this.sourceHeight = targetHeight;
-      } else {
-        this.sourceWidth = this.cache.sourceImage.width;
-        this.sourceHeight = this.cache.sourceImage.height;
-      }
-
-      this.xRatio =
-        (this.cache.sourceImage.width - targetWidth) / this.sourceWidth;
-      this.yRatio =
-        (this.cache.sourceImage.height - targetHeight) / this.sourceHeight;
-    },
-
-    _start: function(e) {
-      this._init();
-      this._move(e);
-    },
-
-    _stop: function() {
-      this.cache.targetImage.style.opacity = 0;
-    },
-
-    /**
-     * Sets the correct coordinates top and left position in px
-     * It sets a limit within between 0 and the max height of the image
-     * So when the mouse leaves the target image, it could
-     * never go above or beyond the target image zone
-     */
-    _setTopLeftMaxValues: function(top, left) {
-      return {
-        left: Math.max(Math.min(left, this.sourceWidth), 0),
-        top: Math.max(Math.min(top, this.sourceHeight), 0)
-      };
-    },
-
-    _move: function(e) {
-      // get left and top position within the "source image" zone
-      var left =
-        e.pageX -
-        (this.cache.sourceImage.getBoundingClientRect().left + window.scrollX);
-      var top =
-        e.pageY -
-        (this.cache.sourceImage.getBoundingClientRect().top + window.scrollY);
-      // make sure the left and top position don't go
-      // above or beyond the target image zone
-      var position = this._setTopLeftMaxValues(top, left);
-
-      top = position.top;
-      left = position.left;
-
-      this.cache.targetImage.style.left = -(left * -this.xRatio) + 'px';
-      this.cache.targetImage.style.top = -(top * -this.yRatio) + 'px';
-      this.cache.targetImage.style.opacity = 1;
-    },
-
-    /**
-     * This loads a high resolution image
-     * via the data attributes url
-     * It adds all necessary CSS styles and adds to the container
-     */
-    _duplicateImage: function() {
-      this._loadImage()
-        .then(
-          function(image) {
-            this.cache.targetImage = image;
-            image.style.width = image.width + 'px';
-            image.style.height = image.height + 'px';
-            image.style.position = 'absolute';
-            image.style.maxWidth = 'none';
-            image.style.maxHeight = 'none';
-            image.style.opacity = 0;
-            image.style.border = 'none';
-            image.style.left = 0;
-            image.style.top = 0;
-
-            this.container.appendChild(image);
-
-            this._init();
-
-            this._start = this._start.bind(this);
-            this._stop = this._stop.bind(this);
-            this._move = this._move.bind(this);
-
-            this.container.addEventListener('mouseenter', this._start);
-            this.container.addEventListener('mouseleave', this._stop);
-            this.container.addEventListener('mousemove', this._move);
-
-            this.container.style.position = 'relative';
-            this.container.style.overflow = 'hidden';
-          }.bind(this)
-        )
-        .catch(function(error) {
-          // eslint-disable-next-line no-console
-          console.warn('Error fetching image', error);
-        });
-    },
-
-    _loadImage: function() {
-      // eslint-disable-next-line
-      return new Promise(function(resolve, reject) {
-          var image = new Image();
-          image.setAttribute('role', 'presentation');
-          image.setAttribute(attributes.imageZoomTarget, true);
-          image.classList.add(classes.zoomImg);
-          image.src = this.url;
-
-          image.addEventListener('load', function() {
-            resolve(image);
+          delete _this22.queryMap[event.target.value];
+
+          Promise.all(responses.map(function (response) {
+            return response.text();
+          })).then(function (contents) {
+            // If we have only one content then we only have product, otherwise we have products and articles
+            if (window.theme.searchMode === 'product') {
+              _this22.searchResultsElement.innerHTML = contents[0];
+            } else {
+              _this22.searchResultsElement.innerHTML = '<div class="PageLayout PageLayout--breakLap">\n              <div class="PageLayout__Section">' + contents[0] + '</div>\n              <div class="PageLayout__Section PageLayout__Section--secondary">' + contents[1] + '</div>\n            </div>';
+            }
+
+            _this22.searchResultsElement.setAttribute('aria-hidden', 'false');
           });
 
-          image.addEventListener('error', function(error) {
-            reject(error);
-          });
-        }.bind(this)
-      );
-    },
-
-    unload: function() {
-      var targetImage = this.container.querySelector(
-        '[' + attributes.imageZoomTarget + ']'
-      );
-      if (targetImage) {
-        targetImage.remove();
-      }
-
-      this.container.removeEventListener('mouseenter', this._start);
-      this.container.removeEventListener('mouseleave', this._stop);
-      this.container.removeEventListener('mousemove', this._move);
-    }
-  });
-
-  return Zoom;
-})();
-
-
-/* ================ TEMPLATES ================ */
-(function() {
-  var $filterBy = $('#BlogTagFilter');
-
-  if (!$filterBy.length) {
-    return;
-  }
-
-  slate.utils.resizeSelects($filterBy);
-
-  $filterBy.on('change', function() {
-    location.href = $(this).val();
-  });
-})();
-
-window.theme = theme || {};
-
-theme.customerTemplates = (function() {
-  var selectors = {
-    RecoverHeading: '#RecoverHeading',
-    RecoverEmail: '#RecoverEmail',
-    LoginHeading: '#LoginHeading'
-  };
-
-  function initEventListeners() {
-    this.$RecoverHeading = $(selectors.RecoverHeading);
-    this.$RecoverEmail = $(selectors.RecoverEmail);
-    this.$LoginHeading = $(selectors.LoginHeading);
-
-    // Show reset password form
-    $('#RecoverPassword').on(
-      'click',
-      function(evt) {
-        evt.preventDefault();
-        showRecoverPasswordForm();
-        this.$RecoverHeading.attr('tabindex', '-1').focus();
-      }.bind(this)
-    );
-
-    // Hide reset password form
-    $('#HideRecoverPasswordLink').on(
-      'click',
-      function(evt) {
-        evt.preventDefault();
-        hideRecoverPasswordForm();
-        this.$LoginHeading.attr('tabindex', '-1').focus();
-      }.bind(this)
-    );
-
-    this.$RecoverHeading.on('blur', function() {
-      $(this).removeAttr('tabindex');
-    });
-
-    this.$LoginHeading.on('blur', function() {
-      $(this).removeAttr('tabindex');
-    });
-  }
-
-  /**
-   *
-   *  Show/Hide recover password form
-   *
-   */
-
-  function showRecoverPasswordForm() {
-    $('#RecoverPasswordForm').removeClass('hide');
-    $('#CustomerLoginForm').addClass('hide');
-
-    if (this.$RecoverEmail.attr('aria-invalid') === 'true') {
-      this.$RecoverEmail.focus();
-    }
-  }
-
-  function hideRecoverPasswordForm() {
-    $('#RecoverPasswordForm').addClass('hide');
-    $('#CustomerLoginForm').removeClass('hide');
-  }
-
-  /**
-   *
-   *  Show reset password success message
-   *
-   */
-  function resetPasswordSuccess() {
-    var $formState = $('.reset-password-success');
-
-    // check if reset password form was successfully submited.
-    if (!$formState.length) {
-      return;
-    }
-
-    // show success message
-    $('#ResetSuccess')
-      .removeClass('hide')
-      .focus();
-  }
-
-  /**
-   *
-   *  Show/hide customer address forms
-   *
-   */
-  function customerAddressForm() {
-    var $newAddressForm = $('#AddressNewForm');
-    var $newAddressFormButton = $('#AddressNewButton');
-
-    if (!$newAddressForm.length) {
-      return;
-    }
-
-    // Initialize observers on address selectors, defined in shopify_common.js
-    if (Shopify) {
-      // eslint-disable-next-line no-new
-      new Shopify.CountryProvinceSelector(
-        'AddressCountryNew',
-        'AddressProvinceNew',
-        {
-          hideElement: 'AddressProvinceContainerNew'
-        }
-      );
-    }
-
-    // Initialize each edit form's country/province selector
-    $('.address-country-option').each(function() {
-      var formId = $(this).data('form-id');
-      var countrySelector = 'AddressCountry_' + formId;
-      var provinceSelector = 'AddressProvince_' + formId;
-      var containerSelector = 'AddressProvinceContainer_' + formId;
-
-      // eslint-disable-next-line no-new
-      new Shopify.CountryProvinceSelector(countrySelector, provinceSelector, {
-        hideElement: containerSelector
-      });
-    });
-
-    // Toggle new/edit address forms
-    $('.address-new-toggle').on('click', function() {
-      var isExpanded = $newAddressFormButton.attr('aria-expanded') === 'true';
-
-      $newAddressForm.toggleClass('hide');
-      $newAddressFormButton.attr('aria-expanded', !isExpanded).focus();
-    });
-
-    $('.address-edit-toggle').on('click', function() {
-      var formId = $(this).data('form-id');
-      var $editButton = $('#EditFormButton_' + formId);
-      var $editAddress = $('#EditAddress_' + formId);
-      var isExpanded = $editButton.attr('aria-expanded') === 'true';
-
-      $editAddress.toggleClass('hide');
-      $editButton.attr('aria-expanded', !isExpanded).focus();
-    });
-
-    $('.address-delete').on('click', function() {
-      var $el = $(this);
-      var target = $el.data('target');
-      var confirmMessage = $el.data('confirm-message');
-
-      // eslint-disable-next-line no-alert
-      if (
-        confirm(
-          confirmMessage || 'Are you sure you wish to delete this address?'
-        )
-      ) {
-        Shopify.postLink(target, {
-          parameters: { _method: 'delete' }
+          document.dispatchEvent(new CustomEvent('theme:loading:end'));
         });
       }
-    });
-  }
+    }, {
+      key: '_resetSearch',
+      value: function _resetSearch() {
+        if (window.theme.searchMode === 'product') {
+          this.searchResultsElement.innerHTML = '';
+        } else {
+          this.searchResultsElement.innerHTML = '<div class="PageLayout PageLayout--breakLap">\n              <div class="PageLayout__Section"></div>\n              <div class="PageLayout__Section PageLayout__Section--secondary"></div>\n            </div>';
+        }
 
-  /**
-   *
-   *  Check URL for reset password hash
-   *
-   */
-  function checkUrlHash() {
-    var hash = window.location.hash;
+        this.searchResultsElement.setAttribute('aria-hidden', 'true');
 
-    // Allow deep linking to recover password form
-    if (hash === '#recover') {
-      showRecoverPasswordForm.bind(this)();
-    }
-  }
+        document.dispatchEvent(new CustomEvent('theme:loading:end')); // Just in case
+      }
 
-  return {
-    init: function() {
-      initEventListeners();
-      checkUrlHash();
-      resetPasswordSuccess();
-      customerAddressForm();
-    }
-  };
-})();
-
-
-/*================ SECTIONS ================*/
-window.theme = window.theme || {};
-
-theme.Cart = (function() {
-  var selectors = {
-    cartCount: '[data-cart-count]',
-    cartCountBubble: '[data-cart-count-bubble]',
-    cartDiscount: '[data-cart-discount]',
-    cartDiscountTitle: '[data-cart-discount-title]',
-    cartDiscountAmount: '[data-cart-discount-amount]',
-    cartDiscountWrapper: '[data-cart-discount-wrapper]',
-    cartErrorMessage: '[data-cart-error-message]',
-    cartErrorMessageWrapper: '[data-cart-error-message-wrapper]',
-    cartItem: '[data-cart-item]',
-    cartItemDetails: '[data-cart-item-details]',
-    cartItemDiscount: '[data-cart-item-discount]',
-    cartItemDiscountedPriceGroup: '[data-cart-item-discounted-price-group]',
-    cartItemDiscountTitle: '[data-cart-item-discount-title]',
-    cartItemDiscountAmount: '[data-cart-item-discount-amount]',
-    cartItemDiscountList: '[data-cart-item-discount-list]',
-    cartItemFinalPrice: '[data-cart-item-final-price]',
-    cartItemImage: '[data-cart-item-image]',
-    cartItemLinePrice: '[data-cart-item-line-price]',
-    cartItemOriginalPrice: '[data-cart-item-original-price]',
-    cartItemPrice: '[data-cart-item-price]',
-    cartItemPriceList: '[data-cart-item-price-list]',
-    cartItemProperty: '[data-cart-item-property]',
-    cartItemPropertyName: '[data-cart-item-property-name]',
-    cartItemPropertyValue: '[data-cart-item-property-value]',
-    cartItemRegularPriceGroup: '[data-cart-item-regular-price-group]',
-    cartItemRegularPrice: '[data-cart-item-regular-price]',
-    cartItemTitle: '[data-cart-item-title]',
-    cartItemOption: '[data-cart-item-option]',
-    cartLineItems: '[data-cart-line-items]',
-    cartNote: '[data-cart-notes]',
-    cartQuantityErrorMessage: '[data-cart-quantity-error-message]',
-    cartQuantityErrorMessageWrapper:
-      '[data-cart-quantity-error-message-wrapper]',
-    cartRemove: '[data-cart-remove]',
-    cartStatus: '[data-cart-status]',
-    cartSubtotal: '[data-cart-subtotal]',
-    cartTableCell: '[data-cart-table-cell]',
-    cartWrapper: '[data-cart-wrapper]',
-    emptyPageContent: '[data-empty-page-content]',
-    quantityInput: '[data-quantity-input]',
-    quantityInputMobile: '[data-quantity-input-mobile]',
-    quantityInputDesktop: '[data-quantity-input-desktop]',
-    quantityLabelMobile: '[data-quantity-label-mobile]',
-    quantityLabelDesktop: '[data-quantity-label-desktop]',
-    inputQty: '[data-quantity-input]',
-    thumbnails: '.cart__image',
-    unitPrice: '[data-unit-price]',
-    unitPriceBaseUnit: '[data-unit-price-base-unit]',
-    unitPriceGroup: '[data-unit-price-group]'
-  };
-
-  var classes = {
-    cartNoCookies: 'cart--no-cookies',
-    cartRemovedProduct: 'cart__removed-product',
-    hide: 'hide',
-    inputError: 'input--error'
-  };
-
-  var attributes = {
-    cartItemIndex: 'data-cart-item-index',
-    cartItemKey: 'data-cart-item-key',
-    cartItemQuantity: 'data-cart-item-quantity',
-    cartItemTitle: 'data-cart-item-title',
-    cartItemUrl: 'data-cart-item-url',
-    quantityItem: 'data-quantity-item'
-  };
-
-  theme.breakpoints = theme.breakpoints || {};
-
-  if (
-    isNaN(theme.breakpoints.medium) ||
-    theme.breakpoints.medium === undefined
-  ) {
-    theme.breakpoints.medium = 750;
-  }
-
-  var mediumUpQuery = '(min-width: ' + theme.breakpoints.medium + 'px)';
-
-  function Cart(container) {
-    this.$container = $(container);
-    this.$thumbnails = $(selectors.thumbnails, this.$container);
-    this.ajaxEnabled = this.$container.data('ajax-enabled');
-
-    if (!this.cookiesEnabled()) {
-      this.$container.addClass(classes.cartNoCookies);
-    }
-
-    this.$thumbnails.css('cursor', 'pointer');
-    this.$container.on(
-      'click',
-      selectors.thumbnails,
-      this._handleThumbnailClick
-    );
-
-    this.$container.on(
-      'change',
-      selectors.inputQty,
-      $.debounce(500, this._handleInputQty.bind(this))
-    );
-
-    this.mql = window.matchMedia(mediumUpQuery);
-    this.mql.addListener(this.setQuantityFormControllers.bind(this));
-    this.setQuantityFormControllers();
-
-    if (this.ajaxEnabled) {
       /**
-       * Because the entire cart is recreated when a cart item is updated,
-       * we cannot cache the elements in the cart. Instead, we add the event
-       * listeners on the cart's container to allow us to retain the event
-       * listeners after rebuilding the cart when an item is updated.
+       * Simple function that allows to debounce
        */
 
-      this.$container.on(
-        'change',
-        selectors.cartNote,
-        this._onNoteChange.bind(this)
-      );
+    }, {
+      key: '_debounce',
+      value: function _debounce(fn, delay) {
+        var _this23 = this;
 
-      this.$container.on(
-        'click',
-        selectors.cartRemove,
-        this._onRemoveItem.bind(this)
-      );
+        var timer = null;
 
-      this._setupCartTemplates();
+        return function () {
+          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          clearTimeout(timer);
+
+          timer = setTimeout(function () {
+            fn.apply(_this23, args);
+          }, delay);
+        };
+      }
+    }]);
+
+    return SearchBar;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = SearchBar;
+
+  /***/
+},
+/* 28 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper__ = __webpack_require__(7);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_CountrySelector__ = __webpack_require__(12);
+
+  var AddressesSection = function AddressesSection() {
+    var _this24 = this;
+
+    _classCallCheck(this, AddressesSection);
+
+    this.countrySelectors = [];
+
+    __WEBPACK_IMPORTED_MODULE_0__helper__["DomHelper"].nodeListToArray(document.querySelectorAll('.Modal--address')).forEach(function (modal) {
+      _this24.countrySelectors.push(new __WEBPACK_IMPORTED_MODULE_1__components_CountrySelector__["default"](modal.querySelector('[name="address[country]"]'), modal.querySelector('[name="address[province]"]')));
+    });
+  };
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = AddressesSection;
+
+  /***/
+},
+/* 29 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+
+  var ArticleList = function () {
+    function ArticleList(container) {
+      var _this25 = this;
+
+      _classCallCheck(this, ArticleList);
+
+      this.element = container;
+
+      if (window.theme.showElementStaggering) {
+        this.timeline = new TimelineLite({ delay: window.theme.showPageTransition ? 0.5 : 0 });
+
+        this.intersectionObserver = new IntersectionObserver(this._reveal.bind(this));
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.ArticleItem')).forEach(function (item) {
+          _this25.intersectionObserver.observe(item);
+        });
+      }
     }
-  }
 
-  Cart.prototype = Object.assign({}, Cart.prototype, {
-    _setupCartTemplates: function() {
-      this.$itemTemplate = $(selectors.cartItem, this.$container)
-        .first()
-        .clone();
-      this.$itemDiscountTemplate = $(
-        selectors.cartItemDiscount,
-        this.$itemTemplate
-      ).clone();
-      this.$itemOptionTemplate = $(
-        selectors.cartItemOption,
-        this.$itemTemplate
-      ).clone();
-      this.$itemPropertyTemplate = $(
-        selectors.cartItemProperty,
-        this.$itemTemplate
-      ).clone();
-      this.$itemPriceListTemplate = $(
-        selectors.cartItemPriceList,
-        this.$itemTemplate
-      ).clone();
-      this.$itemLinePriceTemplate = $(
-        selectors.cartItemLinePrice,
-        this.$itemTemplate
-      ).clone();
-      this.$cartDiscountTemplate = $(
-        selectors.cartDiscount,
-        this.$container
-      ).clone();
-    },
-
-    _handleInputQty: function(evt) {
-      var $input = $(evt.target);
-      var itemIndex = $input.data('quantity-item');
-      var $itemElement = $input.closest(selectors.cartItem);
-      var $itemQtyInputs = $('[data-quantity-item=' + itemIndex + ']');
-      var value = parseInt($input.val());
-      var isValidValue = !(value < 0 || isNaN(value));
-      $itemQtyInputs.val(value);
-
-      this._hideCartError();
-      this._hideQuantityErrorMessage();
-
-      if (!isValidValue) {
-        this._showQuantityErrorMessages($itemElement);
-        return;
-      }
-
-      if (isValidValue && this.ajaxEnabled) {
-        this._updateItemQuantity(
-          itemIndex,
-          $itemElement,
-          $itemQtyInputs,
-          value
-        );
-      }
-    },
-
-    _updateItemQuantity: function(
-      itemIndex,
-      $itemElement,
-      $itemQtyInputs,
-      value
-    ) {
-      var key = $itemElement.attr(attributes.cartItemKey);
-      var index = $itemElement.attr(attributes.cartItemIndex);
-
-      var params = {
-        url: '/cart/change.js',
-        data: { quantity: value, line: index },
-        dataType: 'json'
-      };
-
-      $.post(params)
-        .done(
-          function(state) {
-            if (state.item_count === 0) {
-              this._emptyCart();
-            } else {
-              this._createCart(state);
-
-              if (value === 0) {
-                this._showRemoveMessage($itemElement.clone());
-              } else {
-                var $lineItem = $('[data-cart-item-key="' + key + '"]');
-                var item = this.getItem(key, state);
-
-                $(selectors.quantityInput, $lineItem).focus();
-                this._updateLiveRegion(item);
-              }
-            }
-
-            this._setCartCountBubble(state.item_count);
-          }.bind(this)
-        )
-        .fail(
-          function() {
-            this._showCartError($itemQtyInputs);
-          }.bind(this)
-        );
-    },
-
-    getItem: function(key, state) {
-      return state.items.find(function(item) {
-        return item.key === key;
-      });
-    },
-
-    _liveRegionText: function(item) {
-      // Dummy content for live region
-      var liveRegionText =
-        theme.strings.update +
-        ': [QuantityLabel]: [Quantity], [Regular] [$$] [DiscountedPrice] [$]. [PriceInformation]';
-
-      // Update Quantity
-      liveRegionText = liveRegionText
-        .replace('[QuantityLabel]', theme.strings.quantity)
-        .replace('[Quantity]', item.quantity);
-
-      // Update pricing information
-      var regularLabel = '';
-      var regularPrice = theme.Currency.formatMoney(
-        item.original_line_price,
-        theme.moneyFormat
-      );
-      var discountLabel = '';
-      var discountPrice = '';
-      var discountInformation = '';
-
-      if (item.original_line_price > item.final_line_price) {
-        regularLabel = theme.strings.regularTotal;
-
-        discountLabel = theme.strings.discountedTotal;
-        discountPrice = theme.Currency.formatMoney(
-          item.final_line_price,
-          theme.moneyFormat
-        );
-
-        discountInformation = theme.strings.priceColumn;
-      }
-
-      liveRegionText = liveRegionText
-        .replace('[Regular]', regularLabel)
-        .replace('[$$]', regularPrice)
-        .replace('[DiscountedPrice]', discountLabel)
-        .replace('[$]', discountPrice)
-        .replace('[PriceInformation]', discountInformation)
-        .trim();
-
-      return liveRegionText;
-    },
-
-    _updateLiveRegion: function(item) {
-      var $liveRegion = $(selectors.cartStatus);
-      $liveRegion.html(this._liveRegionText(item)).attr('aria-hidden', false);
-
-      // hide content from accessibility tree after announcement
-      setTimeout(function() {
-        $liveRegion.attr('aria-hidden', true);
-      }, 1000);
-    },
-
-    _createCart: function(state) {
-      var cartDiscountList = this._createCartDiscountList(state);
-
-      $(selectors.cartLineItems, this.$container).html(
-        this._createLineItemList(state)
-      );
-
-      this.setQuantityFormControllers();
-
-      $(selectors.cartNote, this.$container).val(state.note);
-
-      if (cartDiscountList.length === 0) {
-        $(selectors.cartDiscountWrapper, this.$container)
-          .html('')
-          .addClass(classes.hide);
-      } else {
-        $(selectors.cartDiscountWrapper, this.$container)
-          .html(cartDiscountList)
-          .removeClass(classes.hide);
-      }
-
-      $(selectors.cartSubtotal, this.$container).html(
-        theme.Currency.formatMoney(
-          state.total_price,
-          theme.moneyFormatWithCurrency
-        )
-      );
-    },
-
-    _createCartDiscountList: function(cart) {
-      return $.map(
-        cart.cart_level_discount_applications,
-        function(discount) {
-          var $discount = this.$cartDiscountTemplate.clone();
-          $discount.find(selectors.cartDiscountTitle).text(discount.title);
-          $discount
-            .find(selectors.cartDiscountAmount)
-            .html(
-              theme.Currency.formatMoney(
-                discount.total_allocated_amount,
-                theme.moneyFormat
-              )
-            );
-          return $discount[0];
-        }.bind(this)
-      );
-    },
-
-    _createLineItemList: function(state) {
-      return $.map(
-        state.items,
-        function(item, index) {
-          var $item = this.$itemTemplate.clone();
-          var $itemPriceList = this.$itemPriceListTemplate.clone();
-
-          this._setLineItemAttributes($item, item, index);
-          this._setLineItemImage($item, item.featured_image);
-
-          $(selectors.cartItemTitle, $item)
-            .text(item.product_title)
-            .attr('href', item.url);
-
-          var productDetailsList = this._createProductDetailsList(
-            item.product_has_only_default_variant,
-            item.options_with_values,
-            item.properties
-          );
-          this._setProductDetailsList($item, productDetailsList);
-
-          this._setItemRemove($item, item.title);
-
-          $itemPriceList.html(
-            this._createItemPrice(
-              item.original_price,
-              item.final_price,
-              this.$itemPriceListTemplate
-            )
-          );
-
-          if (item.unit_price_measurement) {
-            $itemPriceList.append(
-              this._createUnitPrice(
-                item.unit_price,
-                item.unit_price_measurement,
-                this.$itemPriceListTemplate
-              )
-            );
-          }
-
-          this._setItemPrice($item, $itemPriceList);
-
-          var itemDiscountList = this._createItemDiscountList(item);
-          this._setItemDiscountList($item, itemDiscountList);
-
-          this._setQuantityInputs($item, item, index);
-
-          var itemLinePrice = this._createItemPrice(
-            item.original_line_price,
-            item.final_line_price,
-            this.$itemLinePriceTemplate
-          );
-          this._setItemLinePrice($item, itemLinePrice);
-
-          return $item[0];
-        }.bind(this)
-      );
-    },
-
-    _setLineItemAttributes: function($item, item, index) {
-      $item
-        .attr(attributes.cartItemKey, item.key)
-        .attr(attributes.cartItemUrl, item.url)
-        .attr(attributes.cartItemTitle, item.title)
-        .attr(attributes.cartItemIndex, index + 1)
-        .attr(attributes.cartItemQuantity, item.quantity);
-    },
-
-    _setLineItemImage: function($item, featuredImage) {
-      var $image = $(selectors.cartItemImage, $item);
-
-      var sizedImageUrl =
-        featuredImage.url !== null
-          ? theme.Images.getSizedImageUrl(featuredImage.url, 'x190')
-          : null;
-
-      if (sizedImageUrl) {
-        $image
-          .attr('alt', featuredImage.alt)
-          .attr('src', sizedImageUrl)
-          .removeClass(classes.hide);
-      } else {
-        $image.remove();
-      }
-    },
-
-    _setProductDetailsList: function($item, productDetailsList) {
-      var $itemDetails = $(selectors.cartItemDetails, $item);
-
-      if (productDetailsList.length === 0) {
-        $itemDetails.addClass(classes.hide).text('');
-      } else {
-        $itemDetails.removeClass(classes.hide).html(productDetailsList);
-      }
-    },
-
-    _setItemPrice: function($item, price) {
-      $(selectors.cartItemPrice, $item).html(price);
-    },
-
-    _setItemDiscountList: function($item, discountList) {
-      var $itemDiscountList = $(selectors.cartItemDiscountList, $item);
-
-      if (discountList.length === 0) {
-        $itemDiscountList.html('').addClass(classes.hide);
-      } else {
-        $itemDiscountList.html(discountList).removeClass(classes.hide);
-      }
-    },
-
-    _setItemRemove: function($item, title) {
-      $(selectors.cartRemove, $item).attr(
-        'aria-label',
-        theme.strings.removeLabel.replace('[product]', title)
-      );
-    },
-
-    _setQuantityInputs: function($item, item, index) {
-      $(selectors.quantityInputMobile, $item)
-        .attr('id', 'updates_' + item.key)
-        .attr(attributes.quantityItem, index + 1)
-        .val(item.quantity);
-
-      $(selectors.quantityInputDesktop, $item)
-        .attr('id', 'updates_large_' + item.key)
-        .attr(attributes.quantityItem, index + 1)
-        .val(item.quantity);
-
-      $(selectors.quantityLabelMobile, $item).attr(
-        'for',
-        'updates_' + item.key
-      );
-
-      $(selectors.quantityLabelDesktop, $item).attr(
-        'for',
-        'updates_large_' + item.key
-      );
-    },
-
-    setQuantityFormControllers: function() {
-      if (this.mql.matches) {
-        $(selectors.quantityInputDesktop).attr('name', 'updates[]');
-        $(selectors.quantityInputMobile).removeAttr('name');
-      } else {
-        $(selectors.quantityInputMobile).attr('name', 'updates[]');
-        $(selectors.quantityInputDesktop).removeAttr('name');
-      }
-    },
-
-    _setItemLinePrice: function($item, price) {
-      $(selectors.cartItemLinePrice, $item).html(price);
-    },
-
-    _createProductDetailsList: function(
-      product_has_only_default_variant,
-      options,
-      properties
-    ) {
-      var optionsPropertiesHTML = [];
-
-      if (!product_has_only_default_variant) {
-        optionsPropertiesHTML = optionsPropertiesHTML.concat(
-          this._getOptionList(options)
-        );
-      }
-
-      if (properties !== null && Object.keys(properties).length !== 0) {
-        optionsPropertiesHTML = optionsPropertiesHTML.concat(
-          this._getPropertyList(properties)
-        );
-      }
-
-      return optionsPropertiesHTML;
-    },
-
-    _getOptionList: function(options) {
-      return $.map(
-        options,
-        function(option) {
-          var $optionElement = this.$itemOptionTemplate.clone();
-
-          $optionElement
-            .text(option.name + ': ' + option.value)
-            .removeClass(classes.hide);
-
-          return $optionElement[0];
-        }.bind(this)
-      );
-    },
-
-    _getPropertyList: function(properties) {
-      var propertiesArray =
-        properties !== null ? Object.entries(properties) : [];
-
-      return $.map(
-        propertiesArray,
-        function(property) {
-          var $propertyElement = this.$itemPropertyTemplate.clone();
-
-          // Line item properties prefixed with an underscore are not to be displayed
-          if (property[0].charAt(0) === '_') return;
-
-          // if the property value has a length of 0 (empty), don't display it
-          if (property[1].length === 0) return;
-
-          $propertyElement
-            .find(selectors.cartItemPropertyName)
-            .text(property[0]);
-
-          if (property[0].indexOf('/uploads/') === -1) {
-            $propertyElement
-              .find(selectors.cartItemPropertyValue)
-              .text(': ' + property[1]);
-          } else {
-            $propertyElement
-              .find(selectors.cartItemPropertyValue)
-              .html(
-                ': <a href="' +
-                  property[1] +
-                  '"> ' +
-                  property[1].split('/').pop() +
-                  '</a>'
-              );
-          }
-
-          $propertyElement.removeClass(classes.hide);
-
-          return $propertyElement[0];
-        }.bind(this)
-      );
-    },
-
-    _createItemPrice: function(original_price, final_price, $priceTemplate) {
-      if (original_price !== final_price) {
-        var $discountedPrice = $(
-          selectors.cartItemDiscountedPriceGroup,
-          $priceTemplate
-        ).clone();
-
-        $(selectors.cartItemOriginalPrice, $discountedPrice).html(
-          theme.Currency.formatMoney(original_price, theme.moneyFormat)
-        );
-        $(selectors.cartItemFinalPrice, $discountedPrice).html(
-          theme.Currency.formatMoney(final_price, theme.moneyFormat)
-        );
-        $discountedPrice.removeClass(classes.hide);
-
-        return $discountedPrice[0];
-      } else {
-        var $regularPrice = $(
-          selectors.cartItemRegularPriceGroup,
-          $priceTemplate
-        ).clone();
-
-        $(selectors.cartItemRegularPrice, $regularPrice).html(
-          theme.Currency.formatMoney(original_price, theme.moneyFormat)
-        );
-
-        $regularPrice.removeClass(classes.hide);
-
-        return $regularPrice[0];
-      }
-    },
-
-    _createUnitPrice: function(
-      unitPrice,
-      unitPriceMeasurement,
-      $itemPriceGroup
-    ) {
-      var $unitPriceGroup = $(
-        selectors.unitPriceGroup,
-        $itemPriceGroup
-      ).clone();
-
-      var unitPriceBaseUnit =
-        (unitPriceMeasurement.reference_value !== 1
-          ? unitPriceMeasurement.reference_value
-          : '') + unitPriceMeasurement.reference_unit;
-
-      $(selectors.unitPriceBaseUnit, $unitPriceGroup).text(unitPriceBaseUnit);
-      $(selectors.unitPrice, $unitPriceGroup).html(
-        theme.Currency.formatMoney(unitPrice, theme.moneyFormat)
-      );
-
-      $unitPriceGroup.removeClass(classes.hide);
-
-      return $unitPriceGroup[0];
-    },
-
-    _createItemDiscountList: function(item) {
-      return $.map(
-        item.line_level_discount_allocations,
-        function(discount) {
-          var $discount = this.$itemDiscountTemplate.clone();
-          $discount
-            .find(selectors.cartItemDiscountTitle)
-            .text(discount.discount_application.title);
-          $discount
-            .find(selectors.cartItemDiscountAmount)
-            .html(
-              theme.Currency.formatMoney(discount.amount, theme.moneyFormat)
-            );
-          return $discount[0];
-        }.bind(this)
-      );
-    },
-
-    _showQuantityErrorMessages: function(itemElement) {
-      $(selectors.cartQuantityErrorMessage, itemElement).text(
-        theme.strings.quantityMinimumMessage
-      );
-
-      $(selectors.cartQuantityErrorMessageWrapper, itemElement).removeClass(
-        classes.hide
-      );
-
-      $(selectors.inputQty, itemElement)
-        .addClass(classes.inputError)
-        .focus();
-    },
-
-    _hideQuantityErrorMessage: function() {
-      var $errorMessages = $(
-        selectors.cartQuantityErrorMessageWrapper
-      ).addClass(classes.hide);
-
-      $(selectors.cartQuantityErrorMessage, $errorMessages).text('');
-
-      $(selectors.inputQty, this.$container).removeClass(classes.inputError);
-    },
-
-    _handleThumbnailClick: function(evt) {
-      var url = $(evt.target)
-        .closest(selectors.cartItem)
-        .data('cart-item-url');
-
-      window.location.href = url;
-    },
-
-    _onNoteChange: function(evt) {
-      var note = evt.currentTarget.value;
-      this._hideCartError();
-      this._hideQuantityErrorMessage();
-
-      var params = {
-        url: '/cart/update.js',
-        data: { note: note },
-        dataType: 'json'
-      };
-
-      $.post(params).fail(
-        function() {
-          this._showCartError(evt.currentTarget);
-        }.bind(this)
-      );
-    },
-
-    _showCartError: function(elementToFocus) {
-      $(selectors.cartErrorMessage).text(theme.strings.cartError);
-
-      $(selectors.cartErrorMessageWrapper).removeClass(classes.hide);
-
-      elementToFocus.focus();
-    },
-
-    _hideCartError: function() {
-      $(selectors.cartErrorMessageWrapper).addClass(classes.hide);
-      $(selectors.cartErrorMessage).text('');
-    },
-
-    _onRemoveItem: function(evt) {
-      evt.preventDefault();
-      var $remove = $(evt.target);
-      var $lineItem = $remove.closest(selectors.cartItem);
-      var index = $lineItem.attr(attributes.cartItemIndex);
-      this._hideCartError();
-
-      var params = {
-        url: '/cart/change.js',
-        data: { quantity: 0, line: index },
-        dataType: 'json'
-      };
-
-      $.post(params)
-        .done(
-          function(state) {
-            if (state.item_count === 0) {
-              this._emptyCart();
-            } else {
-              this._createCart(state);
-              this._showRemoveMessage($lineItem.clone());
-            }
-
-            this._setCartCountBubble(state.item_count);
-          }.bind(this)
-        )
-        .fail(
-          function() {
-            this._showCartError(null);
-          }.bind(this)
-        );
-    },
-
-    _showRemoveMessage: function(lineItem) {
-      var index = lineItem.data('cart-item-index');
-      var removeMessage = this._getRemoveMessage(lineItem);
-      var $lineItemAtIndex;
-
-      if (index - 1 === 0) {
-        $lineItemAtIndex = $('[data-cart-item-index="1"]', this.$container);
-        $(removeMessage).insertBefore($lineItemAtIndex);
-      } else {
-        $lineItemAtIndex = $(
-          '[data-cart-item-index="' + (index - 1) + '"]',
-          this.$container
-        );
-        removeMessage.insertAfter($lineItemAtIndex);
-      }
-      removeMessage.focus();
-    },
-
-    _getRemoveMessage: function(lineItem) {
-      var formattedMessage = this._formatRemoveMessage(lineItem);
-
-      var $tableCell = $(selectors.cartTableCell, lineItem).clone();
-      $tableCell
-        .removeClass()
-        .addClass(classes.cartRemovedProduct)
-        .attr('colspan', '4')
-        .html(formattedMessage);
-
-      lineItem
-        .attr('role', 'alert')
-        .html($tableCell)
-        .attr('tabindex', '-1');
-
-      return lineItem;
-    },
-
-    _formatRemoveMessage: function(lineItem) {
-      var quantity = lineItem.data('cart-item-quantity');
-      var url = lineItem.attr(attributes.cartItemUrl);
-      var title = lineItem.attr(attributes.cartItemTitle);
-
-      return theme.strings.removedItemMessage
-        .replace('[quantity]', quantity)
-        .replace(
-          '[link]',
-          '<a ' +
-            'href="' +
-            url +
-            '" class="text-link text-link--accent">' +
-            title +
-            '</a>'
-        );
-    },
-
-    _setCartCountBubble: function(quantity) {
-      this.$cartCountBubble =
-        this.$cartCountBubble || $(selectors.cartCountBubble);
-      this.$cartCount = this.$cartCount || $(selectors.cartCount);
-
-      if (quantity > 0) {
-        this.$cartCountBubble.removeClass(classes.hide);
-        this.$cartCount.html(quantity);
-      } else {
-        this.$cartCountBubble.addClass(classes.hide);
-        this.$cartCount.html('');
-      }
-    },
-
-    _emptyCart: function() {
-      this.$emptyPageContent =
-        this.$emptyPageContent ||
-        $(selectors.emptyPageContent, this.$container);
-      this.$cartWrapper =
-        this.$cartWrapper || $(selectors.cartWrapper, this.$container);
-
-      this.$emptyPageContent.removeClass(classes.hide);
-      this.$cartWrapper.addClass(classes.hide);
-    },
-
-    cookiesEnabled: function() {
-      var cookieEnabled = navigator.cookieEnabled;
-
-      if (!cookieEnabled) {
-        document.cookie = 'testcookie';
-        cookieEnabled = document.cookie.indexOf('testcookie') !== -1;
-      }
-      return cookieEnabled;
-    }
-  });
-
-  return Cart;
-})();
-
-window.theme = window.theme || {};
-
-theme.Filters = (function() {
-  var settings = {
-    mediaQueryMediumUp: '(min-width: ' + theme.breakpoints.medium + 'px)'
-  };
-
-  var selectors = {
-    mainContent: '#MainContent',
-    filterSelection: '#FilterTags',
-    sortSelection: '#SortBy'
-  };
-
-  var data = {
-    sortBy: 'data-default-sortby'
-  };
-
-  function Filters(container) {
-    var $container = (this.$container = $(container));
-
-    this.$filterSelect = $(selectors.filterSelection, $container);
-    this.$sortSelect = $(selectors.sortSelection, $container);
-    this.$selects = $(selectors.filterSelection, $container).add(
-      $(selectors.sortSelection, $container)
-    );
-
-    this.defaultSort = this._getDefaultSortValue();
-    this.$selects.removeClass('hidden');
-
-    this.initBreakpoints = this._initBreakpoints.bind(this);
-
-    this.mql = window.matchMedia(settings.mediaQueryMediumUp);
-    this.mql.addListener(this.initBreakpoints);
-
-    this.$filterSelect.on('change', this._onFilterChange.bind(this));
-    this.$sortSelect.on('change', this._onSortChange.bind(this));
-    this._initBreakpoints();
-    this._initParams();
-  }
-
-  Filters.prototype = Object.assign({}, Filters.prototype, {
-    _initBreakpoints: function() {
-      if (this.mql.matches) {
-        slate.utils.resizeSelects(this.$selects);
-      }
-    },
-
-    _initParams: function() {
-      self.queryParams = {};
-      if (location.search.length) {
-        var aKeyValue;
-        var aCouples = location.search.substr(1).split('&');
-        for (var i = 0; i < aCouples.length; i++) {
-          aKeyValue = aCouples[i].split('=');
-          if (aKeyValue.length > 1) {
-            self.queryParams[
-              decodeURIComponent(aKeyValue[0])
-            ] = decodeURIComponent(aKeyValue[1]);
-          }
+    _createClass(ArticleList, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (window.theme.showElementStaggering) {
+          this.intersectionObserver.disconnect();
+          this.timeline.kill();
         }
       }
-    },
+    }, {
+      key: '_reveal',
+      value: function _reveal(results) {
+        var _this26 = this;
 
-    _onSortChange: function() {
-      self.queryParams.sort_by = this._getSortValue();
+        var toReveal = [];
 
-      if (self.queryParams.page) {
-        delete self.queryParams.page;
+        results.forEach(function (result) {
+          if (result.isIntersecting || result.intersectionRatio > 0) {
+            // isIntersecting does not exist on Samsung Android browser
+            toReveal.push(result.target);
+            _this26.intersectionObserver.unobserve(result.target);
+          }
+        });
+
+        if (toReveal.length === 0) {
+          return;
+        }
+
+        this.timeline.staggerFromTo(toReveal, 0.45, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0 }, 0.2);
       }
-      window.location.search = decodeURIComponent($.param(self.queryParams));
-    },
+    }]);
 
-    _onFilterChange: function() {
-      document.location.href = this._getFilterValue();
-    },
+    return ArticleList;
+  }();
+  /* harmony export (immutable) */
 
-    _getFilterValue: function() {
-      return this.$filterSelect.val();
-    },
+  __webpack_exports__["default"] = ArticleList;
 
-    _getSortValue: function() {
-      return this.$sortSelect.val() || this.defaultSort;
-    },
+  /***/
+},
+/* 30 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-    _getDefaultSortValue: function() {
-      return this.$sortSelect.attr(data.sortBy);
-    },
+  "use strict";
 
-    onUnload: function() {
-      this.$filterSelect.off('change', this._onFilterChange);
-      this.$sortSelect.off('change', this._onSortChange);
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
 
-      this.mql.removeListener(this.initBreakpoints);
-    }
-  });
+  var ArticleSection = function () {
+    function ArticleSection(container) {
+      var _this27 = this;
 
-  return Filters;
-})();
+      _classCallCheck(this, ArticleSection);
 
-window.theme = window.theme || {};
+      this.element = container;
+      this.toolbarElement = this.element.querySelector('.ArticleToolbar');
+      this.articleNavElement = this.element.querySelector('.ArticleNav');
 
-theme.HeaderSection = (function() {
-  function Header() {
-    theme.Header.init();
-    theme.MobileNav.init();
-    theme.SearchDrawer.init();
-    theme.Search.init();
-  }
+      var articleImageElement = this.element.querySelector('.Article__Image');
 
-  Header.prototype = Object.assign({}, Header.prototype, {
-    onUnload: function() {
-      theme.Header.unload();
-      theme.Search.unload();
-    }
-  });
+      if (articleImageElement && window.matchMedia('(-moz-touch-enabled: 0), (hover: hover)').matches) {
+        this.parallaxInstance = new Rellax('.Article__Image', {
+          speed: -7,
+          center: false,
+          round: true
+        });
+      }
 
-  return Header;
-})();
+      if (window.theme.showElementStaggering) {
+        this.timeline = new TimelineLite({ delay: window.theme.showPageTransition ? 0.5 : 0 });
+        this.intersectionObserver = new IntersectionObserver(this._reveal.bind(this));
 
-theme.Maps = (function() {
-  var config = {
-    zoom: 14
-  };
-  var apiStatus = null;
-  var mapsToLoad = [];
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.ArticleItem')).forEach(function (item) {
+          _this27.intersectionObserver.observe(item);
+        });
+      }
 
-  var errors = {
-    addressNoResults: theme.strings.addressNoResults,
-    addressQueryLimit: theme.strings.addressQueryLimit,
-    addressError: theme.strings.addressError,
-    authError: theme.strings.authError
-  };
-
-  var selectors = {
-    section: '[data-section-type="map"]',
-    map: '[data-map]',
-    mapOverlay: '[data-map-overlay]'
-  };
-
-  var classes = {
-    mapError: 'map-section--load-error',
-    errorMsg: 'map-section__error errors text-center'
-  };
-
-  // Global function called by Google on auth errors.
-  // Show an auto error message on all map instances.
-  // eslint-disable-next-line camelcase, no-unused-vars
-  window.gm_authFailure = function() {
-    if (!Shopify.designMode) {
-      return;
+      this._attachListeners();
     }
 
-    $(selectors.section).addClass(classes.mapError);
-    $(selectors.map).remove();
-    $(selectors.mapOverlay).after(
-      '<div class="' +
-        classes.errorMsg +
-        '">' +
-        theme.strings.authError +
-        '</div>'
-    );
-  };
+    _createClass(ArticleSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.parallaxInstance) {
+          this.parallaxInstance.destroy();
+        }
 
-  function Map(container) {
-    this.$container = $(container);
-    this.$map = this.$container.find(selectors.map);
-    this.key = this.$map.data('api-key');
+        if (window.theme.showElementStaggering) {
+          this.intersectionObserver.disconnect();
+          this.timeline.kill();
+        }
 
-    if (typeof this.key === 'undefined') {
-      return;
+        window.removeEventListener('scroll', this._onScrollListener);
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._onScrollListener = this._checkToolbarVisibility.bind(this);
+        window.addEventListener('scroll', this._onScrollListener);
+      }
+    }, {
+      key: '_checkToolbarVisibility',
+      value: function _checkToolbarVisibility() {
+        var _this28 = this;
+
+        var lastYPosition = 0,
+            headerHeight = 0,
+            navBottom = 0,
+            isFixedHeader = 0,
+            header = document.querySelector('.Header');
+
+        fastdom.measure(function () {
+          lastYPosition = window.pageYOffset;
+          headerHeight = header.offsetHeight;
+          isFixedHeader = parseInt(window.getComputedStyle(document.body).getPropertyValue('--use-sticky-header') || 0);
+
+          if (_this28.articleNavElement) {
+            navBottom = _this28.articleNavElement.offsetTop + _this28.articleNavElement.clientHeight - headerHeight;
+          }
+        });
+
+        fastdom.mutate(function () {
+          _this28.toolbarElement.style.top = isFixedHeader ? headerHeight + 'px' : null;
+
+          if (_this28.articleNavElement) {
+            if (lastYPosition > 150 && _this28.articleNavElement && lastYPosition < navBottom) {
+              _this28.toolbarElement.classList.add('is-visible');
+            } else {
+              _this28.toolbarElement.classList.remove('is-visible');
+            }
+          } else {
+            if (lastYPosition > 150) {
+              _this28.toolbarElement.classList.add('is-visible');
+            } else {
+              _this28.toolbarElement.classList.remove('is-visible');
+            }
+          }
+        });
+      }
+    }, {
+      key: '_reveal',
+      value: function _reveal(results) {
+        var _this29 = this;
+
+        var toReveal = [];
+
+        results.forEach(function (result) {
+          if (result.isIntersecting || result.intersectionRatio > 0) {
+            // isIntersecting does not exist on Samsung Android browser
+            toReveal.push(result.target);
+            _this29.intersectionObserver.unobserve(result.target);
+          }
+        });
+
+        if (toReveal.length === 0) {
+          return;
+        }
+
+        this.timeline.staggerFromTo(toReveal, 0.45, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0 }, 0.2);
+      }
+    }]);
+
+    return ArticleSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ArticleSection;
+
+  /***/
+},
+/* 31 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var BackgroundVideoSection = function () {
+    function BackgroundVideoSection(container) {
+      _classCallCheck(this, BackgroundVideoSection);
+
+      this.element = container;
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+
+      this._loadScript().then(this._setupPlayer.bind(this));
     }
 
-    if (apiStatus === 'loaded') {
-      this.createMap();
-    } else {
-      mapsToLoad.push(this);
+    _createClass(BackgroundVideoSection, [{
+      key: '_loadScript',
+      value: function _loadScript() {
+        var _this30 = this;
 
-      if (apiStatus !== 'loading') {
-        apiStatus = 'loading';
-        if (typeof window.google === 'undefined') {
-          $.getScript(
-            'https://maps.googleapis.com/maps/api/js?key=' + this.key
-          ).then(function() {
-            apiStatus = 'loaded';
-            initAllMaps();
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement('script');
+          document.body.appendChild(script);
+          script.onload = resolve;
+          script.onerror = reject;
+          script.async = true;
+          script.src = _this30.options['videoType'] === 'youtube' ? '//www.youtube.com/iframe_api' : '//player.vimeo.com/api/player.js';
+        });
+      }
+    }, {
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.player) {
+          this.player.destroy(); // Both YouTube and Vimeo use the same function name
+        }
+      }
+    }, {
+      key: '_setupPlayer',
+      value: function _setupPlayer() {
+        var _this31 = this;
+
+        var elementToInsert = this.element.querySelector('.ImageHero__VideoHolder');
+
+        var playerLoadingInterval = setInterval(function () {
+          if (_this31.options['videoType'] === 'youtube') {
+            if (window.YT) {
+              _this31.player = new YT.Player(elementToInsert, {
+                videoId: _this31.options['videoId'],
+                playerVars: {
+                  showinfo: 0,
+                  controls: 0,
+                  fs: 0,
+                  rel: 0,
+                  height: '100%',
+                  width: '100%',
+                  iv_load_policy: 3,
+                  html5: 1,
+                  loop: 1,
+                  playsinline: 1,
+                  modestbranding: 1,
+                  disablekb: 1,
+                  origin: _this31.options['requestHost']
+                },
+                events: {
+                  onReady: _this31._onYouTubeReady.bind(_this31),
+                  onStateChange: _this31._onYouTubeStateChange.bind(_this31)
+                }
+              });
+
+              clearInterval(playerLoadingInterval);
+            }
+          } else {
+            if (window.Vimeo) {
+              _this31.player = new Vimeo.Player(elementToInsert.parentNode, {
+                id: _this31.options['videoId'],
+                autoplay: true,
+                muted: true,
+                background: true,
+                /*height: '100%',
+                width: '100%',*/
+                loop: true
+              });
+            }
+          }
+        }, 50);
+      }
+    }, {
+      key: '_onYouTubeReady',
+      value: function _onYouTubeReady(event) {
+        this.player.mute();
+        this.player.playVideo();
+      }
+    }, {
+      key: '_onYouTubeStateChange',
+      value: function _onYouTubeStateChange(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+          this.player.playVideo();
+        }
+      }
+    }]);
+
+    return BackgroundVideoSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = BackgroundVideoSection;
+
+  /***/
+},
+/* 32 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Drawer__ = __webpack_require__(8);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__components_ShippingEstimator__ = __webpack_require__(20);
+
+  var CartSection = function () {
+    function CartSection(container) {
+      _classCallCheck(this, CartSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.documentDelegate = new domDelegate.Delegate(document.documentElement);
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+      this.itemCount = this.options['itemCount'];
+      this.isCartNoteOpen = false;
+
+      if (this.options['drawer']) {
+        this.sidebarDrawer = new __WEBPACK_IMPORTED_MODULE_0__components_Drawer__["default"](this.element, {
+          onClose: this._onDrawerClosed.bind(this)
+        });
+      }
+
+      if (this.options['hasShippingEstimator']) {
+        this.shippingEstimator = new __WEBPACK_IMPORTED_MODULE_2__components_ShippingEstimator__["default"](this.element.querySelector('.ShippingEstimator'));
+      }
+
+      this._attachListeners();
+    }
+
+    _createClass(CartSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.options['hasShippingEstimator']) {
+          this.shippingEstimator.destroy();
+        }
+
+        this.delegateElement.off();
+        document.removeEventListener('product:added', this._onProductAddedListener);
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._onProductAddedListener = this._onProductAdded.bind(this);
+
+        this.delegateElement.on('change', '#cart-note', this._updateCartNote.bind(this));
+
+        if (this.options['type'] !== 'page') {
+          this.delegateElement.on('click', '[data-action="update-item-quantity"], [data-action="remove-item"]', this._updateItemQuantity.bind(this));
+          this.delegateElement.on('change', '.QuantitySelector__CurrentQuantity', this._updateItemQuantity.bind(this));
+        } else {
+          this.delegateElement.on('change', '.QuantitySelector__CurrentQuantity', this._reloadPageWithQuantity.bind(this));
+        }
+
+        // We have some listeners that are specific to the fact it's a drawer or the dedicated cart page
+        if (this.options['drawer']) {
+          this.delegateElement.on('click', '[data-action="toggle-cart-note"]', this._toggleCartNote.bind(this));
+        }
+
+        document.addEventListener('product:added', this._onProductAddedListener);
+
+        // We attach a listener at page level which allows to re-render the cart
+        this.documentDelegate.on('cart:refresh', this._rerenderCart.bind(this, false));
+      }
+    }, {
+      key: '_updateCartNote',
+      value: function _updateCartNote(event, target) {
+        fetch(window.routes.cartUrl + '/update.js', {
+          body: JSON.stringify({ note: target.value }),
+          credentials: 'same-origin',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' // This is needed as currently there is a bug in Shopify that assumes this header
+          }
+        });
+      }
+    }, {
+      key: '_toggleCartNote',
+      value: function _toggleCartNote() {
+        var _this32 = this;
+
+        var noteContainer = this.element.querySelector('.Cart__OffscreenNoteContainer'),
+            cartNote = this.element.querySelector('#cart-note');
+
+        this.element.classList.toggle('has-note-open');
+        this.element.querySelector('.Cart__NoteButton').innerHTML = cartNote.value !== '' ? window.languages.cartEditNote : window.languages.cartAddNote;
+
+        noteContainer.setAttribute('aria-hidden', noteContainer.getAttribute('aria-hidden') === 'true' ? 'false' : 'true');
+
+        this.isCartNoteOpen = noteContainer.getAttribute('aria-hidden') === 'false';
+
+        if (this.element.classList.contains('has-note-open')) {
+          var transitionEndListener = function transitionEndListener() {
+            _this32.element.querySelector('#cart-note').focus();
+            noteContainer.removeEventListener('transitionend', transitionEndListener);
+          };
+
+          noteContainer.addEventListener('transitionend', transitionEndListener);
+        }
+      }
+    }, {
+      key: '_updateItemQuantity',
+      value: function _updateItemQuantity(event, target) {
+        var _this33 = this;
+
+        document.dispatchEvent(new CustomEvent('theme:loading:start'));
+
+        var quantity = null,
+            elementToAnimate = null;
+
+        if (target.tagName === 'INPUT') {
+          quantity = parseInt(Math.max(parseInt(target.value) || 1, 1));
+        } else {
+          quantity = parseInt(target.getAttribute('data-quantity'));
+        }
+
+        // If the quantity is 0, then we will animate the product with a removal effect
+        if (quantity === 0) {
+          elementToAnimate = target.closest('.CartItemWrapper');
+        }
+
+        fetch(window.routes.cartChangeUrl + '.js', {
+          body: JSON.stringify({ id: target.getAttribute('data-line-id'), quantity: quantity }),
+          credentials: 'same-origin',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' // This is needed as currently there is a bug in Shopify that assumes this header
+          }
+        }).then(function (cart) {
+          cart.json().then(function (content) {
+            _this33.itemCount = content['item_count'];
+            _this33._rerenderCart(elementToAnimate);
+
+            document.dispatchEvent(new CustomEvent('theme:loading:end'));
+          });
+        });
+
+        event.preventDefault();
+      }
+    }, {
+      key: '_reloadPageWithQuantity',
+      value: function _reloadPageWithQuantity(event, target) {
+        window.location.href = window.routes.cartChangeUrl + '?quantity=' + parseInt(target.value) + '&id=' + target.getAttribute('data-line-id');
+      }
+    }, {
+      key: '_onProductAdded',
+      value: function _onProductAdded(event) {
+        var _this34 = this;
+
+        this.itemCount += event.detail.quantity;
+
+        this._rerenderCart().then(function () {
+          _this34.sidebarDrawer.open();
+        });
+      }
+    }, {
+      key: '_onDrawerClosed',
+      value: function _onDrawerClosed() {
+        if (this.isCartNoteOpen) {
+          this._toggleCartNote();
+        }
+      }
+
+      /**
+       * This method is called internally to rerender the cart, based on the content returned by Shopify Ajax API.
+       * We could save some performance by updating directly in JavaScript instead of doing a GET call to get the HTML
+       * from Shopify, but by experience, this allows for easier app integration as it allows the Liquid to re-run
+       * all the time and hence having easier logic.
+       */
+
+    }, {
+      key: '_rerenderCart',
+      value: function _rerenderCart(elementToAnimate) {
+        var _this35 = this;
+
+        // Note: appending a timestamp is necessary as the polyfill on IE11 and lower does not support the "cache" property
+        return fetch(window.routes.cartUrl + '?view=' + (this.options['drawer'] && window.theme.pageType !== 'cart' ? 'drawer' : 'ajax') + '&timestamp=' + Date.now(), {
+          credentials: 'same-origin',
+          method: 'GET'
+        }).then(function (content) {
+          // If there is an element to animate, we animate it using a transition
+          if (_this35.options['drawer'] && elementToAnimate) {
+            var timelineLite = new TimelineLite({ onComplete: function onComplete() {
+                content.text().then(function (html) {
+                  _this35._replaceContent(html);
+                });
+              } });
+
+            timelineLite.to(elementToAnimate, 0.5, { height: 0, opacity: 0, ease: Cubic.easeOut }, 0);
+
+            if (_this35.itemCount === 0) {
+              timelineLite.to(_this35.element.querySelector('.Drawer__Footer'), 0.5, { y: '100%', transition: 'none', ease: Cubic.easeInOut }, 0);
+            }
+          } else {
+            content.text().then(function (html) {
+              _this35._replaceContent(html);
+            });
+          }
+        });
+      }
+    }, {
+      key: '_replaceContent',
+      value: function _replaceContent(html) {
+        var _this36 = this;
+
+        var tempElement = document.createElement('div');
+        tempElement.innerHTML = html;
+
+        var cartNodeParent = this.element.querySelector('.Cart').parentNode;
+
+        if (this.options['drawer'] && window.theme.pageType !== 'cart') {
+          var currentScrollPosition = this.element.querySelector('.Drawer__Main').scrollTop;
+          cartNodeParent.replaceChild(tempElement.querySelector('.Cart'), this.element.querySelector('.Cart'));
+          this.element.querySelector('.Drawer__Main').scrollTop = currentScrollPosition;
+        } else {
+          // For dedicated page we replace the whole section if there is no more product
+          if (this.itemCount === 0) {
+            this.element.innerHTML = tempElement.querySelector('.shopify-section').firstElementChild.innerHTML;
+          } else {
+            cartNodeParent.replaceChild(tempElement.querySelector('.Cart'), this.element.querySelector('.Cart'));
+            this.element.querySelector('.PageHeader').innerHTML = tempElement.querySelector('.PageHeader').innerHTML;
+          }
+        }
+
+        // We can also update the dot and the quantity
+        var cartResult = JSON.parse(tempElement.querySelector('[data-section-type="cart"]').getAttribute('data-section-settings'));
+
+        var cartDot = __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('.Header__CartDot')),
+            cartQuantity = __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('.Header__CartCount'));
+
+        this.itemCount = cartResult['itemCount'];
+
+        cartDot.forEach(function (item) {
+          if (_this36.itemCount === 0) {
+            item.classList.remove('is-visible'); // IE 11 and lower does not support second attribute of toggle :(
+          } else {
+            item.classList.add('is-visible');
+          }
+        });
+
+        cartQuantity.forEach(function (item) {
+          item.textContent = _this36.itemCount;
+        });
+      }
+    }]);
+
+    return CartSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = CartSection;
+
+  /***/
+},
+/* 33 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+
+  var CollectionListSection = function () {
+    function CollectionListSection(container) {
+      _classCallCheck(this, CollectionListSection);
+
+      this.element = container;
+
+      var collectionListElement = this.element.querySelector('[data-flickity-config]');
+
+      if (collectionListElement) {
+        this.carousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](collectionListElement);
+      }
+    }
+
+    _createClass(CollectionListSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.carousel) {
+          this.carousel.destroy();
+        }
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        if (this.carousel) {
+          this.carousel.selectCell(event.target.getAttribute('data-slide-index'), true, !event.detail.load);
+        }
+      }
+    }, {
+      key: 'onBlockDeselect',
+      value: function onBlockDeselect() {
+        if (this.carousel) {
+          this.carousel.unpausePlayer();
+        }
+      }
+    }]);
+
+    return CollectionListSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = CollectionListSection;
+
+  /***/
+},
+/* 34 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Drawer__ = __webpack_require__(8);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_Popover__ = __webpack_require__(3);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__components_ProductItemColorSwatch__ = __webpack_require__(4);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__helper_Responsive__ = __webpack_require__(1);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__components_OverflowScroller__ = __webpack_require__(13);
+
+  var CollectionSection = function () {
+    function CollectionSection(element) {
+      _classCallCheck(this, CollectionSection);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.toolbarElement = this.element.querySelector('.CollectionToolbar');
+      this.collectionInnerElement = this.element.querySelector('.CollectionInner__Products');
+
+      this.settings = JSON.parse(this.element.getAttribute('data-section-settings'));
+      this.currentTags = this.settings['currentTags'];
+      this.currentSortBy = this.settings['sortBy'];
+
+      this.temporaryTags = this.currentTags.slice(); // This allows to do a deep copy of the current tags
+
+      // Create the popover if available
+      var sortPopoverElement = document.getElementById('collection-sort-popover');
+      if (sortPopoverElement) {
+        this.sortPopover = new __WEBPACK_IMPORTED_MODULE_1__components_Popover__["default"](sortPopoverElement, { onValueChanged: this._sortByChanged.bind(this) });
+      }
+
+      // Create the filter drawer if available
+      var filterDrawerElement = document.getElementById('collection-filter-drawer');
+
+      if (filterDrawerElement) {
+        this.filterDrawer = new __WEBPACK_IMPORTED_MODULE_0__components_Drawer__["default"](filterDrawerElement, { onClose: this._removeUncommittedTags.bind(this) });
+      }
+
+      // Create scroller of sidebar
+      if (this.settings['filterPosition'] === 'sidebar') {
+        this.filterInnerSidebarScroller = new __WEBPACK_IMPORTED_MODULE_5__components_OverflowScroller__["default"](this.element.querySelector('.CollectionInner__Sidebar'));
+      }
+
+      // Setup parallax on image (if any)
+      var collectionImageElement = this.element.querySelector('.PageHeader__ImageWrapper');
+
+      if (collectionImageElement && window.matchMedia('(-moz-touch-enabled: 0), (hover: hover)').matches) {
+        this.parallaxInstance = new Rellax('.PageHeader__ImageWrapper', {
+          speed: -7,
+          center: false,
+          round: true
+        });
+      }
+
+      // Setup product item color swatch
+      new __WEBPACK_IMPORTED_MODULE_2__components_ProductItemColorSwatch__["default"](this.element);
+
+      // Setup animation
+      this.timeline = new TimelineLite({ delay: window.theme.showPageTransition ? 0.5 : 0 });
+      this._setupAnimation();
+
+      this._attachListeners();
+    }
+
+    _createClass(CollectionSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off('click');
+
+        if (this.sortPopover) {
+          this.sortPopover.destroy();
+        }
+
+        if (this.filterDrawer) {
+          this.filterDrawer.destroy();
+        }
+
+        if (this.filterInnerSidebarScroller) {
+          this.filterInnerSidebarScroller.destroy();
+        }
+
+        if (this.parallaxInstance) {
+          this.parallaxInstance.destroy();
+        }
+
+        if (window.theme.showElementStaggering) {
+          this.intersectionObserver.disconnect();
+          this.timeline.kill();
+        }
+      }
+    }, {
+      key: '_setupAnimation',
+      value: function _setupAnimation() {
+        var _this37 = this;
+
+        var forceLoadFromTop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+        if (!window.theme.showElementStaggering) {
+          return;
+        }
+
+        // If there is already an observer set up, we remove it first
+        if (this.intersectionObserver) {
+          this.intersectionObserver.disconnect();
+        }
+
+        if (forceLoadFromTop) {
+          this.timeline.staggerFromTo(this.element.querySelectorAll('.ProductList .ProductItem'), 0.45, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0 }, 0.2);
+        } else {
+          this.intersectionObserver = new IntersectionObserver(this._reveal.bind(this), {
+            threshold: 0.3
+          });
+
+          __WEBPACK_IMPORTED_MODULE_3__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.ProductList .ProductItem')).forEach(function (item) {
+            _this37.intersectionObserver.observe(item);
           });
         }
       }
+    }, {
+      key: '_reveal',
+      value: function _reveal(results) {
+        var _this38 = this;
+
+        var toReveal = [];
+
+        results.forEach(function (result) {
+          if (result.isIntersecting || result.intersectionRatio > 0) {
+            // isIntersecting does not exist on Samsung Android browser
+            toReveal.push(result.target);
+            _this38.intersectionObserver.unobserve(result.target);
+          }
+        });
+
+        if (toReveal.length === 0) {
+          return;
+        }
+
+        this.timeline.staggerFromTo(toReveal, 0.45, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0 }, 0.2);
+      }
+    }, {
+      key: '_changeLayoutMode',
+      value: function _changeLayoutMode(event, target) {
+        var _this39 = this;
+
+        var layoutType = target.getAttribute('data-grid-type'),
+            newCount = parseInt(target.getAttribute('data-count'));
+
+        // Otherwise we detect the mode, and change all classes
+        var productList = this.collectionInnerElement.querySelector('.ProductList');
+
+        if (productList) {
+          var previousCount = parseInt(productList.getAttribute('data-' + layoutType + '-count'));
+
+          if (previousCount === newCount) {
+            return; // Nothing has changed so we just return to avoid reflow
+          }
+
+          productList.setAttribute('data-' + layoutType + '-count', newCount);
+
+          __WEBPACK_IMPORTED_MODULE_3__helper_Dom__["default"].nodeListToArray(productList.querySelectorAll('.Grid__Cell')).forEach(function (item) {
+            if (layoutType === 'mobile') {
+              item.classList.remove('1/' + previousCount + '--phone'); // IE11 and lower does not support classList.replace
+              item.classList.add('1/' + newCount + '--phone');
+            } else {
+              var previousTabletCount = previousCount === 2 ? 2 : 3,
+                  newTabletCount = newCount === 2 ? 2 : 3;
+
+              if (_this39.settings['filterPosition'] === 'drawer') {
+                item.classList.remove('1/' + previousCount + '--lap-and-up');
+                item.classList.add('1/' + newCount + '--lap-and-up');
+              } else {
+                item.classList.remove('1/' + previousCount + '--desk');
+                item.classList.add('1/' + newCount + '--desk');
+              }
+
+              item.classList.remove('1/' + previousTabletCount + '--tablet-and-up');
+              item.classList.add('1/' + newTabletCount + '--tablet-and-up');
+            }
+
+            if (window.theme.showElementStaggering) {
+              item.firstElementChild.style.visibility = 'hidden'; // Make it as hidden so we can re-trigger the animation
+            }
+          });
+
+          // Force lazy sizes to recalculate item sizes
+          lazySizes.autoSizer.checkElems();
+        }
+
+        target.classList.add('is-active');
+        __WEBPACK_IMPORTED_MODULE_3__helper_Dom__["default"].getSiblings(target)[0].classList.remove('is-active');
+
+        this._setupAnimation();
+
+        // In order to prevent reflow and provide better user experience, we save into cart attributes (those are removed before the checkout
+        // is submitted) the user choices so they are preserved on page reload, without the need to use JavaScript
+
+        fetch(window.routes.cartUrl + '/update.js', {
+          body: JSON.stringify({
+            attributes: _defineProperty({}, 'collection_' + layoutType + '_items_per_row', newCount)
+          }),
+          credentials: 'same-origin',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest' // This is needed as currently there is a bug in Shopify that assumes this header
+          }
+        });
+      }
+    }, {
+      key: '_sortByChanged',
+      value: function _sortByChanged(sortBy) {
+        if (this.currentSortBy === sortBy) {
+          return;
+        }
+
+        this.currentSortBy = sortBy;
+        this._reloadProducts();
+      }
+    }, {
+      key: '_toggleTag',
+      value: function _toggleTag(event) {
+        var element = event.target;
+
+        if (element.classList.contains('is-active')) {
+          this.temporaryTags.splice(this.temporaryTags.indexOf(element.getAttribute('data-tag')), 1); // Delete the tag if already active
+        } else {
+          var activeSibling = element.closest('.Collapsible').querySelector('.is-active');
+
+          if (activeSibling) {
+            this.temporaryTags.splice(this.temporaryTags.indexOf(activeSibling.getAttribute('data-tag')), 1);
+          }
+
+          this.temporaryTags.push(element.getAttribute('data-tag')); // Add if not previously active
+        }
+
+        this._updateActiveTags();
+
+        // If we have the mode set as "sidebar" and that we are on desktop, we auto-commit
+        if (__WEBPACK_IMPORTED_MODULE_4__helper_Responsive__["default"].matchesBreakpoint('lap-and-up') && this.settings['filterPosition'] === 'sidebar') {
+          this._commit();
+        }
+      }
+    }, {
+      key: '_removeUncommittedTags',
+      value: function _removeUncommittedTags() {
+        this.temporaryTags = this.currentTags.slice(); // We simply reset the temporary tags to the active tags
+        this._updateActiveTags();
+      }
+    }, {
+      key: '_applyTags',
+      value: function _applyTags() {
+        this._updateActiveTags();
+        this._commit();
+      }
+    }, {
+      key: '_resetTags',
+      value: function _resetTags() {
+        this.temporaryTags = []; // We simply remove all tags
+        this._applyTags();
+      }
+    }, {
+      key: '_updateActiveTags',
+      value: function _updateActiveTags() {
+        var _this40 = this;
+
+        __WEBPACK_IMPORTED_MODULE_3__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.CollectionFilters [data-tag]')).forEach(function (item) {
+          // IE11 and lower does not support classList.toggle...
+          if (_this40.temporaryTags.includes(item.getAttribute('data-tag'))) {
+            item.classList.add('is-active');
+            item.parentNode.classList.add('is-selected'); // For the case of "ListItem"
+          } else {
+            item.classList.remove('is-active');
+            item.parentNode.classList.remove('is-selected'); // For the case of "ListItem"
+          }
+        });
+      }
+    }, {
+      key: '_commit',
+      value: function _commit() {
+        var _this41 = this;
+
+        if (this.currentTags.sort().join(',') !== this.temporaryTags.sort().join(',')) {
+          this.currentTags = this.temporaryTags.slice();
+          this._reloadProducts();
+        }
+
+        if (this.filterDrawer.isOpen) {
+          this.filterDrawer.close();
+        }
+
+        __WEBPACK_IMPORTED_MODULE_3__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('[data-action="reset-tags"]')).forEach(function (resetButton) {
+          resetButton.style.display = _this41.currentTags.length === 0 ? 'none' : 'block';
+        });
+      }
+    }, {
+      key: '_reloadProducts',
+      value: function _reloadProducts() {
+        var _this42 = this;
+
+        document.dispatchEvent(new CustomEvent('theme:loading:start'));
+
+        var filterElement = this.toolbarElement.querySelector('.CollectionToolbar__Item--filter');
+
+        if (filterElement) {
+          var filterElementCount = filterElement.querySelector('span');
+
+          if (filterElementCount) {
+            filterElement.removeChild(filterElementCount);
+          }
+
+          if (this.currentTags.length === 0) {
+            filterElement.classList.add('Text--subdued');
+          } else {
+            filterElement.classList.remove('Text--subdued');
+            filterElement.innerHTML += '<span class="Text--subdued">(' + this.currentTags.length + ')</span>';
+          }
+        }
+
+        // We also rewrite the URL if browser supports it
+        if (history.replaceState) {
+          var tags = this.currentTags.length > 0 ? this.currentTags.join('+') : '';
+          var newUrl = window.location.protocol + '//' + window.location.host + this.settings['collectionUrl'] + '/' + tags + '?sort_by=' + this.currentSortBy;
+
+          window.history.pushState({ path: newUrl }, '', newUrl);
+        }
+
+        var formData = new FormData();
+        formData.append('view', 'ajax');
+        formData.append('sort_by', this.currentSortBy);
+
+        fetch(location.pathname + '?view=ajax&sort_by=' + this.currentSortBy, {
+          credentials: 'same-origin',
+          method: 'GET'
+        }).then(function (response) {
+          response.text().then(function (content) {
+            var tempElement = document.createElement('div');
+            tempElement.innerHTML = content;
+
+            _this42.collectionInnerElement.innerHTML = tempElement.querySelector('.shopify-section').innerHTML;
+            document.dispatchEvent(new CustomEvent('theme:loading:end'));
+
+            _this42._setupAnimation(true);
+
+            // We scroll to the top
+            var elementOffset = _this42.element.querySelector('.CollectionMain').getBoundingClientRect().top - parseInt(document.documentElement.style.getPropertyValue('--header-height'));
+
+            if (__WEBPACK_IMPORTED_MODULE_4__helper_Responsive__["default"].matchesBreakpoint('lap-and-up') && _this42.toolbarElement && _this42.toolbarElement.clientHeight === 0) {
+              elementOffset -= 50;
+            }
+
+            if (elementOffset < 0) {
+              window.scrollBy({ top: elementOffset, behavior: 'smooth' });
+            }
+          });
+        });
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._toggleTagListener = this._toggleTag.bind(this);
+        this._applyTagsListener = this._applyTags.bind(this);
+        this._resetTagsListener = this._resetTags.bind(this);
+        this._changeLayoutModeListener = this._changeLayoutMode.bind(this);
+
+        this.delegateElement.on('click', '[data-action="toggle-tag"]', this._toggleTagListener);
+        this.delegateElement.on('click', '[data-action="apply-tags"]', this._applyTagsListener);
+        this.delegateElement.on('click', '[data-action="reset-tags"]', this._resetTagsListener);
+        this.delegateElement.on('click', '[data-action="change-layout-mode"]', this._changeLayoutModeListener);
+
+        window.addEventListener('popstate', function (event) {
+          if (event.state.path) {
+            window.location.href = event.state.path;
+          }
+        });
+      }
+    }]);
+
+    return CollectionSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = CollectionSection;
+
+  /***/
+},
+/* 35 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Animation__ = __webpack_require__(6);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+
+  var FaqSection = function () {
+    function FaqSection(element) {
+      _classCallCheck(this, FaqSection);
+
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+
+      this._attachListeners();
     }
-  }
 
-  function initAllMaps() {
-    // API has loaded, load all Map instances in queue
-    $.each(mapsToLoad, function(index, instance) {
-      instance.createMap();
-    });
-  }
+    _createClass(FaqSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off();
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        this._openItem(event.target);
+      }
+    }, {
+      key: 'onBlockDeselect',
+      value: function onBlockDeselect(event) {
+        this._closeItem(event.target);
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '.Faq__Question', this._toggleItem.bind(this));
+        this.delegateElement.on('click', '.FaqSummary__Item', this._switchToCategory.bind(this));
+      }
+    }, {
+      key: '_switchToCategory',
+      value: function _switchToCategory(event, target) {
+        target.classList.add('is-active');
 
-  function geolocate($map) {
-    var deferred = $.Deferred();
-    var geocoder = new google.maps.Geocoder();
-    var address = $map.data('address-setting');
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].getSiblings(target, '.is-active').forEach(function (item) {
+          item.classList.remove('is-active');
+        });
+      }
+    }, {
+      key: '_toggleItem',
+      value: function _toggleItem(event, target) {
+        var item = target.closest('.Faq__Item');
 
-    geocoder.geocode({ address: address }, function(results, status) {
-      if (status !== google.maps.GeocoderStatus.OK) {
-        deferred.reject(status);
+        if (item.getAttribute('aria-expanded') === 'true') {
+          this._closeItem(item);
+        } else {
+          this._openItem(item);
+        }
+      }
+    }, {
+      key: '_openItem',
+      value: function _openItem(item) {
+        var answerWrapper = item.querySelector('.Faq__AnswerWrapper');
+
+        item.setAttribute('aria-expanded', 'true');
+
+        answerWrapper.setAttribute('aria-hidden', 'false');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideDown(answerWrapper, true);
+
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].getSiblings(item, '[aria-expanded="true"]').forEach(function (siblingItem) {
+          var siblingAnswerWrapper = siblingItem.querySelector('.Faq__AnswerWrapper');
+
+          siblingItem.setAttribute('aria-expanded', 'false');
+
+          siblingAnswerWrapper.setAttribute('aria-hidden', 'true');
+          __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideUp(siblingAnswerWrapper);
+        });
+      }
+    }, {
+      key: '_closeItem',
+      value: function _closeItem(item) {
+        var answerWrapper = item.querySelector('.Faq__AnswerWrapper');
+
+        item.setAttribute('aria-expanded', 'false');
+        answerWrapper.setAttribute('aria-hidden', 'true');
+        __WEBPACK_IMPORTED_MODULE_0__helper_Animation__["default"].slideUp(answerWrapper);
+      }
+    }]);
+
+    return FaqSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = FaqSection;
+
+  /***/
+},
+/* 36 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__ = __webpack_require__(4);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__helper__ = __webpack_require__(7);
+
+  var FeaturedCollectionsSection = function () {
+    function FeaturedCollectionsSection(container) {
+      var _this43 = this;
+
+      _classCallCheck(this, FeaturedCollectionsSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = JSON.parse(this.element.getAttribute('data-settings'));
+
+      this.carousels = [];
+
+      __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('[data-flickity-config]')).forEach(function (item) {
+        _this43.carousels.push(new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](item));
+      });
+
+      // Setup product item color swatch
+      new __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__["default"](this.element);
+
+      this._setupAnimation();
+      this._attachListeners();
+    }
+
+    _createClass(FeaturedCollectionsSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.carousels.forEach(function (item) {
+          return item.destroy();
+        });
+        this.delegateElement.off('click');
+
+        this.intersectionObserver.disconnect();
+        this.timeline.kill();
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        // We simply trigger a click on the element that controls this tab
+        this.element.querySelector('[aria-controls="' + event.target.id + '"]').click();
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '[data-action="toggle-tab"]', this._switchTab.bind(this));
+      }
+    }, {
+      key: '_switchTab',
+      value: function _switchTab(event, target) {
+        var _this44 = this;
+
+        // If the tab is already active, do nothing
+        if (target.classList.contains('is-active')) {
+          return;
+        }
+
+        // First, switch the current tab
+        target.classList.add('is-active');
+        __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].getSiblings(target, '.is-active').forEach(function (item) {
+          item.classList.remove('is-active');
+        });
+
+        // Then, display the panel
+        var tabPanelToShow = this.element.querySelector('#' + target.getAttribute('aria-controls'));
+
+        this.timeline.eventCallback('onReverseComplete', function () {
+          tabPanelToShow.setAttribute('aria-hidden', 'false');
+
+          __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].getSiblings(tabPanelToShow, '.TabPanel[aria-hidden="false"]').forEach(function (item) {
+            item.setAttribute('aria-hidden', 'true');
+          });
+
+          if (__WEBPACK_IMPORTED_MODULE_3__helper__["ResponsiveHelper"].matchesBreakpoint('lap-and-up')) {
+            _this44.carousels.forEach(function (carousel) {
+              // There is a bug in Safari where it cannot detect the pseudo-element "::after" if the tab panel is hidden. As a consequence,
+              // we manually activate it
+              carousel.flickityInstance.activate();
+              carousel.flickityInstance.resize(); // Ugly hack
+            });
+          }
+
+          _this44.timeline.clear();
+          _this44._setupAnimation();
+        });
+
+        if (this.options['layout'] === 'grid' && window.theme.showElementStaggering) {
+          this.timeline.reverse().timeScale(3);
+        } else {
+          this.timeline.reverse();
+        }
+      }
+    }, {
+      key: '_setupAnimation',
+      value: function _setupAnimation() {
+        var _this45 = this;
+
+        if (this.intersectionObserver) {
+          this.intersectionObserver.disconnect();
+        }
+
+        this.timeline = new TimelineLite({ delay: 0.5 });
+
+        if (this.options['layout'] === 'grid' && window.theme.showElementStaggering) {
+          this.intersectionObserver = new IntersectionObserver(this._reveal.bind(this));
+
+          __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.TabPanel[aria-hidden="false"] .ProductList .ProductItem')).forEach(function (item) {
+            _this45.intersectionObserver.observe(item);
+          });
+        } else {
+          var productList = this.element.querySelector('.TabPanel[aria-hidden="false"] .ProductList');
+
+          if (productList) {
+            this.timeline.fromTo(productList, 0.6, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0 });
+          }
+        }
+      }
+    }, {
+      key: '_reveal',
+      value: function _reveal(results) {
+        var _this46 = this;
+
+        var toReveal = [];
+
+        results.forEach(function (result) {
+          if (result.isIntersecting || result.intersectionRatio > 0) {
+            // isIntersecting does not exist on Samsung Android browser
+            toReveal.push(result.target);
+            _this46.intersectionObserver.unobserve(result.target);
+          }
+        });
+
+        if (toReveal.length === 0) {
+          return;
+        }
+
+        this.timeline.staggerFromTo(toReveal, 0.45, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0 }, 0.2);
+      }
+    }]);
+
+    return FeaturedCollectionsSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = FeaturedCollectionsSection;
+
+  /***/
+},
+/* 37 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_ProductVariants__ = __webpack_require__(11);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Image__ = __webpack_require__(10);
+
+  var FeaturedProductSection = function () {
+    function FeaturedProductSection(container) {
+      _classCallCheck(this, FeaturedProductSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+
+      if (!this.options['usePlaceholder'] && this.options['templateSuffix'] !== 'coming-soon') {
+        this.productVariants = new __WEBPACK_IMPORTED_MODULE_0__components_ProductVariants__["default"](container, this.options);
       }
 
-      deferred.resolve(results);
-    });
+      // We have to re-order elements in the DOM
+      var offscreenElement = this.element.querySelector('.Product__OffScreen');
 
-    return deferred;
-  }
+      if (offscreenElement) {
+        this.element.appendChild(offscreenElement);
+      }
 
-  Map.prototype = Object.assign({}, Map.prototype, {
-    createMap: function() {
-      var $map = this.$map;
+      this._attachListeners();
+    }
 
-      return geolocate($map)
-        .then(
-          function(results) {
+    _createClass(FeaturedProductSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off('click');
+
+        if (this.productVariants) {
+          this.productVariants.destroy();
+        }
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('variant:changed', this._updateMainImage.bind(this));
+      }
+
+      /**
+       * Update the main featured image
+       */
+
+    }, {
+      key: '_updateMainImage',
+      value: function _updateMainImage(event) {
+        var variant = event.detail.variant,
+            previousVariant = event.detail.previousVariant;
+
+        if (!variant || !variant['featured_image'] || previousVariant['featured_image'] && previousVariant['featured_image']['id'] === variant['featured_image']['id']) {
+          return;
+        }
+
+        // Otherwise we are on the home page. It's a bit more complex as we have to rewrite some code normally written in Liquid
+        var newImage = variant['featured_image'];
+
+        var mainImageContainer = this.element.querySelector('.FeaturedProduct__Gallery .AspectRatio');
+        mainImageContainer.style.cssText = 'max-width: ' + newImage['width'] + 'px; --aspect-ratio: ' + newImage['width'] / newImage['height'];
+
+        var newImageElement = document.createElement('img');
+        newImageElement.classList.add('Image--lazyLoad');
+        newImageElement.setAttribute('data-src', __WEBPACK_IMPORTED_MODULE_1__helper_Image__["default"].getSizedImageUrl(newImage['src'], '1x1').replace('_1x1.', '_{width}x.'));
+        newImageElement.setAttribute('data-widths', '[' + __WEBPACK_IMPORTED_MODULE_1__helper_Image__["default"].getSupportedSizes(newImage, [200, 400, 600, 700, 800, 900, 1000]).join(',') + ']');
+        newImageElement.setAttribute('data-sizes', 'auto');
+
+        mainImageContainer.replaceChild(newImageElement, mainImageContainer.querySelector('img'));
+      }
+    }]);
+
+    return FeaturedProductSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = FeaturedProductSection;
+
+  /***/
+},
+/* 38 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Popover__ = __webpack_require__(3);
+
+  var FooterSection = function () {
+    function FooterSection(container) {
+      _classCallCheck(this, FooterSection);
+
+      this.element = container;
+
+      var localePopoverElement = document.getElementById('footer-locale-popover');
+      if (localePopoverElement) {
+        this.localePopover = new __WEBPACK_IMPORTED_MODULE_0__components_Popover__["default"](localePopoverElement, { preferredAlignment: 'center', preferredPosition: 'top', threshold: 12 });
+      }
+
+      var currencyPopoverElement = document.getElementById('footer-currency-popover');
+      if (currencyPopoverElement) {
+        this.currencyPopover = new __WEBPACK_IMPORTED_MODULE_0__components_Popover__["default"](currencyPopoverElement, { preferredAlignment: 'center', preferredPosition: 'top', threshold: 12 });
+      }
+    }
+
+    _createClass(FooterSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.localePopover) {
+          this.localePopover.destroy();
+        }
+
+        if (this.currencyPopover) {
+          this.currencyPopover.destroy();
+        }
+      }
+    }]);
+
+    return FooterSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = FooterSection;
+
+  /***/
+},
+/* 39 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var GiftCardSection = function () {
+    function GiftCardSection(container) {
+      _classCallCheck(this, GiftCardSection);
+
+      this.element = container;
+
+      this._createQrCode();
+      this._setupPrint();
+    }
+
+    _createClass(GiftCardSection, [{
+      key: '_createQrCode',
+      value: function _createQrCode() {
+        var qrCodeElement = document.getElementById('QrCode');
+
+        new QRCode(qrCodeElement, {
+          text: qrCodeElement.getAttribute('data-identifier'),
+          width: 120,
+          height: 120
+        });
+      }
+    }, {
+      key: '_setupPrint',
+      value: function _setupPrint() {
+        var printElement = document.getElementById('PrintGiftCard');
+
+        if (printElement) {
+          printElement.addEventListener('click', function () {
+            window.print();
+          });
+        }
+      }
+    }]);
+
+    return GiftCardSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = GiftCardSection;
+
+  /***/
+},
+/* 40 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Responsive__ = __webpack_require__(1);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__components_Popover__ = __webpack_require__(3);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__components__ = __webpack_require__(21);
+
+  var HeaderSection = function () {
+    function HeaderSection(container) {
+      var _this47 = this;
+
+      _classCallCheck(this, HeaderSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+      this.lastScrollPosition = -1;
+      this.isTouch = window.matchMedia('(-moz-touch-enabled: 1), (hover: none)').matches;
+
+      if (this.options['isSticky']) {
+        Stickyfill.addOne(this.element.parentNode);
+      }
+
+      // Set up the search bar
+      this.searchBar = new __WEBPACK_IMPORTED_MODULE_3__components__["SearchBar"]();
+
+      this._attachListeners();
+      this._verifyNavigationOverlap();
+
+      // We set again some CSS variables that are used for some calculations in CSS
+      var mainLogo = this.element.querySelector('.Header__LogoImage--primary');
+
+      if (mainLogo && !mainLogo.complete) {
+        mainLogo.addEventListener('load', function () {
+          fastdom.measure(function () {
+            document.documentElement.style.setProperty('--header-height', _this47.element.clientHeight + 'px');
+            document.documentElement.style.setProperty('--header-is-not-transparent', _this47.options['hasTransparentHeader'] ? 0 : 1);
+          });
+        });
+      } else {
+        fastdom.measure(function () {
+          document.documentElement.style.setProperty('--header-height', _this47.element.clientHeight + 'px');
+          document.documentElement.style.setProperty('--header-is-not-transparent', _this47.options['hasTransparentHeader'] ? 0 : 1);
+        });
+      }
+
+      this._setupLocalizationPopovers();
+    }
+
+    _createClass(HeaderSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.element.removeEventListener('mouseleave', this._closeNavigationListener);
+        this.element.removeEventListener('mouseenter', this._focusNavigationListener);
+        this.element.removeEventListener('focusin', this._focusNavigationListener);
+
+        this.delegateElement.off();
+
+        window.removeEventListener('scroll', this._checkTransparentHeaderListener);
+        window.removeEventListener('resize', this._verifyNavigationOverlapListener);
+
+        if (this.options['isSticky']) {
+          Stickyfill.removeOne(this.element.parentNode);
+        }
+
+        this.searchBar.destroy();
+
+        this.localizationPopovers.forEach(function (localizationPopover) {
+          localizationPopover.destroy();
+        });
+      }
+    }, {
+      key: 'onSelect',
+      value: function onSelect() {
+        this._checkTransparentHeader();
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        var _this48 = this;
+
+        var listItem = event.target.closest('.HorizontalList__Item');
+
+        fastdom.mutate(function () {
+          event.target.setAttribute('aria-hidden', 'false');
+
+          if (listItem) {
+            listItem.classList.add('is-expanded');
+
+            __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].getSiblings(listItem, '.is-expanded').forEach(function (item) {
+              item.classList.remove('is-expanded');
+            });
+          }
+
+          _this48.element.classList.remove('Header--transparent'); // This is needed to make sure everything is visible
+        });
+      }
+    }, {
+      key: 'onBlockDeselect',
+      value: function onBlockDeselect(event) {
+        var listItem = event.target.closest('.HorizontalList__Item');
+
+        fastdom.mutate(function () {
+          event.target.setAttribute('aria-hidden', 'true');
+
+          if (listItem) {
+            listItem.classList.remove('is-expanded');
+          }
+        });
+
+        this._checkTransparentHeader();
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._checkTransparentHeaderListener = this._checkTransparentHeader.bind(this);
+        this._closeNavigationListener = this._closeNavigation.bind(this);
+        this._focusNavigationListener = this._focusNavigation.bind(this);
+        this._verifyNavigationOverlapListener = this._verifyNavigationOverlap.bind(this);
+
+        this.element.addEventListener('mouseleave', this._closeNavigationListener);
+
+        this.delegateElement.on('mouseenter', '.Header__MainNav .HorizontalList__Item, [aria-haspopup]', this._openMenu.bind(this), true);
+        this.delegateElement.on('focusin', '[aria-haspopup]', this._openMenu.bind(this), true);
+        this.delegateElement.on('focusout', '[aria-haspopup]', this._closeMenu.bind(this), false);
+        this.delegateElement.on('click', '[data-action="toggle-search"]', this._closeNavigationListener);
+        this.delegateElement.on('mouseleave', '.DropdownMenu [aria-haspopup]', this._closeMenu.bind(this), true);
+        this.delegateElement.on('mouseenter', '.DropdownMenu [aria-haspopup]', this._adjustDropdownPosition.bind(this), true);
+
+        if (this.isTouch) {
+          this.delegateElement.on('click', '.Header__MainNav [aria-haspopup]', this._handleTouchMenu.bind(this));
+        }
+
+        if (this.options['hasTransparentHeader']) {
+          this.element.addEventListener('mouseenter', this._focusNavigationListener);
+          this.element.addEventListener('focusin', this._focusNavigationListener);
+        }
+
+        if (this.options['isSticky'] && this.options['hasTransparentHeader']) {
+          window.addEventListener('scroll', this._checkTransparentHeaderListener);
+        }
+
+        if (this.options['navigationStyle'] === 'inline' || this.options['navigationStyle'] === 'logoLeft') {
+          window.addEventListener('resize', this._verifyNavigationOverlapListener);
+        }
+      }
+    }, {
+      key: '_setupLocalizationPopovers',
+      value: function _setupLocalizationPopovers() {
+        // Prestige is an extremely complex theme, especially in the header due to the various layouts that power different
+        // features. One issue that arises with this is that we output the localization elements twice in the DOM (with the
+        // same ID as we're doing a capture in Liquid), and then depending on the screen size one layout is choosen. We therefore
+        // have to de-duplicate the ID here. This is honestly not the cleanest code on earth, but I prefer handling this here
+        // rather than duplicating too much Liquid
+        this.localizationPopovers = [];
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('#header-locale-popover')).forEach(function (item, index) {
+          item.id = item.id + '-' + index;
+        });
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('[aria-controls="header-locale-popover"]')).forEach(function (item, index) {
+          item.setAttribute('aria-controls', item.getAttribute('aria-controls') + '-' + index);
+        });
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('#header-currency-popover')).forEach(function (item, index) {
+          item.id = item.id + '-' + index;
+        });
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('[aria-controls="header-currency-popover"]')).forEach(function (item, index) {
+          item.setAttribute('aria-controls', item.getAttribute('aria-controls') + '-' + index);
+        });
+
+        var localePopoverElement1 = document.getElementById('header-locale-popover-0');
+        if (localePopoverElement1) {
+          this.localizationPopovers.push(new __WEBPACK_IMPORTED_MODULE_2__components_Popover__["default"](localePopoverElement1, { preferredAlignment: 'center', preferredPosition: 'bottom', threshold: 12 }));
+        }
+        var localePopoverElement2 = document.getElementById('header-locale-popover-1');
+        if (localePopoverElement2) {
+          this.localizationPopovers.push(new __WEBPACK_IMPORTED_MODULE_2__components_Popover__["default"](localePopoverElement2, { preferredAlignment: 'center', preferredPosition: 'bottom', threshold: 12 }));
+        }
+
+        var currencyPopoverElement1 = document.getElementById('header-currency-popover-0');
+        if (currencyPopoverElement1) {
+          this.localizationPopovers.push(new __WEBPACK_IMPORTED_MODULE_2__components_Popover__["default"](currencyPopoverElement1, { preferredAlignment: 'center', preferredPosition: 'bottom', threshold: 12 }));
+        }
+        var currencyPopoverElement2 = document.getElementById('header-currency-popover-1');
+        if (currencyPopoverElement2) {
+          this.localizationPopovers.push(new __WEBPACK_IMPORTED_MODULE_2__components_Popover__["default"](currencyPopoverElement2, { preferredAlignment: 'center', preferredPosition: 'bottom', threshold: 12 }));
+        }
+      }
+    }, {
+      key: '_focusNavigation',
+      value: function _focusNavigation() {
+        var _this49 = this;
+
+        fastdom.mutate(function () {
+          if (!_this49.isTouch || __WEBPACK_IMPORTED_MODULE_1__helper_Responsive__["default"].matchesBreakpoint('desk')) {
+            _this49.element.classList.remove('Header--transparent');
+          }
+        });
+      }
+    }, {
+      key: '_closeNavigation',
+      value: function _closeNavigation() {
+        var _this50 = this;
+
+        fastdom.mutate(function () {
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(_this50.element.querySelectorAll('.is-expanded')).forEach(function (item) {
+            item.classList.remove('is-expanded');
+          });
+
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(_this50.element.querySelectorAll('.Header__MainNav [aria-hidden="false"]')).forEach(function (item) {
+            item.setAttribute('aria-hidden', 'true');
+          });
+        });
+
+        if (this.options['hasTransparentHeader']) {
+          this._checkTransparentHeader();
+        }
+      }
+    }, {
+      key: '_openMenu',
+      value: function _openMenu(event, target) {
+        if (event.type === 'mouseenter' && target !== event.target) {
+          return;
+        }
+
+        fastdom.mutate(function () {
+          target.classList.add('is-expanded');
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(target.children, '.Header__MainNav [aria-hidden="true"]').forEach(function (item) {
+            item.setAttribute('aria-hidden', 'false');
+          });
+
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].getSiblings(target, '.is-expanded').forEach(function (item) {
+            item.classList.remove('is-expanded');
+
+            __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(item.children, '.Header__MainNav [aria-hidden="false"]').forEach(function (item) {
+              item.setAttribute('aria-hidden', 'true');
+            });
+          });
+        });
+      }
+    }, {
+      key: '_closeMenu',
+      value: function _closeMenu(event, target) {
+        if (event.type === 'mouseleave' && target !== event.target) {
+          return;
+        }
+
+        fastdom.mutate(function () {
+          target.classList.remove('is-expanded');
+
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(target.children, '.Header__MainNav [aria-hidden="false"]').forEach(function (item) {
+            item.setAttribute('aria-hidden', 'true');
+          });
+        });
+      }
+    }, {
+      key: '_adjustDropdownPosition',
+      value: function _adjustDropdownPosition(event, target) {
+        var nestedMenus = __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(target.querySelectorAll('.DropdownMenu')),
+            shouldOpenLeft = false;
+
+        fastdom.measure(function () {
+          var windowWidth = window.innerWidth,
+              rightEdge = target.getBoundingClientRect().right;
+
+          nestedMenus.forEach(function (item) {
+            if (rightEdge + item.offsetWidth > windowWidth) {
+              shouldOpenLeft = true;
+            }
+          });
+        });
+
+        fastdom.mutate(function () {
+          if (shouldOpenLeft) {
+            nestedMenus.forEach(function (item) {
+              item.classList.add('DropdownMenu--reversed');
+            });
+          } else {
+            nestedMenus.forEach(function (item) {
+              item.classList.remove('DropdownMenu--reversed');
+            });
+          }
+        });
+      }
+
+      /**
+       * On touch devices where we display the standard menu (like landscape iPad or Surface) we need to do additional code to properly
+       * handle the opening of menu. Especially, what we do is that if an item has a sub-menu, a click does not follow the link but instead open
+       * the sub-menu. If this link is clicked a second twice, then the menu is followed
+       */
+
+    }, {
+      key: '_handleTouchMenu',
+      value: function _handleTouchMenu(event, target) {
+        if (!target.classList.contains('is-expanded')) {
+          event.preventDefault();
+        }
+      }
+    }, {
+      key: '_verifyNavigationOverlap',
+      value: function _verifyNavigationOverlap() {
+        var _this51 = this;
+
+        var isOverlapping = false;
+
+        fastdom.measure(function () {
+          // To detect if the navigation is overlapping, we take the height of a single item and check if its height is taller than the parent
+          var mainTopMenu = _this51.element.querySelector('.Header__MainNav');
+
+          if (mainTopMenu) {
+            // Get the first element
+            var firstNavElementHeight = __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].outerHeightWithMargin(mainTopMenu.querySelector('.HorizontalList__Item')),
+                mainNavHeight = mainTopMenu.scrollHeight;
+
+            if (mainNavHeight > firstNavElementHeight) {
+              isOverlapping = true;
+            }
+          }
+        });
+
+        fastdom.mutate(function () {
+          if (isOverlapping) {
+            _this51.element.classList.remove('Header--' + _this51.options['navigationStyle']);
+            _this51.element.classList.add('Header--center');
+          } else {
+            _this51.element.classList.add('Header--' + _this51.options['navigationStyle']);
+            _this51.element.classList.remove('Header--center');
+          }
+
+          _this51.element.classList.add('Header--initialized');
+
+          fastdom.measure(function () {
+            document.documentElement.style.setProperty('--header-height', _this51.element.clientHeight + 'px');
+          });
+        });
+      }
+
+      /**
+       * If the header mode is set to "transparent", we have to do extra work to automatically make it with fill colors when the
+       * user starts scrolling. For performance we are using fastDOM to do that (which relies of requestAnimationFrame instead of
+       * scroll listener)
+       */
+
+    }, {
+      key: '_checkTransparentHeader',
+      value: function _checkTransparentHeader() {
+        var _this52 = this;
+
+        if (!this.options['hasTransparentHeader']) {
+          return;
+        }
+
+        var scrollThreshold = 10;
+
+        fastdom.measure(function () {
+          _this52.lastScrollPosition = window.pageYOffset;
+        });
+
+        fastdom.mutate(function () {
+          if (_this52.lastScrollPosition <= scrollThreshold) {
+            _this52.element.classList.add('Header--transparent');
+          } else {
+            _this52.element.classList.remove('Header--transparent');
+          }
+        });
+      }
+    }]);
+
+    return HeaderSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = HeaderSection;
+
+  /***/
+},
+/* 41 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var ImageWithTextBlockSection = function () {
+    function ImageWithTextBlockSection(container) {
+      _classCallCheck(this, ImageWithTextBlockSection);
+
+      this.element = container;
+    }
+
+    _createClass(ImageWithTextBlockSection, [{
+      key: 'onUnload',
+      value: function onUnload() {}
+    }]);
+
+    return ImageWithTextBlockSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ImageWithTextBlockSection;
+
+  /***/
+},
+/* 42 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var LoginSection = function () {
+    function LoginSection(container) {
+      _classCallCheck(this, LoginSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.timelineLite = new TimelineLite();
+
+      this.customerLoginForm = this.element.querySelector('#customer_login');
+      this.recoverPasswordForm = this.element.querySelector('#recover_customer_password');
+
+      this.delegateElement.on('click', '[data-action="toggle-recover-form"]', this._showRecoverPassword.bind(this));
+    }
+
+    _createClass(LoginSection, [{
+      key: '_showRecoverPassword',
+      value: function _showRecoverPassword() {
+        var isLoginActive = this.customerLoginForm.style.display === 'block';
+
+        if (isLoginActive) {
+          this.timelineLite.fromTo(this.customerLoginForm, 0.5, { autoAlpha: 1, display: 'block', y: 0 }, { autoAlpha: 0, y: 20, display: 'none' }).fromTo(this.recoverPasswordForm, 0.5, { autoAlpha: 0, display: 'none', y: 20 }, { autoAlpha: 1, display: 'block', y: 0, delay: 0.25 });
+        } else {
+          this.timelineLite.fromTo(this.recoverPasswordForm, 0.5, { autoAlpha: 1, display: 'block', y: 0 }, { autoAlpha: 0, y: 20, display: 'none' }).fromTo(this.customerLoginForm, 0.5, { autoAlpha: 0, display: 'none', y: 20 }, { autoAlpha: 1, display: 'block', y: 0, delay: 0.25 });
+        }
+      }
+    }]);
+
+    return LoginSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = LoginSection;
+
+  /***/
+},
+/* 43 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+  var MapSection = function () {
+    function MapSection(element) {
+      _classCallCheck(this, MapSection);
+
+      this.element = element;
+      this.options = JSON.parse(element.getAttribute('data-section-settings'));
+
+      if (this.options['apiKey'] && this.options['mapAddress']) {
+        this._loadScript().then(this._initMap.bind(this));
+      }
+    }
+
+    _createClass(MapSection, [{
+      key: '_loadScript',
+      value: function _loadScript() {
+        var _this53 = this;
+
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement('script');
+          document.body.appendChild(script);
+          script.onload = resolve;
+          script.onerror = reject;
+          script.async = true;
+          script.src = 'https://maps.googleapis.com/maps/api/js?key=' + _this53.options['apiKey'];
+        });
+      }
+    }, {
+      key: '_initMap',
+      value: function _initMap() {
+        var _this54 = this;
+
+        var geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ address: this.options['mapAddress'] }, function (results, status) {
+          if (status !== google.maps.GeocoderStatus.OK) {
+            if (Shopify.designMode) {}
+          } else {
             var mapOptions = {
-              zoom: config.zoom,
+              zoom: _this54.options['zoom'],
               center: results[0].geometry.location,
               draggable: false,
               clickableIcons: false,
@@ -6417,1416 +5647,2240 @@ theme.Maps = (function() {
               disableDefaultUI: true
             };
 
-            var map = (this.map = new google.maps.Map($map[0], mapOptions));
-            var center = (this.center = map.getCenter());
+            var map = new google.maps.Map(_this54.element.querySelector('.FeaturedMap__GMap'), mapOptions),
+                center = map.getCenter();
 
-            //eslint-disable-next-line no-unused-vars
-            var marker = new google.maps.Marker({
+            map.setCenter(center);
+
+            var icon = {
+              path: "M32.7374478,5.617 C29.1154478,1.995 24.2994478,0 19.1774478,0 C14.0544478,0 9.23944778,1.995 5.61744778,5.617 C-1.08555222,12.319 -1.91855222,24.929 3.81344778,32.569 L19.1774478,54.757 L34.5184478,32.6 C40.2734478,24.929 39.4404478,12.319 32.7374478,5.617 Z M19.3544478,26 C15.4954478,26 12.3544478,22.859 12.3544478,19 C12.3544478,15.141 15.4954478,12 19.3544478,12 C23.2134478,12 26.3544478,15.141 26.3544478,19 C26.3544478,22.859 23.2134478,26 19.3544478,26 Z",
+              fillColor: _this54.options['markerColor'],
+              fillOpacity: 1,
+              anchor: new google.maps.Point(15, 55),
+              strokeWeight: 0,
+              scale: 0.6
+            };
+
+            new google.maps.Marker({
               map: map,
-              position: map.getCenter()
+              position: map.getCenter(),
+              icon: icon
             });
 
-            google.maps.event.addDomListener(
-              window,
-              'resize',
-              $.debounce(250, function() {
-                google.maps.event.trigger(map, 'resize');
-                map.setCenter(center);
-                $map.removeAttr('style');
-              })
-            );
-          }.bind(this)
-        )
-        .fail(function() {
-          var errorMessage;
+            var styledMapType = new google.maps.StyledMapType(JSON.parse(_this54.element.querySelector('[data-gmap-style]').innerHTML));
 
-          switch (status) {
-            case 'ZERO_RESULTS':
-              errorMessage = errors.addressNoResults;
-              break;
-            case 'OVER_QUERY_LIMIT':
-              errorMessage = errors.addressQueryLimit;
-              break;
-            case 'REQUEST_DENIED':
-              errorMessage = errors.authError;
-              break;
-            default:
-              errorMessage = errors.addressError;
-              break;
-          }
+            map.mapTypes.set('styled_map', styledMapType);
+            map.setMapTypeId('styled_map');
 
-          // Show errors only to merchant in the editor.
-          if (Shopify.designMode) {
-            $map
-              .parent()
-              .addClass(classes.mapError)
-              .html(
-                '<div class="' +
-                  classes.errorMsg +
-                  '">' +
-                  errorMessage +
-                  '</div>'
-              );
+            google.maps.event.addDomListener(window, 'resize', function () {
+              google.maps.event.trigger(map, 'resize');
+              map.setCenter(center);
+            });
           }
         });
-    },
-
-    onUnload: function() {
-      if (this.$map.length === 0) {
-        return;
       }
-      google.maps.event.clearListeners(this.map, 'resize');
-    }
-  });
+    }]);
 
-  return Map;
-})();
+    return MapSection;
+  }();
+  /* harmony export (immutable) */
 
-/* eslint-disable no-new */
-theme.Product = (function() {
-  function Product(container) {
-    var $container = (this.$container = $(container));
-    var sectionId = $container.attr('data-section-id');
-    this.zoomPictures = [];
-    this.ajaxEnabled = $container.data('ajax-enabled');
+  __webpack_exports__["default"] = MapSection;
 
-    this.settings = {
-      // Breakpoints from src/stylesheets/global/variables.scss.liquid
-      mediaQueryMediumUp: 'screen and (min-width: 750px)',
-      mediaQuerySmall: 'screen and (max-width: 749px)',
-      bpSmall: false,
-      enableHistoryState: $container.data('enable-history-state') || false,
-      namespace: '.slideshow-' + sectionId,
-      sectionId: sectionId,
-      sliderActive: false,
-      zoomEnabled: false
-    };
+  /***/
+},
+/* 44 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-    this.selectors = {
-      addToCart: '[data-add-to-cart]',
-      addToCartText: '[data-add-to-cart-text]',
-      cartCount: '[data-cart-count]',
-      cartCountBubble: '[data-cart-count-bubble]',
-      cartPopup: '[data-cart-popup]',
-      cartPopupCartQuantity: '[data-cart-popup-cart-quantity]',
-      cartPopupClose: '[data-cart-popup-close]',
-      cartPopupDismiss: '[data-cart-popup-dismiss]',
-      cartPopupImage: '[data-cart-popup-image]',
-      cartPopupImageWrapper: '[data-cart-popup-image-wrapper]',
-      cartPopupImagePlaceholder: '[data-cart-popup-image-placeholder]',
-      cartPopupPlaceholderSize: '[data-placeholder-size]',
-      cartPopupProductDetails: '[data-cart-popup-product-details]',
-      cartPopupQuantity: '[data-cart-popup-quantity]',
-      cartPopupQuantityLabel: '[data-cart-popup-quantity-label]',
-      cartPopupTitle: '[data-cart-popup-title]',
-      cartPopupWrapper: '[data-cart-popup-wrapper]',
-      loader: '[data-loader]',
-      loaderStatus: '[data-loader-status]',
-      quantity: '[data-quantity-input]',
-      SKU: '.variant-sku',
-      productStatus: '[data-product-status]',
-      originalSelectorId: '#ProductSelect-' + sectionId,
-      productForm: '[data-product-form]',
-      errorMessage: '[data-error-message]',
-      errorMessageWrapper: '[data-error-message-wrapper]',
-      imageZoomWrapper: '[data-image-zoom-wrapper]',
-      productMediaWrapper: '[data-product-single-media-wrapper]',
-      productThumbImages: '.product-single__thumbnail--' + sectionId,
-      productThumbs: '.product-single__thumbnails-' + sectionId,
-      productThumbListItem: '.product-single__thumbnails-item',
-      productThumbsWrapper: '.thumbnails-wrapper',
-      saleLabel: '.product-price__sale-label-' + sectionId,
-      singleOptionSelector: '.single-option-selector-' + sectionId,
-      shopifyPaymentButton: '.shopify-payment-button',
-      productMediaTypeVideo: '[data-product-media-type-video]',
-      productMediaTypeModel: '[data-product-media-type-model]',
-      priceContainer: '[data-price]',
-      regularPrice: '[data-regular-price]',
-      salePrice: '[data-sale-price]',
-      unitPrice: '[data-unit-price]',
-      unitPriceBaseUnit: '[data-unit-price-base-unit]',
-      productPolicies: '[data-product-policies]'
-    };
+  "use strict";
 
-    this.classes = {
-      cartPopupWrapperHidden: 'cart-popup-wrapper--hidden',
-      hidden: 'hide',
-      visibilityHidden: 'visibility-hidden',
-      inputError: 'input--error',
-      jsZoomEnabled: 'js-zoom-enabled',
-      productOnSale: 'price--on-sale',
-      productUnitAvailable: 'price--unit-available',
-      productUnavailable: 'price--unavailable',
-      productSoldOut: 'price--sold-out',
-      cartImage: 'cart-popup-item__image',
-      productFormErrorMessageWrapperHidden:
-        'product-form__error-message-wrapper--hidden',
-      activeClass: 'active-thumb',
-      variantSoldOut: 'product-form--variant-sold-out'
-    };
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-    this.$quantityInput = $(this.selectors.quantity, $container);
-    this.$errorMessageWrapper = $(
-      this.selectors.errorMessageWrapper,
-      $container
-    );
-    this.$addToCart = $(this.selectors.addToCart, $container);
-    this.$addToCartText = $(this.selectors.addToCartText, this.$addToCart);
-    this.$shopifyPaymentButton = $(
-      this.selectors.shopifyPaymentButton,
-      $container
-    );
-    this.$productPolicies = $(this.selectors.productPolicies, $container);
+  var NewsletterPopupSection = function () {
+    function NewsletterPopupSection(element) {
+      _classCallCheck(this, NewsletterPopupSection);
 
-    this.$loader = $(this.selectors.loader, this.$addToCart);
-    this.$loaderStatus = $(this.selectors.loaderStatus, $container);
+      this.element = element;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = JSON.parse(element.getAttribute('data-section-settings'));
 
-    this.$imageZoomWrapper = $(this.selectors.imageZoomWrapper, $container);
+      // If the popup has been already displayed, we do not display it
+      try {
+        if (window.location.hash === '#newsletter-popup' && window.theme.pageType !== null) {
+          this._openPopup();
+        } else if (!this.options['showOnlyOnce'] || this.options['showOnlyOnce'] && localStorage.getItem('themePopup') === null) {
+          setTimeout(this._openPopup.bind(this), this.options['apparitionDelay'] * 1000);
+        }
+      } catch (error) {
+        // Some browsers (especially in private mode) throw an exception when trying to access local storage, so we protect ourselves here
+      }
 
-    // Stop parsing if we don't have the product json script tag when loading
-    // section in the Theme Editor
-    if (!$('#ProductJson-' + sectionId).html()) {
-      return;
+      this._attachListeners();
     }
 
-    this.productSingleObject = JSON.parse(
-      document.getElementById('ProductJson-' + sectionId).innerHTML
-    );
+    _createClass(NewsletterPopupSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off();
+      }
+    }, {
+      key: 'onSelect',
+      value: function onSelect() {
+        this._openPopup();
+      }
+    }, {
+      key: 'onDeselect',
+      value: function onDeselect() {
+        this._closePopup();
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '[data-action="close-popup"]', this._closePopup.bind(this));
+      }
+    }, {
+      key: '_openPopup',
+      value: function _openPopup() {
+        this.element.setAttribute('aria-hidden', 'false');
+        localStorage.setItem('themePopup', 'true');
+      }
+    }, {
+      key: '_closePopup',
+      value: function _closePopup() {
+        this.element.setAttribute('aria-hidden', 'true');
+      }
+    }]);
 
-    this.settings.zoomEnabled = this.$imageZoomWrapper.hasClass(
-      this.classes.jsZoomEnabled
-    );
+    return NewsletterPopupSection;
+  }();
+  /* harmony export (immutable) */
 
-    this.initMobileBreakpoint = this._initMobileBreakpoint.bind(this);
-    this.initDesktopBreakpoint = this._initDesktopBreakpoint.bind(this);
+  __webpack_exports__["default"] = NewsletterPopupSection;
 
-    this.mqlSmall = window.matchMedia(this.settings.mediaQuerySmall);
-    this.mqlSmall.addListener(this.initMobileBreakpoint);
+  /***/
+},
+/* 45 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
 
-    this.mqlMediumUp = window.matchMedia(this.settings.mediaQueryMediumUp);
-    this.mqlMediumUp.addListener(this.initDesktopBreakpoint);
+  "use strict";
 
-    this.initMobileBreakpoint();
-    this.initDesktopBreakpoint();
-    this._stringOverrides();
-    this._initVariants();
-    this._initMediaSwitch();
-    this._initAddToCart();
-    this._setActiveThumbnail();
-    this._initProductVideo();
-    this._initModelViewerLibraries();
-    this._initShopifyXrLaunch();
-  }
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__ = __webpack_require__(4);
 
-  Product.prototype = Object.assign({}, Product.prototype, {
-    _stringOverrides: function() {
-      theme.productStrings = theme.productStrings || {};
-      $.extend(theme.strings, theme.productStrings);
-    },
+  var ProductRecommendationsSection = function () {
+    function ProductRecommendationsSection(container) {
+      _classCallCheck(this, ProductRecommendationsSection);
 
-    _initMobileBreakpoint: function() {
-      if (this.mqlSmall.matches) {
-        // initialize thumbnail slider on mobile if more than four thumbnails
-        if ($(this.selectors.productThumbImages).length > 4) {
-          this._initThumbnailSlider();
+      this.element = container;
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+
+      if (this.options['useRecommendations']) {
+        this._loadRecommendations().then(this._createSlideshow.bind(this));
+      } else {
+        this._createSlideshow();
+      }
+    }
+
+    _createClass(ProductRecommendationsSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.carousel.destroy();
+      }
+    }, {
+      key: '_loadRecommendations',
+      value: function _loadRecommendations() {
+        var _this55 = this;
+
+        var url = window.routes.productRecommendationsUrl + '?section_id=product-recommendations&product_id=' + this.options['productId'] + '&limit=' + this.options['recommendationsCount'];
+
+        return fetch(url).then(function (response) {
+          return response.text().then(function (content) {
+            var container = document.createElement('div');
+            container.innerHTML = content;
+
+            _this55.element.querySelector('.ProductRecommendations').innerHTML = container.querySelector('.ProductRecommendations').innerHTML;
+          });
+        });
+      }
+    }, {
+      key: '_createSlideshow',
+      value: function _createSlideshow() {
+        this.carousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](this.element.querySelector('[data-flickity-config]'));
+
+        // Setup product item color swatch
+        new __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__["default"](this.element);
+      }
+    }]);
+
+    return ProductRecommendationsSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductRecommendationsSection;
+
+  /***/
+},
+/* 46 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_ProductModel__ = __webpack_require__(15);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__components_ProductVariants__ = __webpack_require__(11);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__components_ProductImageZoom__ = __webpack_require__(14);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__components_ProductReviews__ = __webpack_require__(16);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__components_ProductVideo__ = __webpack_require__(18);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_6__components_ScrollSpy__ = __webpack_require__(19);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_7__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_8__components_OverflowScroller__ = __webpack_require__(13);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_9__helper_Responsive__ = __webpack_require__(1);
+
+  var ProductSection = function () {
+    function ProductSection(container) {
+      var _this56 = this;
+
+      _classCallCheck(this, ProductSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+
+      this.viewInSpaceElement = this.element.querySelector('[data-shopify-xr]');
+
+      if (this.options['templateSuffix'] !== 'coming-soon') {
+        this.productVariants = new __WEBPACK_IMPORTED_MODULE_2__components_ProductVariants__["default"](container, this.options);
+      }
+
+      this.productReviews = new __WEBPACK_IMPORTED_MODULE_4__components_ProductReviews__["default"](container);
+
+      var productSlideshowElement = this.element.querySelector('.Product__Slideshow');
+
+      // If there is no image at all, there is nothing to init
+      if (productSlideshowElement) {
+        this.productSlideshow = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](productSlideshowElement, { onSelect: this._onImageChanged.bind(this), onSettle: this._onImageSettled.bind(this) }, { draggable: !__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('supports-hover') });
+        this.mediaList = {}; // We keep track of a list of media element
+        this.previouslySelectedMedia = null; // Keep track of the previously selected media
+
+        // For each model and video, we register a media
+        productSlideshowElement.querySelectorAll('[data-media-type="model"]').forEach(function (model) {
+          _this56.mediaList[model.getAttribute('data-media-id')] = new __WEBPACK_IMPORTED_MODULE_1__components_ProductModel__["default"](model, _this56.options['stackProductImages']);
+        });
+
+        productSlideshowElement.querySelectorAll('[data-media-type="video"], [data-media-type="external_video"]').forEach(function (video) {
+          _this56.mediaList[video.getAttribute('data-media-id')] = new __WEBPACK_IMPORTED_MODULE_5__components_ProductVideo__["default"](video, _this56.options['stackProductImages'], _this56.options['enableVideoLooping']);
+        });
+
+        if (this.options['stackProductImages']) {
+          this.slideshowNavDots = this.element.querySelector('.Product__SlideshowNav--dots');
+          this.slideshowNavDotsItems = this.slideshowNavDots ? __WEBPACK_IMPORTED_MODULE_7__helper_Dom__["default"].nodeListToArray(this.slideshowNavDots.querySelectorAll('a')) : [];
         }
 
-        // destroy image zooming if enabled
-        if (this.settings.zoomEnabled) {
-          this.$imageZoomWrapper.each(
-            function(index) {
-              this._destroyZoom(index);
-            }.bind(this)
-          );
+        if (this.options['showThumbnails']) {
+          this.slideshowNavThumbnails = this.element.querySelector('.Product__SlideshowNav--thumbnails');
+          this.slideshowNavThumbnailsItems = this.slideshowNavThumbnails ? __WEBPACK_IMPORTED_MODULE_7__helper_Dom__["default"].nodeListToArray(this.slideshowNavThumbnails.querySelectorAll('.Product__SlideshowNavImage')) : [];
         }
 
-        this.settings.bpSmall = true;
-      } else {
-        if (this.settings.sliderActive) {
-          this._destroyThumbnailSlider();
+        this.slideshowImages = __WEBPACK_IMPORTED_MODULE_7__helper_Dom__["default"].nodeListToArray(productSlideshowElement.querySelectorAll('.Carousel__Cell'));
+
+        // Setup the mobile nav
+        this._setupSlideshowMobileNav();
+      }
+
+      this.productWrapperElement = this.element.querySelector('.Product__Wrapper');
+      this.productInfoElement = this.element.querySelector('.Product__Info');
+      this.productAsideElement = this.element.querySelector('.Product__Aside');
+      this.productGalleryElement = this.element.querySelector('.Product__Gallery');
+      this.quickNav = this.element.querySelector('.Product__QuickNav');
+
+      if (this.options['enableImageZoom']) {
+        this.imageZoomInstance = new __WEBPACK_IMPORTED_MODULE_3__components_ProductImageZoom__["default"](this.element, this.productSlideshow);
+      }
+
+      Stickyfill.addOne(this.productInfoElement);
+
+      // We have to re-order elements in the DOM
+      var offscreenElement = this.element.querySelector('.Product__OffScreen');
+
+      if (offscreenElement) {
+        this.element.appendChild(offscreenElement);
+      }
+
+      this._setupDeviceFeatures();
+      this._attachListeners();
+    }
+
+    _createClass(ProductSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off('click');
+        this.productReviews.destroy();
+
+        if (this.productVariants) {
+          this.productVariants.destroy();
         }
 
-        this.settings.bpSmall = false;
+        if (this.productSlideshow) {
+          this.productSlideshow.destroy();
+        }
+
+        if (this.options['enableImageZoom']) {
+          this.imageZoomInstance.destroy();
+        }
+
+        if (this.carouselNavScrollSpy) {
+          this.carouselNavScrollSpy.destroy();
+        }
+
+        if (this.quickNav) {
+          window.removeEventListener('scroll', this._checkQuickNavListener);
+        }
+
+        if (this.productInfoScroller) {
+          this.productInfoScroller.destroy();
+        }
+
+        if (this.productThumbnailsScroller) {
+          this.productThumbnailsScroller.destroy();
+        }
+
+        if (window.ResizeObserver && this.productInfoResizeObserver) {
+          this.productInfoResizeObserver.disconnect();
+        }
+
+        Stickyfill.removeOne(this.productInfoElement);
+
+        document.removeEventListener('breakpoint:changed', this._onBreakpointChangedListener);
       }
-    },
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._onBreakpointChangedListener = this._setupDeviceFeatures.bind(this);
+        this._checkQuickNavListener = this._checkQuickNav.bind(this);
 
-    _initDesktopBreakpoint: function() {
-      if (this.mqlMediumUp.matches && this.settings.zoomEnabled) {
-        this.$imageZoomWrapper.each(
-          function(index, element) {
-            this._enableZoom(element, index);
-          }.bind(this)
-        );
+        this.delegateElement.on('click', '[data-action="toggle-social-share"]', this._toggleSocialShare.bind(this));
+        this.delegateElement.on('variant:changed', this._updateSlideshowImage.bind(this));
+        this.delegateElement.on('scrollspy:target:changed', this._onScrollTargetChanged.bind(this));
+
+        this.delegateElement.on('model:played', this._onMediaPlayed.bind(this));
+        this.delegateElement.on('video:played', this._onMediaPlayed.bind(this));
+
+        this.delegateElement.on('model:paused', this._onMediaPaused.bind(this));
+        this.delegateElement.on('video:paused', this._onMediaPaused.bind(this));
+
+        document.addEventListener('breakpoint:changed', this._onBreakpointChangedListener);
+
+        if (this.quickNav) {
+          window.addEventListener('scroll', this._checkQuickNavListener);
+        }
+
+        if (!this.options['stackProductImages'] && this.options['showThumbnails']) {
+          this.delegateElement.on('click', '.Product__SlideshowNavImage', this._switchToImage.bind(this));
+        }
       }
-    },
+    }, {
+      key: '_setupSlideshowMobileNav',
+      value: function _setupSlideshowMobileNav() {
+        var _this57 = this;
 
-    _initVariants: function() {
-      var options = {
-        $container: this.$container,
-        enableHistoryState:
-          this.$container.data('enable-history-state') || false,
-        singleOptionSelector: this.selectors.singleOptionSelector,
-        originalSelectorId: this.selectors.originalSelectorId,
-        product: this.productSingleObject
-      };
+        this.slideshowMobileNav = this.element.querySelector('.Product__SlideshowMobileNav');
 
-      this.variants = new slate.Variants(options);
+        if (this.slideshowMobileNav) {
+          var slideshowMobileNavDelegate = new domDelegate.Delegate(this.slideshowMobileNav);
 
-      this.$container.on(
-        'variantChange' + this.settings.namespace,
-        this._updateAvailability.bind(this)
-      );
-      this.$container.on(
-        'variantImageChange' + this.settings.namespace,
-        this._updateMedia.bind(this)
-      );
-      this.$container.on(
-        'variantPriceChange' + this.settings.namespace,
-        this._updatePrice.bind(this)
-      );
-      this.$container.on(
-        'variantSKUChange' + this.settings.namespace,
-        this._updateSKU.bind(this)
-      );
-    },
+          // Handle the dot
+          slideshowMobileNavDelegate.on('click', '.dot', function (event, element) {
+            _this57._slideWillChange();
+            _this57.productSlideshow.selectCell(parseInt(element.getAttribute('data-index')));
+          });
 
-    _initMediaSwitch: function() {
-      if (!$(this.selectors.productThumbImages).length) {
-        return;
+          // Handle the buttons
+          slideshowMobileNavDelegate.on('click', '.Product__SlideshowNavArrow', function (event, element) {
+            _this57._slideWillChange();
+
+            if (element.getAttribute('data-direction') === 'next') {
+              _this57.productSlideshow.next();
+            } else {
+              _this57.productSlideshow.previous();
+            }
+          });
+        }
       }
 
-      var self = this;
+      /**
+       * Update the main carousel image
+       */
 
-      $(this.selectors.productThumbImages)
-        .on('click', function(evt) {
-          evt.preventDefault();
-          var $el = $(this);
+    }, {
+      key: '_updateSlideshowImage',
+      value: function _updateSlideshowImage(event) {
+        var variant = event.detail.variant,
+            previousVariant = event.detail.previousVariant;
 
-          var mediaId = $el.data('thumbnail-id');
+        if (!variant || !variant['featured_media'] || previousVariant && previousVariant['featured_media'] && previousVariant['featured_media']['id'] === variant['featured_media']['id']) {
+          return;
+        }
 
-          self._switchMedia(mediaId);
-          self._setActiveThumbnail(mediaId);
-        })
-        .on('keyup', self._handleMediaFocus.bind(self));
-    },
+        // We have two logic here: if we are on pocket mode, we switch using the carousel, otherwise we simulate a link to the anchor
+        this._slideWillChange();
 
-    _initAddToCart: function() {
-      $(this.selectors.productForm, this.$container).on(
-        'submit',
-        function(evt) {
-          if (this.$addToCart.is('[aria-disabled]')) {
-            evt.preventDefault();
-            return;
+        if (__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('pocket') || !this.options['stackProductImages']) {
+          for (var i = 0; i !== this.productSlideshow.flickityInstance.cells.length; ++i) {
+            var cellElement = this.productSlideshow.flickityInstance.cells[i].element,
+                mediaId = parseInt(cellElement.getAttribute('data-media-id'));
+
+            if (mediaId === variant['featured_media']['id']) {
+              this.productSlideshow.selectCell(parseInt(cellElement.getAttribute('data-media-position')) - 1);
+            }
           }
-
-          if (!this.ajaxEnabled) return;
-
-          evt.preventDefault();
-
-          this.$previouslyFocusedElement = $(':focus');
-
-          var isInvalidQuantity = this.$quantityInput.val() <= 0;
-
-          if (isInvalidQuantity) {
-            this._showErrorMessage(theme.strings.quantityMinimumMessage);
-            return;
-          }
-
-          if (!isInvalidQuantity && this.ajaxEnabled) {
-            // disable the addToCart and dynamic checkout button while
-            // request/cart popup is loading and handle loading state
-            this._handleButtonLoadingState(true);
-            var $data = $(this.selectors.productForm, this.$container);
-            this._addItemToCart($data);
-            return;
-          }
-        }.bind(this)
-      );
-    },
-
-    _initProductVideo: function() {
-      var sectionId = this.settings.sectionId;
-
-      $(this.selectors.productMediaTypeVideo, this.$container).each(function() {
-        var $el = $(this);
-        theme.ProductVideo.init($el, sectionId);
-      });
-    },
-
-    _initModelViewerLibraries: function() {
-      var $modelViewerElements = $(
-        this.selectors.productMediaTypeModel,
-        this.$container
-      );
-      if ($modelViewerElements.length < 1) return;
-      theme.ProductModel.init($modelViewerElements, this.settings.sectionId);
-    },
-
-    _initShopifyXrLaunch: function() {
-      var self = this;
-      $(document).on('shopify_xr_launch', function() {
-        var $currentMedia = $(
-          self.selectors.productMediaWrapper +
-            ':not(.' +
-            self.classes.hidden +
-            ')',
-          self.$container
-        );
-        $currentMedia.trigger('xrLaunch');
-      });
-    },
-
-    _addItemToCart: function(data) {
-      var params = {
-        url: '/cart/add.js',
-        data: $(data).serialize(),
-        dataType: 'json'
-      };
-
-      $.post(params)
-        .done(
-          function(item) {
-            this._hideErrorMessage();
-            this._setupCartPopup(item);
-          }.bind(this)
-        )
-        .fail(
-          function(response) {
-            this.$previouslyFocusedElement.focus();
-            var errorMessage = response.responseJSON
-              ? response.responseJSON.description
-              : theme.strings.cartError;
-            this._showErrorMessage(errorMessage);
-            this._handleButtonLoadingState(false);
-          }.bind(this)
-        );
-    },
-
-    _handleButtonLoadingState: function(isLoading) {
-      if (isLoading) {
-        this.$addToCart.attr('aria-disabled', true);
-        this.$addToCartText.addClass(this.classes.hidden);
-        this.$loader.removeClass(this.classes.hidden);
-        this.$shopifyPaymentButton.attr('disabled', true);
-        this.$loaderStatus.attr('aria-hidden', false);
-      } else {
-        this.$addToCart.removeAttr('aria-disabled');
-        this.$addToCartText.removeClass(this.classes.hidden);
-        this.$loader.addClass(this.classes.hidden);
-        this.$shopifyPaymentButton.removeAttr('disabled');
-        this.$loaderStatus.attr('aria-hidden', true);
-      }
-    },
-
-    _showErrorMessage: function(errorMessage) {
-      $(this.selectors.errorMessage, this.$container).html(errorMessage);
-
-      if (this.$quantityInput.length !== 0) {
-        this.$quantityInput.addClass(this.classes.inputError);
-      }
-
-      this.$errorMessageWrapper
-        .removeClass(this.classes.productFormErrorMessageWrapperHidden)
-        .attr('aria-hidden', true)
-        .removeAttr('aria-hidden');
-    },
-
-    _hideErrorMessage: function() {
-      this.$errorMessageWrapper.addClass(
-        this.classes.productFormErrorMessageWrapperHidden
-      );
-
-      if (this.$quantityInput.length !== 0) {
-        this.$quantityInput.removeClass(this.classes.inputError);
-      }
-    },
-
-    _setupCartPopup: function(item) {
-      this.$cartPopup = this.$cartPopup || $(this.selectors.cartPopup);
-      this.$cartPopupWrapper =
-        this.$cartPopupWrapper || $(this.selectors.cartPopupWrapper);
-      this.$cartPopupTitle =
-        this.$cartPopupTitle || $(this.selectors.cartPopupTitle);
-      this.$cartPopupQuantity =
-        this.$cartPopupQuantity || $(this.selectors.cartPopupQuantity);
-      this.$cartPopupQuantityLabel =
-        this.$cartPopupQuantityLabel ||
-        $(this.selectors.cartPopupQuantityLabel);
-      this.$cartPopupClose =
-        this.$cartPopupClose || $(this.selectors.cartPopupClose);
-      this.$cartPopupDismiss =
-        this.$cartPopupDismiss || $(this.selectors.cartPopupDismiss);
-      this.$cartPopupImagePlaceholder =
-        this.$cartPopupImagePlaceholder ||
-        $(this.selectors.cartPopupImagePlaceholder);
-
-      this._setupCartPopupEventListeners();
-
-      this._updateCartPopupContent(item);
-    },
-
-    _updateCartPopupContent: function(item) {
-      var quantity = this.$quantityInput.length ? this.$quantityInput.val() : 1;
-
-      this.$cartPopupTitle.text(item.product_title);
-      this.$cartPopupQuantity.text(quantity);
-      this.$cartPopupQuantityLabel.text(
-        theme.strings.quantityLabel.replace('[count]', quantity)
-      );
-
-      this._setCartPopupPlaceholder(
-        item.featured_image.url,
-        item.featured_image.aspect_ratio
-      );
-      this._setCartPopupImage(item.featured_image.url, item.featured_image.alt);
-      this._setCartPopupProductDetails(
-        item.product_has_only_default_variant,
-        item.options_with_values,
-        item.properties
-      );
-
-      $.getJSON('/cart.js').then(
-        function(cart) {
-          this._setCartQuantity(cart.item_count);
-          this._setCartCountBubble(cart.item_count);
-          this._showCartPopup();
-        }.bind(this)
-      );
-    },
-
-    _setupCartPopupEventListeners: function() {
-      this.$cartPopupWrapper.on(
-        'keyup',
-        function(event) {
-          if (event.keyCode === slate.utils.keyboardKeys.ESCAPE) {
-            this._hideCartPopup(event);
-          }
-        }.bind(this)
-      );
-
-      this.$cartPopupClose.on('click', this._hideCartPopup.bind(this));
-      this.$cartPopupDismiss.on('click', this._hideCartPopup.bind(this));
-      $('body').on('click', this._onBodyClick.bind(this));
-    },
-
-    _setCartPopupPlaceholder: function(imageUrl, imageAspectRatio) {
-      this.$cartPopupImageWrapper =
-        this.$cartPopupImageWrapper || $(this.selectors.cartPopupImageWrapper);
-
-      if (imageUrl === null) {
-        this.$cartPopupImageWrapper.addClass(this.classes.hidden);
-        return;
-      }
-
-      var $placeholder = $(this.selectors.cartPopupPlaceholderSize);
-      var maxWidth = 95 * imageAspectRatio;
-      var heightRatio = 100 / imageAspectRatio;
-
-      this.$cartPopupImagePlaceholder.css('max-width', maxWidth);
-
-      $placeholder.css('padding-top', heightRatio + '%');
-    },
-
-    _setCartPopupImage: function(imageUrl, imageAlt) {
-      if (imageUrl === null) return;
-
-      this.$cartPopupImageWrapper.removeClass(this.classes.hidden);
-      var sizedImageUrl = theme.Images.getSizedImageUrl(imageUrl, '200x');
-      var image = document.createElement('img');
-      image.src = sizedImageUrl;
-      image.alt = imageAlt;
-      image.classList.add(this.classes.cartImage);
-      image.dataset.cartPopupImage = '';
-
-      image.onload = function() {
-        this.$cartPopupImagePlaceholder.addClass(this.classes.hidden);
-        this.$cartPopupImageWrapper.append(image);
-      }.bind(this);
-    },
-
-    _setCartPopupProductDetails: function(
-      product_has_only_default_variant,
-      options,
-      properties
-    ) {
-      this.$cartPopupProductDetails =
-        this.$cartPopupProductDetails ||
-        $(this.selectors.cartPopupProductDetails);
-      var variantPropertiesHTML = '';
-
-      if (!product_has_only_default_variant) {
-        variantPropertiesHTML =
-          variantPropertiesHTML + this._getVariantOptionList(options);
-      }
-
-      if (properties !== null && Object.keys(properties).length !== 0) {
-        variantPropertiesHTML =
-          variantPropertiesHTML + this._getPropertyList(properties);
-      }
-
-      if (variantPropertiesHTML.length === 0) {
-        this.$cartPopupProductDetails.html('');
-        this.$cartPopupProductDetails.attr('hidden', '');
-      } else {
-        this.$cartPopupProductDetails.html(variantPropertiesHTML);
-        this.$cartPopupProductDetails.removeAttr('hidden');
-      }
-    },
-
-    _getVariantOptionList: function(variantOptions) {
-      var variantOptionListHTML = '';
-
-      variantOptions.forEach(function(variantOption) {
-        variantOptionListHTML =
-          variantOptionListHTML +
-          '<li class="product-details__item product-details__item--variant-option">' +
-          variantOption.name +
-          ': ' +
-          variantOption.value +
-          '</li>';
-      });
-
-      return variantOptionListHTML;
-    },
-
-    _getPropertyList: function(properties) {
-      var propertyListHTML = '';
-      var propertiesArray = Object.entries(properties);
-
-      propertiesArray.forEach(function(property) {
-        // Line item properties prefixed with an underscore are not to be displayed
-        if (property[0].charAt(0) === '_') return;
-
-        // if the property value has a length of 0 (empty), don't display it
-        if (property[1].length === 0) return;
-
-        propertyListHTML =
-          propertyListHTML +
-          '<li class="product-details__item product-details__item--property">' +
-          '<span class="product-details__property-label">' +
-          property[0] +
-          ': </span>' +
-          property[1];
-        ': ' + '</li>';
-      });
-
-      return propertyListHTML;
-    },
-
-    _setCartQuantity: function(quantity) {
-      this.$cartPopupCartQuantity =
-        this.$cartPopupCartQuantity || $(this.selectors.cartPopupCartQuantity);
-      var ariaLabel;
-
-      if (quantity === 1) {
-        ariaLabel = theme.strings.oneCartCount;
-      } else if (quantity > 1) {
-        ariaLabel = theme.strings.otherCartCount.replace('[count]', quantity);
-      }
-
-      this.$cartPopupCartQuantity.text(quantity).attr('aria-label', ariaLabel);
-    },
-
-    _setCartCountBubble: function(quantity) {
-      this.$cartCountBubble =
-        this.$cartCountBubble || $(this.selectors.cartCountBubble);
-      this.$cartCount = this.$cartCount || $(this.selectors.cartCount);
-
-      this.$cartCountBubble.removeClass(this.classes.hidden);
-      this.$cartCount.text(quantity);
-    },
-
-    _showCartPopup: function() {
-      this.$cartPopupWrapper
-        .prepareTransition()
-        .removeClass(this.classes.cartPopupWrapperHidden);
-      this._handleButtonLoadingState(false);
-
-      slate.a11y.trapFocus({
-        $container: this.$cartPopupWrapper,
-        $elementToFocus: this.$cartPopup,
-        namespace: 'cartPopupFocus'
-      });
-    },
-
-    _hideCartPopup: function(event) {
-      var setFocus = event.detail === 0 ? true : false;
-      this.$cartPopupWrapper
-        .prepareTransition()
-        .addClass(this.classes.cartPopupWrapperHidden);
-
-      $(this.selectors.cartPopupImage).remove();
-      this.$cartPopupImagePlaceholder.removeClass(this.classes.hidden);
-
-      slate.a11y.removeTrapFocus({
-        $container: this.$cartPopupWrapper,
-        namespace: 'cartPopupFocus'
-      });
-
-      if (setFocus) this.$previouslyFocusedElement[0].focus();
-
-      this.$cartPopupWrapper.off('keyup');
-      this.$cartPopupClose.off('click');
-      this.$cartPopupDismiss.off('click');
-      $('body').off('click');
-    },
-
-    _onBodyClick: function(event) {
-      var $target = $(event.target);
-
-      if (
-        $target[0] !== this.$cartPopupWrapper[0] &&
-        !$target.parents(this.selectors.cartPopup).length
-      ) {
-        this._hideCartPopup(event);
-      }
-    },
-
-    _setActiveThumbnail: function(mediaId) {
-      // If there is no element passed, find it by the current product image
-      if (typeof mediaId === 'undefined') {
-        mediaId = $(
-          this.selectors.productMediaWrapper + ':not(.hide)',
-          this.$container
-        ).data('media-id');
-      }
-
-      var $thumbnailWrappers = $(
-        this.selectors.productThumbListItem + ':not(.slick-cloned)',
-        this.$container
-      );
-
-      var $activeThumbnail = $thumbnailWrappers.find(
-        this.selectors.productThumbImages +
-          "[data-thumbnail-id='" +
-          mediaId +
-          "']"
-      );
-
-      $(this.selectors.productThumbImages)
-        .removeClass(this.classes.activeClass)
-        .removeAttr('aria-current');
-
-      $activeThumbnail.addClass(this.classes.activeClass);
-      $activeThumbnail.attr('aria-current', true);
-
-      if (!$thumbnailWrappers.hasClass('slick-slide')) {
-        return;
-      }
-
-      var slideIndex = $activeThumbnail.parent().data('slick-index');
-
-      $(this.selectors.productThumbs).slick('slickGoTo', slideIndex, true);
-    },
-
-    _switchMedia: function(mediaId) {
-      var $currentMedia = $(
-        this.selectors.productMediaWrapper +
-          ':not(.' +
-          this.classes.hidden +
-          ')',
-        this.$container
-      );
-
-      var $newMedia = $(
-        this.selectors.productMediaWrapper +
-          "[data-media-id='" +
-          mediaId +
-          "']",
-        this.$container
-      );
-
-      var $otherMedia = $(
-        this.selectors.productMediaWrapper +
-          ":not([data-media-id='" +
-          mediaId +
-          "'])",
-        this.$container
-      );
-
-      $currentMedia.trigger('mediaHidden');
-      $newMedia.removeClass(this.classes.hidden).trigger('mediaVisible');
-      $otherMedia.addClass(this.classes.hidden);
-    },
-
-    _handleMediaFocus: function(evt) {
-      if (evt.keyCode !== slate.utils.keyboardKeys.ENTER) return;
-
-      var mediaId = $(evt.currentTarget).data('thumbnail-id');
-
-      $(
-        this.selectors.productMediaWrapper +
-          "[data-media-id='" +
-          mediaId +
-          "']",
-        this.$container
-      ).focus();
-    },
-
-    _initThumbnailSlider: function() {
-      var options = {
-        slidesToShow: 3,
-        slidesToScroll: 2,
-        infinite: false,
-        prevArrow: '.thumbnails-slider__prev--' + this.settings.sectionId,
-        nextArrow: '.thumbnails-slider__next--' + this.settings.sectionId
-      };
-
-      $(this.selectors.productThumbs).slick(options);
-
-      // Accessibility concerns not yet fixed in Slick Slider
-      $(this.selectors.productThumbsWrapper, this.$container)
-        .find('.slick-list')
-        .removeAttr('aria-live');
-      $(this.selectors.productThumbsWrapper, this.$container)
-        .find('.slick-disabled')
-        .removeAttr('aria-disabled');
-
-      this.settings.sliderActive = true;
-    },
-
-    _destroyThumbnailSlider: function() {
-      $(this.selectors.productThumbs).slick('unslick');
-      this.settings.sliderActive = false;
-
-      // Accessibility concerns not yet fixed in Slick Slider
-      $(this.selectors.productThumbsWrapper, this.$container)
-        .find('[tabindex="-1"]')
-        .removeAttr('tabindex');
-    },
-
-    _liveRegionText: function(variant) {
-      // Dummy content for live region
-      var liveRegionText =
-        '[Availability] [Regular] [$$] [Sale] [$]. [UnitPrice] [$$$]';
-
-      if (!variant) {
-        liveRegionText = theme.strings.unavailable;
-        return liveRegionText;
-      }
-
-      // Update availability
-      var availability = variant.available ? '' : theme.strings.soldOut + ',';
-      liveRegionText = liveRegionText.replace('[Availability]', availability);
-
-      // Update pricing information
-      var regularLabel = '';
-      var regularPrice = theme.Currency.formatMoney(
-        variant.price,
-        theme.moneyFormat
-      );
-      var saleLabel = '';
-      var salePrice = '';
-      var unitLabel = '';
-      var unitPrice = '';
-
-      if (variant.compare_at_price > variant.price) {
-        regularLabel = theme.strings.regularPrice;
-        regularPrice =
-          theme.Currency.formatMoney(
-            variant.compare_at_price,
-            theme.moneyFormat
-          ) + ',';
-        saleLabel = theme.strings.sale;
-        salePrice = theme.Currency.formatMoney(
-          variant.price,
-          theme.moneyFormat
-        );
-      }
-
-      if (variant.unit_price) {
-        unitLabel = theme.strings.unitPrice;
-        unitPrice =
-          theme.Currency.formatMoney(variant.unit_price, theme.moneyFormat) +
-          ' ' +
-          theme.strings.unitPriceSeparator +
-          ' ' +
-          this._getBaseUnit(variant);
-      }
-
-      liveRegionText = liveRegionText
-        .replace('[Regular]', regularLabel)
-        .replace('[$$]', regularPrice)
-        .replace('[Sale]', saleLabel)
-        .replace('[$]', salePrice)
-        .replace('[UnitPrice]', unitLabel)
-        .replace('[$$$]', unitPrice)
-        .trim();
-
-      return liveRegionText;
-    },
-
-    _updateLiveRegion: function(evt) {
-      var variant = evt.variant;
-      var liveRegion = this.container.querySelector(
-        this.selectors.productStatus
-      );
-      liveRegion.innerHTML = this._liveRegionText(variant);
-      liveRegion.setAttribute('aria-hidden', false);
-
-      // hide content from accessibility tree after announcement
-      setTimeout(function() {
-        liveRegion.setAttribute('aria-hidden', true);
-      }, 1000);
-    },
-
-    _updateAddToCart: function(evt) {
-      var variant = evt.variant;
-
-      if (variant) {
-        if (variant.available) {
-          this.$addToCart
-            .removeAttr('aria-disabled')
-            .attr('aria-label', theme.strings.addToCart);
-          $(this.selectors.addToCartText, this.$container)
-            .html(theme.strings.addToCart)
-            .text();
-          $(this.selectors.productForm, this.container).removeClass(
-            this.classes.variantSoldOut
-          );
         } else {
-          // Variant is sold out, disable submit button and change the text.
-          this.$addToCart
-            .attr('aria-disabled', true)
-            .attr('aria-label', theme.strings.soldOut);
-          $(this.selectors.addToCartText, this.$container)
-            .html(theme.strings.soldOut)
-            .text();
-          $(this.selectors.productForm, this.container).addClass(
-            this.classes.variantSoldOut
-          );
+          document.querySelector('[href="#Media' + variant['featured_media']['id'] + '"]').click();
+          //document.getElementById(`Media${variant['featured_media']['id']}`).scrollIntoView({behavior: 'smooth'});
         }
-      } else {
-        // The variant doesn't exist, disable submit button and change the text.
-        this.$addToCart
-          .attr('aria-disabled', true)
-          .attr('aria-label', theme.strings.unavailable);
-        $(this.selectors.addToCartText, this.$container)
-          .html(theme.strings.unavailable)
-          .text();
-        $(this.selectors.productForm, this.container).addClass(
-          this.classes.variantSoldOut
-        );
-      }
-    },
-
-    _updateAvailability: function(evt) {
-      // remove error message if one is showing
-      this._hideErrorMessage();
-
-      // update form submit
-      this._updateAddToCart(evt);
-      // update live region
-      this._updateLiveRegion(evt);
-
-      this._updatePrice(evt);
-    },
-
-    _updateMedia: function(evt) {
-      var variant = evt.variant;
-      var mediaId = variant.featured_media.id;
-      var sectionMediaId = this.settings.sectionId + '-' + mediaId;
-
-      this._switchMedia(sectionMediaId);
-      this._setActiveThumbnail(sectionMediaId);
-    },
-
-    _updatePrice: function(evt) {
-      var variant = evt.variant;
-
-      var $priceContainer = $(this.selectors.priceContainer, this.$container);
-      var $regularPrice = $(this.selectors.regularPrice, $priceContainer);
-      var $salePrice = $(this.selectors.salePrice, $priceContainer);
-      var $unitPrice = $(this.selectors.unitPrice, $priceContainer);
-      var $unitPriceBaseUnit = $(
-        this.selectors.unitPriceBaseUnit,
-        $priceContainer
-      );
-
-      // Reset product price state
-      $priceContainer
-        .removeClass(this.classes.productUnavailable)
-        .removeClass(this.classes.productOnSale)
-        .removeClass(this.classes.productUnitAvailable)
-        .removeClass(this.classes.productSoldOut)
-        .removeAttr('aria-hidden');
-
-      this.$productPolicies.removeClass(this.classes.visibilityHidden);
-
-      // Unavailable
-      if (!variant) {
-        $priceContainer
-          .addClass(this.classes.productUnavailable)
-          .attr('aria-hidden', true);
-
-        this.$productPolicies.addClass(this.classes.visibilityHidden);
-        return;
       }
 
-      // Sold out
-      if (!variant.available) {
-        $priceContainer.addClass(this.classes.productSoldOut);
+      /**
+       * This happens when a media is played
+       */
+
+    }, {
+      key: '_onMediaPlayed',
+      value: function _onMediaPlayed(event) {
+        // Remove draggability
+        this.productSlideshow.getFlickityInstance().options.draggable = false;
+        this.productSlideshow.getFlickityInstance().unbindDrag();
+
+        // If there is a previously enabled media, we disable it
+        if (this.previouslySelectedMedia && this.previouslySelectedMedia !== event.target) {
+          this.mediaList[this.previouslySelectedMedia.getAttribute('data-media-id')].hasBeenDeselected();
+        }
+
+        // If the slideshow is configured to stack images, the "select" method from the carousel is not called, so we
+        // have to keep track of it here
+        if (this.options['stackProductImages']) {
+          this.previouslySelectedMedia = event.target;
+        }
       }
 
-      // On sale
-      if (variant.compare_at_price > variant.price) {
-        $regularPrice.html(
-          theme.Currency.formatMoney(
-            variant.compare_at_price,
-            theme.moneyFormat
-          )
-        );
-        $salePrice.html(
-          theme.Currency.formatMoney(variant.price, theme.moneyFormat)
-        );
-        $priceContainer.addClass(this.classes.productOnSale);
-      } else {
-        // Regular price
-        $regularPrice.html(
-          theme.Currency.formatMoney(variant.price, theme.moneyFormat)
-        );
+      /**
+       * This happens when a given media is paused
+       */
+
+    }, {
+      key: '_onMediaPaused',
+      value: function _onMediaPaused() {
+        // Enable draggability
+        this.productSlideshow.getFlickityInstance().options.draggable = !__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('supports-hover');
+        this.productSlideshow.getFlickityInstance().bindDrag();
       }
 
-      // Unit price
-      if (variant.unit_price) {
-        $unitPrice.html(
-          theme.Currency.formatMoney(variant.unit_price, theme.moneyFormat)
-        );
-        $unitPriceBaseUnit.html(this._getBaseUnit(variant));
-        $priceContainer.addClass(this.classes.productUnitAvailable);
+      /**
+       * This method is called when a media changed in the slideshow
+       */
+
+    }, {
+      key: '_handleMedia',
+      value: function _handleMedia(item) {
+        // First, we need to turn off the previous media (if any)
+        if (this.previouslySelectedMedia && this.previouslySelectedMedia !== item) {
+          switch (this.previouslySelectedMedia.getAttribute('data-media-type')) {
+            case 'video':
+            case 'external_video':
+            case 'model':
+              this.mediaList[this.previouslySelectedMedia.getAttribute('data-media-id')].hasBeenDeselected();
+          }
+
+          // If the previous media was a model, we need to adjust the "view in space" button to go back to initial value
+          if (this.previouslySelectedMedia.getAttribute('data-media-type') === 'model' && this.viewInSpaceElement) {
+            this.viewInSpaceElement.setAttribute('data-shopify-model3d-id', this.viewInSpaceElement.getAttribute('data-shopify-model3d-default-id'));
+          }
+        }
+
+        // Then, we have to handle the currently selected media
+        switch (item.getAttribute('data-media-type')) {
+          case 'video':
+          case 'external_video':
+          case 'model':
+            this.mediaList[item.getAttribute('data-media-id')].hasBeenSelected();
+            break;
+        }
+
+        // If the media is a model, we need to adjust the "view in space" button
+        if (item.getAttribute('data-media-type') === 'model' && this.viewInSpaceElement) {
+          this.viewInSpaceElement.setAttribute('data-shopify-model3d-id', item.getAttribute('data-media-id'));
+        }
+
+        // We set the previously selected media to the currently new one, so that when it changes it can be properly accounted
+        this.previouslySelectedMedia = item;
       }
-    },
 
-    _getBaseUnit: function(variant) {
-      return variant.unit_price_measurement.reference_value === 1
-        ? variant.unit_price_measurement.reference_unit
-        : variant.unit_price_measurement.reference_value +
-            variant.unit_price_measurement.reference_unit;
-    },
+      /**
+       * Callback when the target changes
+       */
 
-    _updateSKU: function(evt) {
-      var variant = evt.variant;
+    }, {
+      key: '_onScrollTargetChanged',
+      value: function _onScrollTargetChanged(event) {
+        // The scrollspy emit also an "oldTarget", but when scrolling very fast with Firefox or Safari, it prevents the old to be removed, so we
+        // manually iterate through all of them to remove it first
+        if (this.options['stackProductImages']) {
+          this.slideshowNavDotsItems.forEach(function (item) {
+            return item.classList.remove('is-selected');
+          });
+          this.slideshowNavDotsItems[parseInt(event.detail.newTarget.getAttribute('data-media-position')) - 1].classList.add('is-selected');
 
-      // Update the sku
-      $(this.selectors.SKU).html(variant.sku);
-    },
+          if (this.options['showThumbnails']) {
+            this.slideshowNavThumbnailsItems.forEach(function (item) {
+              return item.classList.remove('is-selected');
+            });
+            this.slideshowNavThumbnailsItems[parseInt(event.detail.newTarget.getAttribute('data-media-position')) - 1].classList.add('is-selected');
+          }
+        }
+      }
+    }, {
+      key: '_switchToImage',
+      value: function _switchToImage(event, target) {
+        event.preventDefault();
 
-    _enableZoom: function(el, index) {
-      this.zoomPictures[index] = new theme.Zoom(el);
-    },
+        this._slideWillChange();
 
-    _destroyZoom: function(index) {
-      if (this.zoomPictures.length === 0) return;
-      this.zoomPictures[index].unload();
-    },
+        for (var i = 0; i !== this.productSlideshow.flickityInstance.cells.length; ++i) {
+          var cellElement = this.productSlideshow.flickityInstance.cells[i].element,
+              mediaId = parseInt(cellElement.getAttribute('data-media-id'));
 
-    onUnload: function() {
-      this.$container.off(this.settings.namespace);
-      theme.ProductVideo.removeSectionVideos(this.settings.sectionId);
-      theme.ProductModel.removeSectionModels(this.settings.sectionId);
+          if (mediaId === parseInt(target.getAttribute('data-media-id'))) {
+            this.productSlideshow.selectCell(parseInt(cellElement.getAttribute('data-media-position')) - 1);
+          }
+        }
+      }
 
-      this.mqlSmall.removeListener(this.initMobileBreakpoint);
-      this.mqlMediumUp.removeListener(this.initDesktopBreakpoint);
+      /**
+       * Check the quick nav
+       */
+
+    }, {
+      key: '_checkQuickNav',
+      value: function _checkQuickNav() {
+        var _this58 = this;
+
+        var showAsideQuickNav = false;
+
+        fastdom.measure(function () {
+          showAsideQuickNav = window.scrollY >= _this58.productAsideElement.offsetTop - _this58.productAsideElement.clientHeight;
+        });
+
+        fastdom.mutate(function () {
+          if (showAsideQuickNav) {
+            _this58.quickNav.classList.add('is-flipped');
+          } else {
+            _this58.quickNav.classList.remove('is-flipped');
+          }
+        });
+      }
+
+      /**
+       * Toggle the social share icons
+       */
+
+    }, {
+      key: '_toggleSocialShare',
+      value: function _toggleSocialShare(event, target) {
+        target.classList.toggle('is-active');
+        target.classList.toggle('RoundButton--secondaryState');
+
+        target.setAttribute('aria-expanded', target.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+        target.nextElementSibling.setAttribute('aria-hidden', target.nextElementSibling.getAttribute('aria-hidden') === 'true' ? 'false' : 'true');
+      }
+    }, {
+      key: '_onImageChanged',
+      value: function _onImageChanged(event, cell) {
+        // If cell is video or model, we hide the action list
+        if (__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('pocket')) {
+          var productGalleryActionListElement = this.element.querySelector('.Product__Gallery .Product__ActionList');
+
+          if (productGalleryActionListElement) {
+            if (cell.classList.contains('Product__SlideItem--image')) {
+              productGalleryActionListElement.classList.remove('is-hidden');
+            } else {
+              productGalleryActionListElement.classList.add('is-hidden');
+            }
+          }
+        }
+
+        // If we have non-stacked with thumbnails, update it
+        if (!this.options['stackProductImages'] && this.options['showThumbnails']) {
+          var mediaId = cell.getAttribute('data-media-id');
+
+          this.slideshowNavThumbnailsItems.forEach(function (thumbnail) {
+            if (thumbnail.getAttribute('data-media-id') === mediaId) {
+              thumbnail.classList.add('is-selected');
+            } else {
+              thumbnail.classList.remove('is-selected');
+            }
+          });
+        }
+
+        // If we have the mobile navigation, we also update it
+        if (this.slideshowMobileNav) {
+          var selectedIndex = parseInt(cell.getAttribute('data-media-position')) - 1; // The -1 is to make it 0 indexed
+
+          __WEBPACK_IMPORTED_MODULE_7__helper_Dom__["default"].nodeListToArray(this.slideshowMobileNav.querySelectorAll('.dot')).forEach(function (item, index) {
+            if (index === selectedIndex) {
+              item.classList.add('is-selected');
+            } else {
+              item.classList.remove('is-selected');
+            }
+          });
+        }
+      }
+    }, {
+      key: '_onImageSettled',
+      value: function _onImageSettled(index, cell) {
+        this._handleMedia(cell);
+
+        if (__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('lap-and-up')) {
+          var slides = this.element.querySelectorAll('.Product__SlideItem:not(.is-selected)');
+          slides.forEach(function (slide) {
+            slide.classList.add('Product__SlideItem--hidden');
+          });
+        }
+      }
+    }, {
+      key: '_slideWillChange',
+      value: function _slideWillChange() {
+        if (__WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('lap-and-up')) {
+          var slides = this.element.querySelectorAll('.Product__SlideItem');
+          slides.forEach(function (slide) {
+            slide.classList.remove('Product__SlideItem--hidden');
+          });
+        }
+      }
+
+      /**
+       * Verify when the screen size changes to create additional stuff on non pocket mode
+       */
+
+    }, {
+      key: '_setupDeviceFeatures',
+      value: function _setupDeviceFeatures(event) {
+        var _this59 = this;
+
+        var currentBreakpoint = event ? event.detail.currentBreakpoint : __WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].getCurrentBreakpoint(),
+            previousBreakpoint = event ? event.detail.previousBreakpoint : null;
+
+        if (currentBreakpoint === previousBreakpoint) {
+          return; // Nothing has changed, no specific setup to do
+        }
+
+        if (currentBreakpoint === 'phone' || currentBreakpoint === 'tablet') {
+          if (this.carouselNavScrollSpy) {
+            this.carouselNavScrollSpy.destroy();
+          }
+
+          if (this.productInfoScroller) {
+            this.productInfoScroller.destroy();
+          }
+
+          if (this.productThumbnailsScroller) {
+            this.productThumbnailsScroller.destroy();
+          }
+
+          if (this.productAsideElement) {
+            this.productAsideElement.style.minHeight = null;
+          } else {
+            this.productWrapperElement.style.minHeight = null;
+          }
+
+          this.productInfoElement.parentNode.style.maxHeight = null;
+        } else {
+          // 1st: scrollspy for the dots and image
+          if (this.slideshowImages && this.slideshowImages.length > 1) {
+            var offsetTop = 0;
+
+            if (this.options['stackProductImages'] && this.slideshowNavDots) {
+              offsetTop = this.slideshowNavDots.firstElementChild.offsetTop;
+            }
+
+            if (this.options['showThumbnails'] && __WEBPACK_IMPORTED_MODULE_9__helper_Responsive__["default"].matchesBreakpoint('desk')) {
+              offsetTop = 250;
+            }
+
+            this.carouselNavScrollSpy = new __WEBPACK_IMPORTED_MODULE_6__components_ScrollSpy__["default"](this.element, this.slideshowImages, {
+              rootMargin: '-' + offsetTop + 'px 0px 0px 0px'
+            });
+          }
+
+          var productInfoStyles = window.getComputedStyle(this.productInfoElement),
+              productInfoPadding = parseInt(productInfoStyles.paddingTop) + parseInt(productInfoStyles.paddingBottom),
+              productGalleryHeight = this.productGalleryElement ? parseInt(this.productGalleryElement.scrollHeight) : 0;
+
+          // 2nd: making sure to set up enough space in aside part
+          var calculateMinHeight = function calculateMinHeight() {
+            if (_this59.productAsideElement) {
+              _this59.productAsideElement.style.minHeight = _this59.productInfoElement.scrollHeight - productInfoPadding - productGalleryHeight + 'px';
+              _this59.productInfoElement.closest('.Product__InfoWrapper').style.maxHeight = _this59.productAsideElement.offsetTop + _this59.productInfoElement.scrollHeight - productInfoPadding + 'px';
+            } else {
+              _this59.productWrapperElement.style.minHeight = _this59.productInfoElement.scrollHeight - parseInt(productInfoStyles.paddingTop) + 'px';
+            }
+          };
+
+          calculateMinHeight();
+
+          // This code actually works well, but if a merchant is using an app that dynamically adds content (such as ReCharge or any other widget-based app), this
+          // will mess the min height. There is a clean solution to this issue, which is by using ResizeObserver. However it's only supported in Chrome for now,
+          // but I feel it's already good to have a clean fix
+          if (window.ResizeObserver) {
+            this.productInfoResizeObserver = new ResizeObserver(function () {
+              calculateMinHeight(); // We currently do not take advantage of the values returned by the observer as our calculation depends on other values
+            });
+
+            this.productInfoResizeObserver.observe(this.productInfoElement);
+          }
+
+          // 3rd: let's handle the scroll for the product info
+          this.productInfoScroller = new __WEBPACK_IMPORTED_MODULE_8__components_OverflowScroller__["default"](this.productInfoElement);
+
+          // 4th: let's handle the scroll for the thumbnails
+          if (this.options['showThumbnails'] && this.slideshowNavThumbnails) {
+            this.productThumbnailsScroller = new __WEBPACK_IMPORTED_MODULE_8__components_OverflowScroller__["default"](this.slideshowNavThumbnails);
+          }
+        }
+      }
+    }]);
+
+    return ProductSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ProductSection;
+
+  /***/
+},
+/* 47 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__ = __webpack_require__(4);
+
+  var RecentlyViewedProductsSection = function () {
+    function RecentlyViewedProductsSection(container) {
+      _classCallCheck(this, RecentlyViewedProductsSection);
+
+      this.element = container;
+      this.options = JSON.parse(this.element.getAttribute('data-section-settings'));
+
+      if (this.options['productId']) {
+        this._saveProduct(this.options['productId']);
+      }
+
+      // Setup product item color swatch
+      new __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__["default"](this.element);
+
+      this._fetchProducts();
     }
-  });
 
-  return Product;
-})();
-
-theme.ProductRecommendations = (function() {
-  function ProductRecommendations(container) {
-    this.$container = $(container);
-
-    var baseUrl = this.$container.data('baseUrl');
-    var productId = this.$container.data('productId');
-    var recommendationsSectionUrl =
-      baseUrl +
-      '?section_id=product-recommendations&product_id=' +
-      productId +
-      '&limit=4';
-
-    $.get(recommendationsSectionUrl).then(
-      function(section) {
-        var recommendationsMarkup = $(section).html();
-        if (recommendationsMarkup.trim() !== '') {
-          this.$container.html(recommendationsMarkup);
+    _createClass(RecentlyViewedProductsSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        if (this.carousel) {
+          this.carousel.destroy();
         }
-      }.bind(this)
-    );
-  }
+      }
 
-  return ProductRecommendations;
-})();
+      /**
+       * When we are on a product page, we need to save the current product into local storage
+       */
 
-theme.Quotes = (function() {
-  var config = {
-    mediaQuerySmall: 'screen and (max-width: 749px)',
-    mediaQueryMediumUp: 'screen and (min-width: 750px)',
-    slideCount: 0
-  };
-  var defaults = {
-    accessibility: true,
-    arrows: false,
-    dots: true,
-    autoplay: false,
-    touchThreshold: 20,
-    slidesToShow: 3,
-    slidesToScroll: 3
-  };
+    }, {
+      key: '_saveProduct',
+      value: function _saveProduct(productId) {
+        var items = JSON.parse(localStorage.getItem('recentlyViewedProducts') || '[]');
 
-  function Quotes(container) {
-    var $container = (this.$container = $(container));
-    var sectionId = $container.attr('data-section-id');
-    var wrapper = (this.wrapper = '.quotes-wrapper');
-    var slider = (this.slider = '#Quotes-' + sectionId);
-    this.$slider = $(slider, wrapper);
+        // We check if the current product already exists, and if it does not, we add it at the start
+        if (!items.includes(productId)) {
+          items.unshift(productId);
+        }
 
-    this.sliderActive = false;
-    this.mobileOptions = $.extend({}, defaults, {
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      adaptiveHeight: true
-    });
+        // Then, we save the current product into the local storage, by keeping only the 8 most recent
+        try {
+          localStorage.setItem('recentlyViewedProducts', JSON.stringify(items.slice(0, 8)));
+        } catch (error) {
+          // Do nothing, this may happen in Safari in incognito mode
+        }
+      }
 
-    config.slideCount = this.$slider.data('count');
+      /**
+       * In order to get the products to display, we hit the search template with the given IDS
+       */
 
-    // Override slidesToShow/Scroll if there are not enough blocks
-    if (config.slideCount < defaults.slidesToShow) {
-      defaults.slidesToShow = config.slideCount;
-      defaults.slidesToScroll = config.slideCount;
+    }, {
+      key: '_fetchProducts',
+      value: function _fetchProducts() {
+        var _this60 = this;
+
+        var queryString = this._getSearchQueryString();
+
+        if (queryString === '') {
+          return;
+        }
+
+        // If we have a non empty query string we do a search query
+        fetch(window.routes.searchUrl + '?view=recently-viewed-products&type=product&q=' + queryString, {
+          credentials: 'same-origin',
+          method: 'GET'
+        }).then(function (response) {
+          response.text().then(function (content) {
+            var tempElement = document.createElement('div');
+            tempElement.innerHTML = content;
+
+            // Set the content
+            _this60.element.innerHTML = tempElement.querySelector('.Section').innerHTML;
+
+            // Show the section
+            _this60.element.parentNode.style.display = 'block';
+
+            // And finally let's create the carousel !
+            _this60.carousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](_this60.element.querySelector('[data-flickity-config]'));
+          });
+        });
+      }
+    }, {
+      key: '_getSearchQueryString',
+      value: function _getSearchQueryString() {
+        var items = JSON.parse(localStorage.getItem('recentlyViewedProducts') || '[]');
+
+        // If we are on a product template, we make sure to remove the main product from the related product
+        if (items.includes(this.options['productId'])) {
+          items.splice(items.indexOf(this.options['productId']), 1);
+        }
+
+        return items.map(function (item) {
+          return 'id:' + item;
+        }).join(' OR ');
+      }
+    }]);
+
+    return RecentlyViewedProductsSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = RecentlyViewedProductsSection;
+
+  /***/
+},
+/* 48 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+
+  var SearchSection = function () {
+    function SearchSection(container) {
+      _classCallCheck(this, SearchSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+
+      this._setupAnimation();
     }
 
-    this.$slider.on('init', this.a11y.bind(this));
+    _createClass(SearchSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.intersectionObserver.disconnect();
+        this.timeline.kill();
+      }
+    }, {
+      key: '_setupAnimation',
+      value: function _setupAnimation() {
+        var _this61 = this;
 
-    this.initMobileSlider = this._initMobileSlider.bind(this);
-    this.initDesktopSlider = this._initDesktopSlider.bind(this);
-
-    this.mqlSmall = window.matchMedia(config.mediaQuerySmall);
-    this.mqlSmall.addListener(this.initMobileSlider);
-
-    this.mqlMediumUp = window.matchMedia(config.mediaQueryMediumUp);
-    this.mqlMediumUp.addListener(this.initDesktopSlider);
-
-    this.initMobileSlider();
-    this.initDesktopSlider();
-  }
-
-  Quotes.prototype = Object.assign({}, Quotes.prototype, {
-    onUnload: function() {
-      this.mqlSmall.removeListener(this.initMobileSlider);
-      this.mqlMediumUp.removeListener(this.initDesktopSlider);
-
-      $(this.slider, this.wrapper).slick('unslick');
-    },
-
-    onBlockSelect: function(evt) {
-      // Ignore the cloned version
-      var $slide = $(
-        '.quotes-slide--' + evt.detail.blockId + ':not(.slick-cloned)'
-      );
-      var slideIndex = $slide.data('slick-index');
-
-      // Go to selected slide, pause autoplay
-      $(this.slider, this.wrapper).slick('slickGoTo', slideIndex);
-    },
-
-    a11y: function(event, obj) {
-      var $list = obj.$list;
-      var $wrapper = $(this.wrapper, this.$container);
-
-      // Remove default Slick aria-live attr until slider is focused
-      $list.removeAttr('aria-live');
-
-      // When an element in the slider is focused set aria-live
-      $wrapper.on('focusin', function(evt) {
-        if ($wrapper.has(evt.target).length) {
-          $list.attr('aria-live', 'polite');
+        if (this.intersectionObserver) {
+          this.intersectionObserver.disconnect();
         }
+
+        this.timeline = new TimelineLite({ delay: 0.5 });
+
+        if (window.theme.showElementStaggering) {
+          this.intersectionObserver = new IntersectionObserver(this._reveal.bind(this));
+
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.ProductList .ProductItem, .ArticleList .ArticleItem')).forEach(function (item) {
+            _this61.intersectionObserver.observe(item);
+          });
+        }
+      }
+    }, {
+      key: '_reveal',
+      value: function _reveal(results) {
+        var _this62 = this;
+
+        var toReveal = [];
+
+        results.forEach(function (result) {
+          if (result.isIntersecting || result.intersectionRatio > 0) {
+            // isIntersecting does not exist on Samsung Android browser
+            toReveal.push(result.target);
+            _this62.intersectionObserver.unobserve(result.target);
+          }
+        });
+
+        if (toReveal.length === 0) {
+          return;
+        }
+
+        this.timeline.staggerFromTo(toReveal, 0.6, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0 }, 0.2);
+      }
+    }]);
+
+    return SearchSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = SearchSection;
+
+  /***/
+},
+/* 49 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+
+  /**
+   * This code is extracted from Slate
+   */
+
+  var SectionContainer = function () {
+    function SectionContainer() {
+      _classCallCheck(this, SectionContainer);
+
+      this.constructors = [];
+      this.instances = [];
+
+      this._attachListeners();
+    }
+
+    _createClass(SectionContainer, [{
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        document.addEventListener('shopify:section:load', this._onSectionLoad.bind(this));
+        document.addEventListener('shopify:section:unload', this._onSectionUnload.bind(this));
+        document.addEventListener('shopify:section:select', this._onSelect.bind(this));
+        document.addEventListener('shopify:section:deselect', this._onDeselect.bind(this));
+        document.addEventListener('shopify:section:reorder', this._onReorder.bind(this));
+        document.addEventListener('shopify:block:select', this._onBlockSelect.bind(this));
+        document.addEventListener('shopify:block:deselect', this._onBlockDeselect.bind(this));
+      }
+    }, {
+      key: 'register',
+      value: function register(type, constructor) {
+        var _this63 = this;
+
+        this.constructors[type] = constructor;
+
+        __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(document.querySelectorAll('[data-section-type=' + type + ']')).forEach(function (container) {
+          _this63._createInstance(container, constructor);
+        });
+      }
+
+      /**
+       * Return an object from an array of objects that matches the provided key and value
+       */
+
+    }, {
+      key: '_findInstance',
+      value: function _findInstance(array, key, value) {
+        for (var i = 0; i < array.length; i++) {
+          if (array[i][key] === value) {
+            return array[i];
+          }
+        }
+      }
+
+      /**
+       * Remove an object from an array of objects by matching the provided key and value
+       */
+
+    }, {
+      key: '_removeInstance',
+      value: function _removeInstance(array, key, value) {
+        var i = array.length;
+
+        while (i--) {
+          if (array[i][key] === value) {
+            array.splice(i, 1);
+            break;
+          }
+        }
+
+        return array;
+      }
+    }, {
+      key: '_onSectionLoad',
+      value: function _onSectionLoad(event) {
+        var container = event.target.querySelector('[data-section-id]');
+
+        if (container) {
+          this._createInstance(container);
+        }
+      }
+    }, {
+      key: '_onSectionUnload',
+      value: function _onSectionUnload(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (!instance) {
+          return;
+        }
+
+        if (typeof instance.onUnload === 'function') {
+          instance.onUnload(event);
+        }
+
+        this.instances = this._removeInstance(this.instances, 'id', event.detail.sectionId);
+      }
+    }, {
+      key: '_onSelect',
+      value: function _onSelect(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (instance && typeof instance.onSelect === 'function') {
+          instance.onSelect(event);
+        }
+      }
+    }, {
+      key: '_onDeselect',
+      value: function _onDeselect(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (instance && typeof instance.onDeselect === 'function') {
+          instance.onDeselect(event);
+        }
+      }
+    }, {
+      key: '_onReorder',
+      value: function _onReorder(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (instance && typeof instance.onReorder === 'function') {
+          instance.onReorder(event);
+        }
+      }
+    }, {
+      key: '_onBlockSelect',
+      value: function _onBlockSelect(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (instance && typeof instance.onBlockSelect === 'function') {
+          instance.onBlockSelect(event);
+        }
+      }
+    }, {
+      key: '_onBlockDeselect',
+      value: function _onBlockDeselect(event) {
+        var instance = this._findInstance(this.instances, 'id', event.detail.sectionId);
+
+        if (instance && typeof instance.onBlockDeselect === 'function') {
+          instance.onBlockDeselect(event);
+        }
+      }
+    }, {
+      key: '_createInstance',
+      value: function _createInstance(container, constructor) {
+        var id = container.getAttribute('data-section-id'),
+            type = container.getAttribute('data-section-type');
+
+        constructor = constructor || this.constructors[type];
+
+        if (typeof constructor === 'undefined') {
+          return;
+        }
+
+        var instance = Object.assign(new constructor(container), {
+          id: id,
+          type: type,
+          container: container
+        });
+
+        this.instances.push(instance);
+      }
+    }]);
+
+    return SectionContainer;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = SectionContainer;
+
+  /***/
+},
+/* 50 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__ = __webpack_require__(4);
+
+  var ShopNowSection = function () {
+    function ShopNowSection(container) {
+      _classCallCheck(this, ShopNowSection);
+
+      this.element = container;
+      this.carousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](this.element.querySelector('[data-flickity-config]'));
+
+      // Setup product item color swatch
+      new __WEBPACK_IMPORTED_MODULE_1__components_ProductItemColorSwatch__["default"](this.element);
+    }
+
+    _createClass(ShopNowSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.carousel.destroy();
+      }
+    }]);
+
+    return ShopNowSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ShopNowSection;
+
+  /***/
+},
+/* 51 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__components_Popover__ = __webpack_require__(3);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__helper_Responsive__ = __webpack_require__(1);
+
+  var ShopTheLookSection = function () {
+    function ShopTheLookSection(container) {
+      _classCallCheck(this, ShopTheLookSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.usePocketMode = __WEBPACK_IMPORTED_MODULE_3__helper_Responsive__["default"].matchesBreakpoint('pocket');
+      this.pocketActivatorButton = this.element.querySelector('[data-action="open-look"]');
+
+      this._createOuterCarousel();
+      this._createPocketPopovers();
+
+      this._attachListeners();
+    }
+
+    _createClass(ShopTheLookSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.outerCarousel.destroy();
+        this.innerCarousels.forEach(function (item) {
+          item.forEach(function (innerItem) {
+            return innerItem.destroy();
+          });
+        });
+
+        this.popovers.forEach(function (item) {
+          return item.destroy();
+        });
+
+        this.delegateElement.off();
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        this.outerCarousel.selectCell(event.target.getAttribute('data-slide-index'), true, !event.detail.load);
+      }
+
+      /**
+       * Attach all the listeners
+       */
+
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '.ShopTheLook__Dot', this._onDotClicked.bind(this));
+      }
+
+      /**
+       * There is one mobile and tablet popover per look, so we pre-create them
+       */
+
+    }, {
+      key: '_createPocketPopovers',
+      value: function _createPocketPopovers() {
+        var _this64 = this;
+
+        this.popovers = [];
+
+        __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.Popover')).forEach(function (popover) {
+          _this64.popovers.push(new __WEBPACK_IMPORTED_MODULE_1__components_Popover__["default"](popover, {
+            activator: _this64.pocketActivatorButton,
+            showOverlay: false,
+            onOpen: _this64._openPocketZoom.bind(_this64),
+            onClose: _this64._closePocketZoom.bind(_this64)
+          }));
+        });
+      }
+
+      /**
+       * The outer carousel is the carousel that holds the main one (all the looks). Internally, it also creates
+       * a sub-carousel for each inner carousel
+       */
+
+    }, {
+      key: '_createOuterCarousel',
+      value: function _createOuterCarousel() {
+        var _this65 = this;
+
+        this.outerCarousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](this.element.querySelector('.ShopTheLook'), {
+          onSelect: this._onLookChanged.bind(this)
+        });
+
+        this.innerCarousels = new Array(this.outerCarousel.flickityInstance.cells.length);
+
+        for (var i = 0; i !== this.innerCarousels.length; ++i) {
+          this.innerCarousels[i] = [];
+        }
+
+        // We need to create ALL the carousels (both in desktop and mobile). Fortunately Flickity is quite fast, but
+        // we have no other choices if we want to have proper animations everywhere.
+        __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.ShopTheLook__ProductList')).forEach(function (item) {
+          var lookIndex = parseInt(item.getAttribute('data-look-index'));
+          _this65.innerCarousels[lookIndex].push(new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](item, { onSelect: _this65._onProductChanged.bind(_this65) }));
+
+          // By default, Flickity will append the carousel, hence making the "ViewButton" before the carousel. We need to manipulate it to move it after
+          item.insertBefore(item.querySelector('.flickity-viewport'), item.querySelector('.ShopTheLook__ViewButton'));
+        });
+
+        this.outerCarousel.resize(); // Needed in case the products are taller than the image
+      }
+
+      /**
+       * This function is called whenever the main look has changed, so that we can modify the popover activator
+       */
+
+    }, {
+      key: '_onLookChanged',
+      value: function _onLookChanged(selectedIndex, selectedCell) {
+        // Then, we update the mobile button so that it opens the correct block
+        this.pocketActivatorButton.setAttribute('aria-controls', selectedCell.getAttribute('id') + '-popover');
+      }
+
+      /**
+       * This function is called whenever a product is changed in the list for a given look. This allows to focus the main dot
+       */
+
+    }, {
+      key: '_onProductChanged',
+      value: function _onProductChanged(selectedIndex, selectedCell) {
+        var lookItem = this.outerCarousel.getSelectedCell(),
+            activeDot = null;
+
+        __WEBPACK_IMPORTED_MODULE_2__helper_Dom__["default"].nodeListToArray(lookItem.querySelectorAll('.ShopTheLook__Dot')).forEach(function (dot, index) {
+          dot.classList.remove('is-active'); // IE11 and lower does not support "toggle" with second parameter :(
+
+          if (index === selectedIndex) {
+            dot.classList.add('is-active');
+            activeDot = dot;
+          }
+        });
+
+        // Update the link to the product (if using the desktop view)
+        lookItem.querySelector('.ShopTheLook__ViewButton').setAttribute('href', selectedCell.getAttribute('data-product-url'));
+
+        // We trigger an event so that when the dot change we can recalculate the position
+        lookItem.dispatchEvent(new CustomEvent('product:changed', { detail: { dot: activeDot } }));
+      }
+
+      /**
+       * This function is called whenever you explicitly click on a dot.
+       *
+       * On mobile and tablet, this must open the appropriate popver
+       */
+
+    }, {
+      key: '_onDotClicked',
+      value: function _onDotClicked(event, target) {
+        var shouldAnimateCarousel = false,
+            hasOnePopoverOpen = false,
+            lookIndex = this.outerCarousel.getSelectedIndex();
+
+        this.popovers.forEach(function (item) {
+          if (item.isOpen) {
+            hasOnePopoverOpen = true;
+            shouldAnimateCarousel = true;
+          }
+        });
+
+        // Each inner carousel has a mobile AND desktop version, so we change both
+        this.innerCarousels[lookIndex].forEach(function (innerCarousel) {
+          innerCarousel.selectCell(parseInt(target.getAttribute('data-product-index')) - 1, false, shouldAnimateCarousel);
+        });
+
+        if (this.usePocketMode && !hasOnePopoverOpen) {
+          this.popovers[lookIndex].open();
+        }
+      }
+
+      /**
+       * This is called when, on mobile, the popover is open. We must open the image in full resolution
+       */
+
+    }, {
+      key: '_openPocketZoom',
+      value: function _openPocketZoom(popover) {
+        var _this66 = this;
+
+        this._calculateImageTransform(popover);
+
+        fastdom.mutate(function () {
+          // We need to animate the header to avoid a slightly ugly effect if image overlap the header
+          document.getElementById('shopify-section-header').style.cssText = 'transform: translateY(-100%); transition: transform 0.3s ease-in-out;';
+
+          _this66.outerCarousel.flickityInstance.unbindDrag(); // Prevent changing the active slide
+          _this66.outerCarousel.flickityInstance.element.classList.add('is-zoomed');
+          _this66.outerCarousel.getSelectedCell().classList.add('is-expanded');
+        });
+      }
+
+      /**
+       * When the mobile zoom is open, and whenever the active dot changes, we need to potentially re-calculate the transform
+       */
+
+    }, {
+      key: '_calculateImageTransform',
+      value: function _calculateImageTransform(openPopover) {
+        var _this67 = this;
+
+        var selectedCell = this.outerCarousel.getSelectedCell();
+
+        fastdom.measure(function () {
+          // We first need to compute the initial transform and scale factor
+          var scale = window.innerWidth / (selectedCell.offsetWidth - parseInt(window.getComputedStyle(selectedCell).paddingLeft) * 2),
+              heightAfterScale = Math.round(selectedCell.offsetHeight * scale),
+              // Height of the selected cell once the scale transform is applied
+          hiddenImageHeight = Math.round(Math.max(heightAfterScale - (window.innerHeight - openPopover.element.offsetHeight), 0)),
+              // Part of image that is below popover
+          visibleImageHeight = heightAfterScale - hiddenImageHeight,
+              // Part of the image that is visible in the viewport
+          minTranslateY = Math.round(-(selectedCell.getBoundingClientRect().top - (heightAfterScale - selectedCell.offsetHeight) / 2)),
+              // The minimum translate Y transform allowed so that image is visible
+          maxTranslateY = Math.round(minTranslateY - hiddenImageHeight); // The maximum translate Y transform allowed so that image is visible
+
+          _this67._calculateTransformForDotListener = function (event) {
+            var dotTopPosition = Math.round((event.detail.dot.offsetTop + event.detail.dot.offsetHeight / 2) * scale),
+                offsetToMove = Math.round(dotTopPosition - visibleImageHeight / 2),
+                translateY = Math.min(Math.max(minTranslateY - offsetToMove, maxTranslateY), minTranslateY);
+
+            fastdom.mutate(function () {
+              _this67.outerCarousel.flickityInstance.viewport.style.transform = 'translate3d(0, ' + Math.round(translateY) + 'px, 0) scale(' + scale + ')';
+            });
+          };
+
+          // We manually generate an event the first time to trigger the positioning
+
+          selectedCell.addEventListener('product:changed', _this67._calculateTransformForDotListener);
+          selectedCell.dispatchEvent(new CustomEvent('product:changed', {
+            detail: { dot: selectedCell.querySelector('.ShopTheLook__Dot.is-active') }
+          }));
+        });
+      }
+
+      /**
+       * Close the mobile zoom (which close the popover and remove any transform
+       */
+
+    }, {
+      key: '_closePocketZoom',
+      value: function _closePocketZoom() {
+        var _this68 = this;
+
+        var selectedCell = this.outerCarousel.getSelectedCell();
+
+        selectedCell.removeEventListener('product:changed', this._calculateTransformForDotListener);
+
+        fastdom.mutate(function () {
+          document.getElementById('shopify-section-header').style.cssText = 'transform: translateY(0); transition: transform 0.3s ease-in-out 0.3s;';
+
+          _this68.outerCarousel.flickityInstance.bindDrag();
+          _this68.outerCarousel.flickityInstance.element.classList.remove('is-zoomed');
+          _this68.outerCarousel.flickityInstance.viewport.style.transform = null;
+
+          selectedCell.classList.remove('is-expanded');
+        });
+      }
+    }]);
+
+    return ShopTheLookSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = ShopTheLookSection;
+
+  /***/
+},
+/* 52 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Drawer__ = __webpack_require__(8);
+
+  var SidebarMenuSection = function () {
+    function SidebarMenuSection(container) {
+      _classCallCheck(this, SidebarMenuSection);
+
+      this.element = container;
+      this.sidebarDrawer = new __WEBPACK_IMPORTED_MODULE_0__components_Drawer__["default"](container);
+    }
+
+    _createClass(SidebarMenuSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.sidebarDrawer.destroy();
+      }
+    }, {
+      key: 'onSelect',
+      value: function onSelect() {
+        this.sidebarDrawer.open();
+      }
+    }, {
+      key: 'onDeselect',
+      value: function onDeselect() {
+        this.sidebarDrawer.close();
+      }
+    }]);
+
+    return SidebarMenuSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = SidebarMenuSection;
+
+  /***/
+},
+/* 53 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__ = __webpack_require__(1);
+
+  var SlideshowSection = function () {
+    function SlideshowSection(container) {
+      _classCallCheck(this, SlideshowSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.slideshow = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](this.element.querySelector('[data-flickity-config]'), { onSelect: this._onSlideChanged.bind(this) });
+      this.selectedSlide = null;
+      this.shouldAnimate = true;
+      this.timeline = new TimelineLite({ delay: window.theme.showPageTransition ? 0.5 : 0 });
+
+      if (this.slideshow.flickityInstance.cells.length > 0) {
+        this._transitionToSlide(this.slideshow.flickityInstance.selectedCell.element, true);
+      }
+
+      this._attachListeners();
+    }
+
+    _createClass(SlideshowSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.slideshow.destroy();
+        this.timeline.kill();
+        this.delegateElement.off();
+
+        document.removeEventListener('breakpoint:changed', this._onBreakpointChangedListener);
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        if (this.slideshow.flickityInstance.options.autoPlay) {
+          this.slideshow.flickityInstance.stopPlayer();
+        }
+
+        this.shouldAnimate = !event.detail.load;
+        this.slideshow.selectCell(event.target.getAttribute('data-slide-index'), false, !event.detail.load);
+      }
+    }, {
+      key: 'onBlockDeselect',
+      value: function onBlockDeselect() {
+        this.shouldAnimate = true;
+
+        if (this.slideshow.flickityInstance.options.autoPlay) {
+          this.slideshow.flickityInstance.playPlayer();
+        }
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this._onBreakpointChangedListener = this._onBreakpointChanged.bind(this);
+
+        this.delegateElement.on('mouseenter', '.Button', this._pauseSlideshow.bind(this), true);
+        this.delegateElement.on('mouseleave', '.Button', this._resumeSlideshow.bind(this), true);
+
+        document.addEventListener('breakpoint:changed', this._onBreakpointChangedListener);
+      }
+    }, {
+      key: '_pauseSlideshow',
+      value: function _pauseSlideshow() {
+        if (this.slideshow.flickityInstance.options.autoPlay) {
+          this.slideshow.flickityInstance.pausePlayer();
+        }
+      }
+    }, {
+      key: '_resumeSlideshow',
+      value: function _resumeSlideshow() {
+        if (this.slideshow.flickityInstance.options.autoPlay) {
+          this.slideshow.flickityInstance.unpausePlayer();
+        }
+      }
+    }, {
+      key: '_onSlideChanged',
+      value: function _onSlideChanged(index, element) {
+        this._transitionToSlide(element);
+      }
+    }, {
+      key: '_transitionToSlide',
+      value: function _transitionToSlide(slide) {
+        var _this69 = this;
+
+        this.timeline.clear();
+
+        // First, we check if there is a previous slide selected, if that's the case
+        if (this.selectedSlide) {
+          this._slideLeave(this.selectedSlide);
+          this.timeline.addLabel('enter', this.shouldAnimate ? '-=0.4' : 0);
+        }
+
+        // We get the next slide (if any) to preload it
+        this._lazyLoadNextImage();
+
+        this.timeline.fromTo(slide, this.selectedSlide && this.shouldAnimate ? 0.3 : 0, { autoAlpha: 0 }, { autoAlpha: 1, ease: Cubic.easeInOut }, 'enter');
+
+        // The image may take 1s or more to load depending on the network, so we make sure to pause the player, and restart it once it has transitioned
+        if (this.slideshow.flickityInstance.options.autoPlay && this.slideshow.flickityInstance.player.state === 'playing') {
+          this.slideshow.flickityInstance.pausePlayer();
+        }
+
+        __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(slide.querySelectorAll('.Slideshow__Image')).forEach(function (image) {
+          if (image.classList.contains('Image--lazyLoading') || image.classList.contains('Image--lazyLoad')) {
+            image.addEventListener('lazyloaded', _this69._slideEnter.bind(_this69, slide));
+          } else {
+            _this69._slideEnter(slide);
+          }
+        });
+
+        this.selectedSlide = slide;
+      }
+    }, {
+      key: '_slideLeave',
+      value: function _slideLeave(slide) {
+        var content = slide.querySelector('.SectionHeader'),
+            buttonWrapper = slide.querySelector('.SectionHeader__ButtonWrapper');
+
+        this.timeline.fromTo(slide, this.shouldAnimate ? 0.3 : 0, { autoAlpha: 1 }, { autoAlpha: 0, ease: Cubic.easeInOut, delay: this.shouldAnimate ? 0.35 : 0 });
+
+        if (content) {
+          this.timeline.fromTo(content, this.shouldAnimate ? 0.4 : 0, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: 20, ease: Cubic.easeIn }, 0);
+        }
+
+        if (buttonWrapper) {
+          this.timeline.fromTo(buttonWrapper, this.shouldAnimate ? 0.4 : 0, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: 10, ease: Cubic.easeIn }, 0);
+        }
+      }
+    }, {
+      key: '_slideEnter',
+      value: function _slideEnter(slide) {
+        var images = slide.querySelectorAll('.Slideshow__Image'),
+            content = slide.querySelector('.SectionHeader'),
+            buttonWrapper = slide.querySelector('.SectionHeader__ButtonWrapper');
+
+        if (this.slideshow.flickityInstance.options.autoPlay && this.slideshow.flickityInstance.player.state === 'paused') {
+          this.slideshow.flickityInstance.unpausePlayer();
+        }
+
+        if (window.CSS && window.CSS.supports('(object-fit: cover) or (-o-object-fit: cover)')) {
+          if (window.theme.showImageZooming) {
+            this.timeline.fromTo(images, this.shouldAnimate ? 1.2 : 0, { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, ease: Quad.easeOut }, 'enter');
+          } else {
+            this.timeline.fromTo(images, this.shouldAnimate ? 1.2 : 0, { opacity: 0 }, { opacity: 1, ease: Quad.easeOut }, 'enter');
+          }
+        }
+
+        if (content) {
+          this.timeline.fromTo(content, this.shouldAnimate ? 0.8 : 0, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, delay: this.shouldAnimate ? 0.8 : 0, ease: Cubic.easeOut }, 'enter');
+        }
+
+        if (buttonWrapper) {
+          this.timeline.fromTo(buttonWrapper, this.shouldAnimate ? 0.8 : 0, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, delay: this.shouldAnimate ? 0.8 : 0, ease: Cubic.easeOut }, 'enter');
+        }
+      }
+    }, {
+      key: '_lazyLoadNextImage',
+      value: function _lazyLoadNextImage() {
+        var currentIndex = this.slideshow.flickityInstance.selectedIndex,
+            breakpoint = __WEBPACK_IMPORTED_MODULE_2__helper_Responsive__["default"].getCurrentBreakpoint();
+
+        if (this.slideshow.flickityInstance.cells.length - 1 > currentIndex) {
+          var nextCellElement = this.slideshow.flickityInstance.cells[currentIndex + 1].element,
+              imageContainers = __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(nextCellElement.querySelectorAll('.Slideshow__ImageContainer')),
+              imageToReveal = null;
+
+          if (breakpoint === 'phone') {
+            imageToReveal = imageContainers[0];
+          } else {
+            imageToReveal = imageContainers[1];
+          }
+
+          if (window.lazySizes && imageToReveal && imageToReveal.classList.contains('Image--lazyLoad')) {
+            lazySizes.loader.unveil(imageToReveal.firstElementChild);
+          }
+        }
+      }
+    }, {
+      key: '_onBreakpointChanged',
+      value: function _onBreakpointChanged(event) {
+        if (event.detail.previousBreakpoint === 'phone' && event.detail.currentBreakpoint !== 'phone' || event.detail.previousBreakpoint !== 'phone' && event.detail.currentBreakpoint === 'phone') {
+          this.selectedSlide = null;
+          this._transitionToSlide(this.slideshow.flickityInstance.selectedElement);
+        }
+      }
+    }]);
+
+    return SlideshowSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = SlideshowSection;
+
+  /***/
+},
+/* 54 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components_Carousel__ = __webpack_require__(2);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper_Dom__ = __webpack_require__(0);
+
+  var TestimonialsSection = function () {
+    function TestimonialsSection(container) {
+      _classCallCheck(this, TestimonialsSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.navItems = __WEBPACK_IMPORTED_MODULE_1__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.TestimonialNav__Item'));
+
+      this.carousel = new __WEBPACK_IMPORTED_MODULE_0__components_Carousel__["default"](this.element.querySelector('.TestimonialList'), {
+        onSelect: this._testimonialChanged.bind(this)
       });
 
-      // Remove aria-live
-      $wrapper.on('focusout', function(evt) {
-        if ($wrapper.has(evt.target).length) {
-          $list.removeAttr('aria-live');
+      this._attachListeners();
+    }
+
+    _createClass(TestimonialsSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.carousel.destroy();
+        this.delegateElement.off('click');
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        this.carousel.selectCell(event.target.getAttribute('data-slide-index'), true);
+      }
+    }, {
+      key: 'onBlockDeselect',
+      value: function onBlockDeselect() {
+        this.carousel.unpausePlayer();
+      }
+    }, {
+      key: '_testimonialClicked',
+      value: function _testimonialClicked(event, target) {
+        this.carousel.pausePlayer();
+        this.carousel.selectCell(parseInt(target.getAttribute('data-index')));
+        this.carousel.unpausePlayer();
+      }
+    }, {
+      key: '_testimonialChanged',
+      value: function _testimonialChanged(newIndex) {
+        this.navItems.forEach(function (item, index) {
+          item.classList.remove('is-selected'); // IE11 and lower does not support classList.toggle
+
+          if (newIndex === index) {
+            item.classList.add('is-selected');
+          }
+        });
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '.TestimonialNav__Item', this._testimonialClicked.bind(this));
+      }
+    }]);
+
+    return TestimonialsSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = TestimonialsSection;
+
+  /***/
+},
+/* 55 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__helper_Dom__ = __webpack_require__(0);
+
+  var TimelineSection = function () {
+    function TimelineSection(container) {
+      _classCallCheck(this, TimelineSection);
+
+      this.element = container;
+      this.delegateElement = new domDelegate.Delegate(this.element);
+      this.items = __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.Timeline__Item'));
+      this.navItems = __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].nodeListToArray(this.element.querySelectorAll('.Timeline__NavItem'));
+
+      this._attachListeners();
+    }
+
+    _createClass(TimelineSection, [{
+      key: 'onUnload',
+      value: function onUnload() {
+        this.delegateElement.off('click');
+      }
+    }, {
+      key: 'onBlockSelect',
+      value: function onBlockSelect(event) {
+        this.navItems[parseInt(event.target.getAttribute('data-index'))].click(); // Simulate a click on the given nav item
+      }
+    }, {
+      key: '_attachListeners',
+      value: function _attachListeners() {
+        this.delegateElement.on('click', '.Timeline__NavItem', this._clickOnNavItem.bind(this));
+      }
+    }, {
+      key: '_clickOnNavItem',
+      value: function _clickOnNavItem(event, target) {
+        var newItem = this.items[parseInt(target.getAttribute('data-index'))];
+
+        if (newItem.classList.contains('is-selected')) {
+          return;
+        }
+
+        var isContentLarger = false,
+            navWrapper = target.parentNode,
+            scrollableOffset = 0;
+
+        fastdom.measure(function () {
+          var scrollableWidth = navWrapper.scrollWidth,
+              visibleWidth = navWrapper.offsetWidth;
+
+          isContentLarger = visibleWidth < scrollableWidth;
+
+          if (isContentLarger) {
+            var beginBound = target.offsetLeft,
+                endBound = beginBound + target.offsetWidth,
+                closerToLeft = beginBound <= visibleWidth - endBound;
+
+            var itemToUse = null;
+
+            if (closerToLeft) {
+              // If closer to left, we try to make the previous item visible (if possible)
+              itemToUse = target.previousElementSibling || target;
+            } else {
+              // If closer to right, we try to make the next item visible (if possible)
+              itemToUse = target.nextElementSibling || target;
+            }
+
+            var itemBeginBound = itemToUse.offsetLeft - navWrapper.scrollLeft,
+                itemEndBound = itemBeginBound + itemToUse.offsetWidth;
+
+            if (itemEndBound > visibleWidth) {
+              // Element is not visible from the right, so we must move by a given amount so that endBound is within viewable screen
+              scrollableOffset = itemEndBound - visibleWidth;
+            } else if (itemBeginBound < 0) {
+              // Element is not visible from the left, so we simply use the opposite of the negative offset
+              scrollableOffset = itemBeginBound;
+            }
+          }
+        });
+
+        fastdom.mutate(function () {
+          if (isContentLarger) {
+            navWrapper.scrollBy({ behavior: 'smooth', left: scrollableOffset });
+          }
+
+          // First we set the class on the selected item and remove it on siblings
+          target.classList.add('is-selected');
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].getSiblings(target, '.is-selected').forEach(function (item) {
+            item.classList.remove('is-selected');
+          });
+
+          // Then we slide to the appropriate element
+          newItem.classList.add('is-selected');
+          __WEBPACK_IMPORTED_MODULE_0__helper_Dom__["default"].getSiblings(newItem, '.is-selected').forEach(function (item) {
+            item.classList.remove('is-selected');
+          });
+        });
+      }
+    }]);
+
+    return TimelineSection;
+  }();
+  /* harmony export (immutable) */
+
+  __webpack_exports__["default"] = TimelineSection;
+
+  /***/
+},
+/* 56 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__AddressesSection__ = __webpack_require__(28);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "AddressesSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_0__AddressesSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__ArticleListSection__ = __webpack_require__(29);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ArticleListSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_1__ArticleListSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__ArticleSection__ = __webpack_require__(30);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ArticleSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_2__ArticleSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__CartSection__ = __webpack_require__(32);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "CartSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_3__CartSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__CollectionListSection__ = __webpack_require__(33);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "CollectionListSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_4__CollectionListSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__CollectionSection__ = __webpack_require__(34);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "CollectionSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_5__CollectionSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_6__FaqSection__ = __webpack_require__(35);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "FaqSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_6__FaqSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_7__FeaturedCollectionsSection__ = __webpack_require__(36);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "FeaturedCollectionsSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_7__FeaturedCollectionsSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_8__FeaturedProductSection__ = __webpack_require__(37);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "FeaturedProductSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_8__FeaturedProductSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_9__BackgroundVideoSection__ = __webpack_require__(31);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "BackgroundVideoSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_9__BackgroundVideoSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_10__GiftCardSection__ = __webpack_require__(39);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "GiftCardSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_10__GiftCardSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_11__HeaderSection__ = __webpack_require__(40);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "HeaderSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_11__HeaderSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_12__FooterSection__ = __webpack_require__(38);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "FooterSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_12__FooterSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_13__ImageWithTextBlockSection__ = __webpack_require__(41);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ImageWithTextBlockSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_13__ImageWithTextBlockSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_14__LoginSection__ = __webpack_require__(42);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "LoginSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_14__LoginSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_15__MapSection__ = __webpack_require__(43);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "MapSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_15__MapSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_16__NewsletterPopupSection__ = __webpack_require__(44);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "NewsletterPopupSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_16__NewsletterPopupSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_17__ProductRecommendationsSection__ = __webpack_require__(45);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductRecommendationsSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_17__ProductRecommendationsSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_18__ProductSection__ = __webpack_require__(46);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ProductSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_18__ProductSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_19__RecentlyViewedProductsSection__ = __webpack_require__(47);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "RecentlyViewedProductsSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_19__RecentlyViewedProductsSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_20__SectionContainer__ = __webpack_require__(49);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "SectionContainer", function () {
+    return __WEBPACK_IMPORTED_MODULE_20__SectionContainer__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_21__SearchSection__ = __webpack_require__(48);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "SearchSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_21__SearchSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_22__ShopNowSection__ = __webpack_require__(50);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ShopNowSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_22__ShopNowSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_23__ShopTheLookSection__ = __webpack_require__(51);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "ShopTheLookSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_23__ShopTheLookSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_24__SidebarMenuSection__ = __webpack_require__(52);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "SidebarMenuSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_24__SidebarMenuSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_25__SlideshowSection__ = __webpack_require__(53);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "SlideshowSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_25__SlideshowSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_26__TestimonialsSection__ = __webpack_require__(54);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "TestimonialsSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_26__TestimonialsSection__["default"];
+  });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_27__TimelineSection__ = __webpack_require__(55);
+  /* harmony reexport (binding) */__webpack_require__.d(__webpack_exports__, "TimelineSection", function () {
+    return __WEBPACK_IMPORTED_MODULE_27__TimelineSection__["default"];
+  });
+
+  /***/
+},
+/* 57 */
+/***/function (module, exports, __webpack_require__) {
+
+  __webpack_require__(5);
+  __webpack_require__(6);
+  __webpack_require__(9);
+  __webpack_require__(0);
+  __webpack_require__(22);
+  __webpack_require__(10);
+  __webpack_require__(1);
+  __webpack_require__(7);
+  __webpack_require__(2);
+  __webpack_require__(23);
+  __webpack_require__(12);
+  __webpack_require__(8);
+  __webpack_require__(24);
+  __webpack_require__(25);
+  __webpack_require__(13);
+  __webpack_require__(26);
+  __webpack_require__(3);
+  __webpack_require__(14);
+  __webpack_require__(4);
+  __webpack_require__(15);
+  __webpack_require__(16);
+  __webpack_require__(11);
+  __webpack_require__(18);
+  __webpack_require__(19);
+  __webpack_require__(27);
+  __webpack_require__(20);
+  __webpack_require__(17);
+  __webpack_require__(21);
+  __webpack_require__(28);
+  __webpack_require__(29);
+  __webpack_require__(30);
+  __webpack_require__(31);
+  __webpack_require__(32);
+  __webpack_require__(33);
+  __webpack_require__(34);
+  __webpack_require__(35);
+  __webpack_require__(36);
+  __webpack_require__(37);
+  __webpack_require__(38);
+  __webpack_require__(39);
+  __webpack_require__(40);
+  __webpack_require__(41);
+  __webpack_require__(42);
+  __webpack_require__(43);
+  __webpack_require__(44);
+  __webpack_require__(45);
+  __webpack_require__(46);
+  __webpack_require__(47);
+  __webpack_require__(48);
+  __webpack_require__(49);
+  __webpack_require__(50);
+  __webpack_require__(51);
+  __webpack_require__(52);
+  __webpack_require__(53);
+  __webpack_require__(54);
+  __webpack_require__(55);
+  __webpack_require__(56);
+  module.exports = __webpack_require__(58);
+
+  /***/
+},
+/* 58 */
+/***/function (module, __webpack_exports__, __webpack_require__) {
+
+  "use strict";
+
+  Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_0__components__ = __webpack_require__(21);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__helper__ = __webpack_require__(7);
+  /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__sections__ = __webpack_require__(56);
+
+  (function () {
+    // First, we register all plugins that are used for all pages
+    new __WEBPACK_IMPORTED_MODULE_0__components__["Collapsible"]();
+    new __WEBPACK_IMPORTED_MODULE_0__components__["Modal"]();
+    new __WEBPACK_IMPORTED_MODULE_1__helper__["ResponsiveHelper"]();
+
+    if (window.theme.pageType !== 'password' && window.theme.pageType !== 'gift_card') {
+      new __WEBPACK_IMPORTED_MODULE_0__components__["LoadingBar"]();
+    }
+
+    var sections = new __WEBPACK_IMPORTED_MODULE_2__sections__["SectionContainer"]();
+
+    sections.register('header', __WEBPACK_IMPORTED_MODULE_2__sections__["HeaderSection"]);
+    sections.register('footer', __WEBPACK_IMPORTED_MODULE_2__sections__["FooterSection"]);
+    sections.register('sidebar-menu', __WEBPACK_IMPORTED_MODULE_2__sections__["SidebarMenuSection"]);
+    sections.register('cart', __WEBPACK_IMPORTED_MODULE_2__sections__["CartSection"]);
+    sections.register('newsletter-popup', __WEBPACK_IMPORTED_MODULE_2__sections__["NewsletterPopupSection"]);
+
+    // Sections used on index
+    sections.register('slideshow', __WEBPACK_IMPORTED_MODULE_2__sections__["SlideshowSection"]);
+    sections.register('collection-list', __WEBPACK_IMPORTED_MODULE_2__sections__["CollectionListSection"]);
+    sections.register('article-list', __WEBPACK_IMPORTED_MODULE_2__sections__["ArticleListSection"]);
+    sections.register('featured-product', __WEBPACK_IMPORTED_MODULE_2__sections__["FeaturedProductSection"]);
+    sections.register('image-with-text-block', __WEBPACK_IMPORTED_MODULE_2__sections__["ImageWithTextBlockSection"]);
+    sections.register('timeline', __WEBPACK_IMPORTED_MODULE_2__sections__["TimelineSection"]);
+    sections.register('map', __WEBPACK_IMPORTED_MODULE_2__sections__["MapSection"]);
+    sections.register('featured-collections', __WEBPACK_IMPORTED_MODULE_2__sections__["FeaturedCollectionsSection"]);
+    sections.register('shop-the-look', __WEBPACK_IMPORTED_MODULE_2__sections__["ShopTheLookSection"]);
+    sections.register('testimonials', __WEBPACK_IMPORTED_MODULE_2__sections__["TestimonialsSection"]);
+    sections.register('background-video', __WEBPACK_IMPORTED_MODULE_2__sections__["BackgroundVideoSection"]);
+
+    // Sections used on product page
+    sections.register('product', __WEBPACK_IMPORTED_MODULE_2__sections__["ProductSection"]);
+    sections.register('product-recommendations', __WEBPACK_IMPORTED_MODULE_2__sections__["ProductRecommendationsSection"]);
+
+    // Sections used on collection page
+    sections.register('collection', __WEBPACK_IMPORTED_MODULE_2__sections__["CollectionSection"]);
+
+    // Sections used on blog page
+    sections.register('article-list', __WEBPACK_IMPORTED_MODULE_2__sections__["ArticleListSection"]);
+
+    // Sections used on article page
+    sections.register('article', __WEBPACK_IMPORTED_MODULE_2__sections__["ArticleSection"]);
+
+    // Sections used on content pages
+    sections.register('faq', __WEBPACK_IMPORTED_MODULE_2__sections__["FaqSection"]);
+
+    // Sections used on login page
+    sections.register('login', __WEBPACK_IMPORTED_MODULE_2__sections__["LoginSection"]);
+
+    // Sections used on addresses page
+    sections.register('addresses', __WEBPACK_IMPORTED_MODULE_2__sections__["AddressesSection"]);
+
+    // Sections used on gift card page
+    sections.register('gift-card', __WEBPACK_IMPORTED_MODULE_2__sections__["GiftCardSection"]);
+
+    // Sections used on search page
+    sections.register('search', __WEBPACK_IMPORTED_MODULE_2__sections__["SearchSection"]);
+
+    // Sections used on different pages
+    sections.register('recently-viewed-products', __WEBPACK_IMPORTED_MODULE_2__sections__["RecentlyViewedProductsSection"]);
+    sections.register('shop-now', __WEBPACK_IMPORTED_MODULE_2__sections__["ShopNowSection"]);
+
+    /**
+     * ----------------------------------------------------------------------------
+     * FLICKITY
+     *
+     * Starting from iOS 11, Safari on iOS is experiencing a bug that prevents
+     * event.preventDefault to be called on dynamically added listeners, which is
+     * what Flickity is using.
+     *
+     * The bug is coming from iOS but it impacts indirectly Flickity. A temporary
+     * fix has been suggested here: https://github.com/metafizzy/flickity/issues/740
+     * and that we are using here as a temporary workaround, that should be removed
+     * once the bug is fixed on iOS
+     * ----------------------------------------------------------------------------
+     */
+
+    (function () {
+      var touchingCarousel = false,
+          touchStartCoords = void 0;
+
+      document.body.addEventListener('touchstart', function (e) {
+        if (e.target.closest('.flickity-slider')) {
+          touchingCarousel = true;
+        } else {
+          touchingCarousel = false;
+          return;
+        }
+
+        touchStartCoords = {
+          x: e.touches[0].pageX,
+          y: e.touches[0].pageY
+        };
+      });
+
+      document.body.addEventListener('touchmove', function (e) {
+        if (!(touchingCarousel && e.cancelable)) {
+          return;
+        }
+
+        var moveVector = {
+          x: e.touches[0].pageX - touchStartCoords.x,
+          y: e.touches[0].pageY - touchStartCoords.y
+        };
+
+        if (Math.abs(moveVector.x) > Flickity.defaults.dragThreshold) e.preventDefault();
+      }, { passive: false });
+    })();
+
+    /**
+     * ----------------------------------------------------------------------------
+     * RTE
+     * ----------------------------------------------------------------------------
+     */
+
+    (function () {
+      // We wrap each RTE table by a specific class to allow wrapping
+      __WEBPACK_IMPORTED_MODULE_1__helper__["DomHelper"].nodeListToArray(document.querySelectorAll('.Rte table')).forEach(function (table) {
+        table.outerHTML = '<div class="TableWrapper">' + table.outerHTML + '</div>';
+      });
+
+      __WEBPACK_IMPORTED_MODULE_1__helper__["DomHelper"].nodeListToArray(document.querySelectorAll('.Rte iframe')).forEach(function (iframe) {
+        // We scope the wrapping only for YouTube and Vimeo
+        if (iframe.src.indexOf('youtube') !== -1 || iframe.src.indexOf('youtu.be') !== -1 || iframe.src.indexOf('vimeo') !== -1) {
+          iframe.outerHTML = '<div class="VideoWrapper">' + iframe.outerHTML + '</div>';
+
+          // Re-set the src attribute on each iframe after page load for Chrome's "incorrect iFrame content on 'back'" bug.
+          // https://code.google.com/p/chromium/issues/detail?id=395791. Need to specifically target video and admin bar
+          iframe.src = iframe.src;
         }
       });
-    },
+    })();
 
-    _initMobileSlider: function() {
-      if (this.mqlSmall.matches) {
-        this._initSlider(this.mobileOptions);
-      }
-    },
+    /**
+     * ----------------------------------------------------------------------------
+     * UTILS
+     * ----------------------------------------------------------------------------
+     */
 
-    _initDesktopSlider: function() {
-      if (this.mqlMediumUp.matches) {
-        this._initSlider(defaults);
-      }
-    },
+    (function () {
+      var documentDelegate = new domDelegate.Delegate(document.body),
+          announcementBar = document.querySelector('.AnnouncementBar');
 
-    _initSlider: function(args) {
-      if (this.sliderActive) {
-        this.$slider.slick('unslick');
-        this.sliderActive = false;
-      }
+      documentDelegate.on('click', '[href^="#"], [data-href]', function (event, target) {
+        var selector = target.hasAttribute('href') ? target.getAttribute('href') : target.getAttribute('data-href');
 
-      this.$slider.slick(args);
-      this.sliderActive = true;
-    }
-  });
+        if (selector === '#') {
+          return;
+        }
 
-  return Quotes;
-})();
+        var element = document.querySelector(selector),
+            offset = parseInt(target.getAttribute('data-offset') || 0);
 
-theme.slideshows = {};
+        if (announcementBar) {
+          offset -= announcementBar.clientHeight;
+        }
 
-theme.SlideshowSection = (function() {
-  function SlideshowSection(container) {
-    var $container = (this.$container = $(container));
-    var sectionId = $container.attr('data-section-id');
-    var slideshow = (this.slideshow = '#Slideshow-' + sectionId);
+        if (target.hasAttribute('data-focus-on-click')) {
+          var prevScrollY = window.pageYOffset;
+          element.focus({ preventScroll: true });
 
-    theme.slideshows[slideshow] = new theme.Slideshow(slideshow, sectionId);
-  }
+          // hack to fix scroll jump after focus
+          if (window.pageYOffset !== prevScrollY) {
+            window.scrollTo(window.pageXOffset, prevScrollY);
+          }
 
-  return SlideshowSection;
-})();
+          element.focus();
+        }
 
-theme.SlideshowSection.prototype = Object.assign(
-  {},
-  theme.SlideshowSection.prototype,
-  {
-    onUnload: function() {
-      delete theme.slideshows[this.slideshow];
-    },
+        window.scrollTo({ behavior: 'smooth', top: element.offsetTop - offset });
 
-    onBlockSelect: function(evt) {
-      var $slideshow = $(this.slideshow);
-      var adaptHeight = $slideshow.data('adapt-height');
+        event.preventDefault();
+      });
+    })();
 
-      if (adaptHeight) {
-        theme.slideshows[this.slideshow].setSlideshowHeight();
-      }
+    (function () {
+      var windowWidth = window.innerWidth,
+          headerSection = document.getElementById('shopify-section-header');
 
-      // Ignore the cloned version
-      var $slide = $(
-        '.slideshow__slide--' + evt.detail.blockId + ':not(.slick-cloned)'
-      );
-      var slideIndex = $slide.data('slick-index');
+      window.addEventListener('resize', function () {
+        var newWidth = -1;
 
-      // Go to selected slide, pause auto-rotate
-      $slideshow.slick('slickGoTo', slideIndex).slick('slickPause');
-    },
+        fastdom.measure(function () {
+          newWidth = window.innerWidth;
+        });
 
-    onBlockDeselect: function() {
-      // Resume auto-rotate
-      $(this.slideshow).slick('slickPlay');
-    }
-  }
-);
+        fastdom.mutate(function () {
+          if (newWidth === windowWidth) {
+            return;
+          }
 
-theme.slideshows = {};
+          windowWidth = newWidth;
 
-theme.VideoSection = (function() {
-  function VideoSection(container) {
-    var $container = (this.$container = $(container));
+          document.documentElement.style.setProperty('--window-height', window.innerHeight + 'px');
 
-    $('.video', $container).each(function() {
-      var $el = $(this);
-      theme.Video.init($el);
-      theme.Video.editorLoadVideo($el.attr('id'));
-    });
-  }
+          if (headerSection) {
+            document.documentElement.style.setProperty('--header-height', headerSection.clientHeight + 'px');
+          }
+        });
+      });
+    })();
 
-  return VideoSection;
-})();
-
-theme.VideoSection.prototype = Object.assign({}, theme.VideoSection.prototype, {
-  onUnload: function() {
-    theme.Video.removeEvents();
-  }
-});
-
-theme.heros = {};
-
-theme.HeroSection = (function() {
-  function HeroSection(container) {
-    var $container = (this.$container = $(container));
-    var sectionId = $container.attr('data-section-id');
-    var hero = '#Hero-' + sectionId;
-    theme.heros[hero] = new theme.Hero(hero, sectionId);
-  }
-
-  return HeroSection;
-})();
-
-window.theme = window.theme || {};
-
-var selectors = {
-  disclosureLocale: '[data-disclosure-locale]',
-  disclosureCurrency: '[data-disclosure-currency]'
-};
-
-theme.FooterSection = (function() {
-  function Footer(container) {
-    this.$container = $(container);
-    this.cache = {};
-    this.cacheSelectors();
-
-    if (this.cache.$localeDisclosure.length) {
-      this.localeDisclosure = new theme.Disclosure(
-        this.cache.$localeDisclosure
-      );
-    }
-
-    if (this.cache.$currencyDisclosure.length) {
-      this.currencyDisclosure = new theme.Disclosure(
-        this.cache.$currencyDisclosure
-      );
-    }
-  }
-
-  Footer.prototype = Object.assign({}, Footer.prototype, {
-    cacheSelectors: function() {
-      this.cache = {
-        $localeDisclosure: this.$container.find(selectors.disclosureLocale),
-        $currencyDisclosure: this.$container.find(selectors.disclosureCurrency)
-      };
-    },
-
-    onUnload: function() {
-      if (this.cache.$localeDisclosure.length) {
-        this.localeDisclosure.unload();
+    (function () {
+      function handleFirstTab(event) {
+        if (event.keyCode === 9) {
+          document.body.classList.add('is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
       }
 
-      if (this.cache.$currencyDisclosure.length) {
-        this.currencyDisclosure.unload();
-      }
+      window.addEventListener('keydown', handleFirstTab);
+    })();
+
+    /**
+     * ----------------------------------------------------------------------------
+     * ANIMATION
+     *
+     * Important: this has to be at the very end of the file
+     * ----------------------------------------------------------------------------
+     */
+
+    if (window.theme.showPageTransition) {
+      __WEBPACK_IMPORTED_MODULE_0__components__["PageTransition"].getInstance();
     }
-  });
+  })();
 
-  return Footer;
-})();
-
-
-$(document).ready(function() {
-  var sections = new theme.Sections();
-
-  sections.register('cart-template', theme.Cart);
-  sections.register('product', theme.Product);
-  sections.register('collection-template', theme.Filters);
-  sections.register('product-template', theme.Product);
-  sections.register('header-section', theme.HeaderSection);
-  sections.register('map', theme.Maps);
-  sections.register('slideshow-section', theme.SlideshowSection);
-  sections.register('video-section', theme.VideoSection);
-  sections.register('quotes', theme.Quotes);
-  sections.register('hero-section', theme.HeroSection);
-  sections.register('product-recommendations', theme.ProductRecommendations);
-  sections.register('footer-section', theme.FooterSection);
-});
-
-theme.init = function() {
-  theme.customerTemplates.init();
-
-  // Theme-specific selectors to make tables scrollable
-  var tableSelectors = '.rte table,' + '.custom__item-inner--html table';
-
-  slate.rte.wrapTable({
-    $tables: $(tableSelectors),
-    tableWrapperClass: 'scrollable-wrapper'
-  });
-
-  // Theme-specific selectors to make iframes responsive
-  var iframeSelectors =
-    '.rte iframe[src*="youtube.com/embed"],' +
-    '.rte iframe[src*="player.vimeo"],' +
-    '.custom__item-inner--html iframe[src*="youtube.com/embed"],' +
-    '.custom__item-inner--html iframe[src*="player.vimeo"]';
-
-  slate.rte.wrapIframe({
-    $iframes: $(iframeSelectors),
-    iframeWrapperClass: 'video-wrapper'
-  });
-
-  // Common a11y fixes
-  slate.a11y.pageLinkFocus($(window.location.hash));
-
-  $('.in-page-link').on('click', function(evt) {
-    slate.a11y.pageLinkFocus($(evt.currentTarget.hash));
-  });
-
-  $('a[href="#"]').on('click', function(evt) {
-    evt.preventDefault();
-  });
-
-  slate.a11y.accessibleLinks({
-    messages: {
-      newWindow: theme.strings.newWindow,
-      external: theme.strings.external,
-      newWindowExternal: theme.strings.newWindowExternal
-    },
-    $links: $('a[href]:not([aria-describedby], .product-single__thumbnail)')
-  });
-
-  theme.FormStatus.init();
-
-  var selectors = {
-    image: '[data-image]',
-    imagePlaceholder: '[data-image-placeholder]',
-    imageWithPlaceholderWrapper: '[data-image-with-placeholder-wrapper]',
-    lazyloaded: '.lazyloaded'
-  };
-
-  var classes = {
-    hidden: 'hide'
-  };
-
-  $(document).on('lazyloaded', function(e) {
-    var $target = $(e.target);
-
-    if ($target.data('bgset')) {
-      var $image = $target.find(selectors.lazyloaded);
-      if ($image.length) {
-        var alt = $target.data('alt');
-        var src = $image.data('src') ? $image.data('src') : $target.data('bg');
-
-        $image.attr('alt', alt ? alt : '');
-        $image.attr('src', src ? src : '');
-      }
-    }
-
-    if (!$target.is(selectors.image)) {
-      return;
-    }
-
-    $target
-      .closest(selectors.imageWithPlaceholderWrapper)
-      .find(selectors.imagePlaceholder)
-      .addClass(classes.hidden);
-  });
-
-  // When the theme loads, lazysizes might load images before the "lazyloaded"
-  // event listener has been attached. When this happens, the following function
-  // hides the loading placeholders.
-  function onLoadHideLazysizesAnimation() {
-    $(selectors.image + '.lazyloaded')
-      .closest(selectors.imageWithPlaceholderWrapper)
-      .find(selectors.imagePlaceholder)
-      .addClass(classes.hidden);
-  }
-
-  onLoadHideLazysizesAnimation();
-  $(document).one('touchstart', function() {
-    theme.Helpers.setTouch();
-  });
-};
-
-// Youtube API callback
-// eslint-disable-next-line no-unused-vars
-function onYouTubeIframeAPIReady() {
-  theme.Video.loadVideos();
-  theme.ProductVideo.loadVideos(theme.ProductVideo.hosts.youtube);
-}
-
-$(theme.init);
+  /***/
+}]
+/******/);
