@@ -28,7 +28,9 @@ jobs:
     steps:
       - name: Slack Notify
         uses: baijunyao/action-slack-notify@v3.0.1
-        if: always()
+        if: always()  
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}       
         with:
           slack_channel_id: C018MLX7WUB
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
