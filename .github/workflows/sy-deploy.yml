@@ -11,14 +11,22 @@ jobs:
     name: Deploy Staging Theme
     runs-on: ubuntu-latest
     steps:
-      # basically git clone
       - uses: actions/checkout@v2
-      # deploy shopify theme
       - uses: pgrimaud/action-shopify@2.1.0
+      - uses: rtCamp/action-slack-notify@master
         env:
           SHOPIFY_PASSWORD: ${{ secrets.SHOPIFY_PASSWORD }}
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
           SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
           THEME_PATH: ${{ secrets.THEME_PATH }}
+          #SLACK MESSAGES
+          SLACK_CHANNEL: general
+          SLACK_COLOR: '#3278BD'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_TITLE: Post Title
+          SLACK_USERNAME: Kamal Kumar
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         with:
           args: --ignored-file=config/settings_data.json --ignored-file=locales/*
+          
