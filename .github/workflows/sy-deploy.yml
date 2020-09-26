@@ -23,18 +23,39 @@ jobs:
   slackNotification:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [deploy]
-    if: always()
     steps:
-      - name: Slack Notify
-        uses: baijunyao/action-slack-notify@v3.0.1
-        if: always()  
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}       
+      - uses: 8398a7/action-slack@v3
         with:
-          slack_channel_id: C018MLX7WUB
-          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
-          github_context: ${{ toJson(github) }}
+          status: custom
+          fields: commit,repo,author,took
+          custom_payload: |
+            {
+              username: 'kamal',
+              icon_emoji: ':rocket:',
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} succeeded in ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+#   slackNotification:
+#     name: Slack Notify
+#     runs-on: ubuntu-latest
+#     needs: [deploy]
+#     if: always()
+#     steps:
+#       - name: Slack Notify
+#         uses: baijunyao/action-slack-notify@v3.0.1
+#         if: always()  
+#         env:
+#           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}       
+#         with:
+#           slack_channel_id: C018MLX7WUB
+#           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+#           github_context: ${{ toJson(github) }}
               
 #   slackNotification:
 #     name: Slack Notification
