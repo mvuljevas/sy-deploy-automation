@@ -33,7 +33,7 @@ jobs:
               username: 'kamal',
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: `${process.env.AS_WORKFLOW} Started\nCommit: ${process.env.AS_COMMIT}\nRepo: ${process.env.AS_REPO}\nStarted by *${process.env.AS_AUTHOR}*\n*Engineer Kamal* has deployed your theme!, Follow me on Behance @EngineerKamalKumar :rocket:`,
+                text: `${process.env.AS_WORKFLOW} started on ${process.env.AS_REPO}\nCommit: ${process.env.AS_COMMIT}\nStarted by *${process.env.AS_AUTHOR}*\n*Engineer Kamal* has deployed your theme :rocket:\nFollow me on Behance @EngineerKamalKumar`,
               }]
             }
         env:
