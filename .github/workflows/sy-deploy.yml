@@ -27,7 +27,7 @@ jobs:
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
-          fields: workflow,job,commit,repo,ref,author,took
+          fields: author,message,job,took,repo
           custom_payload: |
             {
               username: 'kamal',
