@@ -1,0 +1,73 @@
+name: Deploy Staging Theme
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy Staging Theme
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pgrimaud/action-shopify@2.1.0
+        env:
+          SHOPIFY_PASSWORD: ${{ secrets.SHOPIFY_PASSWORD }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
+          THEME_PATH: ${{ secrets.THEME_PATH }}
+        with:
+          args: --ignored-file=config/settings_data.json
+
+  slackNotification:
+    name: Slack Notify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: all
+          custom_payload: |
+            {
+              username: 'kamal',
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `${process.env.AS_WORKFLOW} started on ${process.env.AS_REPO}\nCommit: ${process.env.AS_COMMIT}\nStarted by *${process.env.AS_AUTHOR}*\n*Engineer Kamal* has deployed your theme :rocket:\nFollow me on *Behance* @EngineerKamalKumar`,
+              }]
+            }
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+          
+#   slackNotification:
+#     name: Slack Notify
+#     runs-on: ubuntu-latest
+#     needs: [deploy]
+#     if: always()
+#     steps:
+#       - name: Slack Notify
+#         uses: baijunyao/action-slack-notify@v3.0.1
+#         if: always()  
+#         env:
+#           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}       
+#         with:
+#           slack_channel_id: C018MLX7WUB
+#           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+#           github_context: ${{ toJson(github) }}
+              
+#   slackNotification:
+#     name: Slack Notification
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Slack Notification
+#       uses: rtCamp/action-slack-notify@master
+#       env:
+#         SLACK_CHANNEL: general
+#         SLACK_COLOR: '#3278BD'
+#         SLACK_ICON: https://github.com/rtCamp.png?size=48
+#         SLACK_MESSAGE: 'Post Content :rocket:'
+#         SLACK_TITLE: Post Title
+#         SLACK_USERNAME: rtCamp
+#         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

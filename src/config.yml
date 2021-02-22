@@ -1,0 +1,7 @@
+development:
+  password: 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
+  theme_id: 110038515866
+  store: kayzen-development.myshopify.com
+  timeout: 60s
+  ignore_files:
+    - config/settings_data.json
